@@ -6,7 +6,9 @@
             <name>talkbot</name>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Ctrlr</word>
             <word>Madsoft</word>
+            <word>params</word>
             <word>Talkbot</word>
         </spellchecker-wordlist>
     </configuration>

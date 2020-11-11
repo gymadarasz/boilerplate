@@ -65,7 +65,7 @@ class Invoker
     public function invoke(
         array $route,
         array $constructorArgs = [],
-        $methodArgs = []
+        array $methodArgs = []
     ) {
         $ctrlr = $this->instance($route[0], $constructorArgs);
         $method = $ctrlr[1]->getMethod($route[1]);

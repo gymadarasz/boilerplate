@@ -3,6 +3,8 @@
 namespace Madsoft\Test;
 
 use Madsoft\Library\Invoker;
+use Madsoft\Library\Test\Ctrlr\ErrorTest;
+use Madsoft\Library\Test\Ctrlr\IndexTest;
 use Madsoft\Library\Test\InvokerTest;
 use Madsoft\Library\Test\SaferTest;
 use Madsoft\Library\Test\TemplateTest;
@@ -29,6 +31,9 @@ $tester->run(SaferTest::class);
 $tester->run(TemplateTest::class);
 $tester->run(TestTest::class);
 $tester->run(TesterTest::class);
+
+$tester->run(IndexTest::class);
+$tester->run(ErrorTest::class);
 
 // Talkbot tests
 $tester->run(TalkbotTest::class);

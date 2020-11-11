@@ -138,16 +138,16 @@ abstract class Test
     /**
      * Method assertEquals
      *
-     * @param mixed $expected expected
-     * @param mixed $result   result
-     * @param mixed $message  message
+     * @param mixed  $expected expected
+     * @param mixed  $result   result
+     * @param string $message  message
      *
      * @return void
      */
     public function assertEquals(
         $expected,
         $result,
-        $message = 'Assert equals failed.'
+        string $message = 'Assert equals failed.'
     ): void {
         $this->assertTrue($expected === $result, $message, $expected, $result);
     }
@@ -155,17 +155,39 @@ abstract class Test
     /**
      * Method assertEquals
      *
-     * @param mixed $expected expected
-     * @param mixed $result   result
-     * @param mixed $message  message
+     * @param mixed  $expected expected
+     * @param mixed  $result   result
+     * @param string $message  message
      *
      * @return void
      */
     public function assertNotEquals(
         $expected,
         $result,
-        $message = 'Assert not equals failed.'
+        string $message = 'Assert not equals failed.'
     ): void {
         $this->assertTrue($expected !== $result, $message, $expected, $result);
+    }
+    
+    /**
+     * Method assertStringContains
+     *
+     * @param string $expected expected
+     * @param string $result   result
+     * @param string $message  message
+     *
+     * @return void
+     */
+    public function assertStringContains(
+        string $expected,
+        string $result,
+        string $message = 'Assert string contains failed.'
+    ): void {
+        $this->assertTrue(
+            false !== strpos($result, $expected),
+            $message,
+            $expected,
+            $result
+        );
     }
 }

@@ -2,3 +2,4 @@
 /nbproject/private/
 /coverage/coverage.html
 *.cache
+*.log

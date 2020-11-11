@@ -16,15 +16,29 @@ function fixit(string $phpfile): string {
         '/<\?php declare\(strict_types = 1\);\s*namespace ([a-zA-Z0-9_\\\\]+);/' => '<?php declare(strict_types = 1);\n\n/**\n *\n *\n * PHP version 7.4\n *\n * @category  PHP\n * @package   $1\n * @author    Gyula Madarasz <gyula.madarasz@gmail.com>\n * @copyright 2020 Gyula Madarasz\n * @license   Copyright (c) All rights reserved.\n * @link      this\n */\n\nnamespace $1;',
         '/;\s*class\s+([\w\d_]+)\b/' => ';\n\n/**\n * $1\n *\n * @category  PHP\n * @package   \n * @author    Gyula Madarasz <gyula.madarasz@gmail.com>\n * @copyright 2020 Gyula Madarasz\n * @license   Copyright (c) All rights reserved.\n * @link      this\n */\nclass $1 ',
         '/;\s*interface\s+([\w\d_]+)\b/' => ';\n\n/**\n * $1\n *\n * @category  PHP\n * @package   \n * @author    Gyula Madarasz <gyula.madarasz@gmail.com>\n * @copyright 2020 Gyula Madarasz\n * @license   Copyright (c) All rights reserved.\n * @link      this\n */\ninterface $1 ',
+        '/\bnamespace (.*);(.*@package)\s+\*/s' => 'namespace $1;$2 $1\n *',        
     ];
+    
 
-    foreach ($replaces as &$replace) {
-        $replace = str_replace('\n', "\n", $replace);
-    }
 
     if (false === ($phpcode = file_get_contents($phpfile))) {
         return 'File reading error.';
     }
+    
+    
+    if (!preg_match('/^<\?php\s+declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $phpcode)) {
+        $phpcode = preg_replace('/^<\?php\s*/', "<?php declare(strict_types = 1);\n\n", $phpcode);
+    }
+    
+//    $phpcode = preg_replace(
+//        '/;\s*(abstract\s+){0,1}(public\s+|protected\s+|private\s+){0,1}(static\s+){0,1}function\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*\(((([a-zA-Z_][a-zA-Z_0-9]*\s*\$[a-zA-Z_][a-zA-Z_0-9]*)(\s*,\s*){0,1})*)\)/s', 
+//        ";\n\n\/**\n *\n @replaceparams $5\n */\n$1/"
+//    );
+    
+    foreach ($replaces as &$replace) {
+        $replace = str_replace('\n', "\n", $replace);
+    }
+    
     while (true) {
         $replaced = preg_replace(array_keys($replaces), array_values($replaces), $phpcode);
         if (null === $replaced) {

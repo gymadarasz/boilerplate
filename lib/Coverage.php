@@ -13,8 +13,8 @@
 
 namespace Madsoft\Library;
 
+use Madsoft\Library\Template;
 use RuntimeException;
-use function count;
 
 /**
  * Coverage
