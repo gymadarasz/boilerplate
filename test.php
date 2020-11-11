@@ -13,8 +13,7 @@ use Madsoft\Talkbot\Test\TalkbotTest;
 
 include __DIR__ . '/vendor/autoload.php';
 
-$invoker = new Invoker();
-$tester = $invoker->getInstance(Tester::class);
+$tester = (new Invoker())->getInstance(Tester::class);
 
 $tester->getCoverage()->start([
     __DIR__ . "/vendor/",
