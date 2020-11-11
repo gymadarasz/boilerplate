@@ -1,0 +1,27 @@
+{
+    "name": "gymadarasz/talkbot",
+    "description": "Talkbot",
+    "type": "project",
+    "license": "Copyright (c) All rights reserved",
+    "autoload": {
+        "psr-4": {
+            "Madsoft\\Library\\": "lib/",
+            "Madsoft\\Library\\Test\\": "tests/lib/",
+            "Madsoft\\Talkbot\\": "src/",
+            "Madsoft\\Talkbot\\Test\\": "tests/src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gyula Madarasz",
+            "email": "gyula.madarasz@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "squizlabs/php_codesniffer": "*",
+        "phpstan/phpstan": "^0.12.52",
+        "phpmd/phpmd" : "@stable"
+    }
+}
