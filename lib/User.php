@@ -27,7 +27,8 @@ class User
 {
     const SESSION_KEY = 'User';
 
-    protected int $uid = 0;
+    protected int $uid;
+    protected string $email;
     
     protected Session $session;
     
@@ -49,6 +50,30 @@ class User
     public function __destruct()
     {
         $this->store();
+    }
+    
+    /**
+     * Method setUid
+     *
+     * @param int $uid uid
+     *
+     * @return void
+     */
+    public function setUid(int $uid): void
+    {
+        $this->uid = $uid;
+    }
+    
+    /**
+     * Method setEmail
+     *
+     * @param string $email email
+     *
+     * @return void
+     */
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
     }
     
     /**
@@ -86,6 +111,6 @@ class User
      */
     public function isVisitor(): bool
     {
-        return !$this->uid;
+        return !isset($this->uid) || !$this->uid;
     }
 }

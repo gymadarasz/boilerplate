@@ -15,6 +15,7 @@ namespace Madsoft\Library\Test\Ctrlr;
 
 use Madsoft\Library\Folders;
 use Madsoft\Library\Inspector;
+use Madsoft\Library\Logger;
 use Madsoft\Library\RequestTest;
 use Madsoft\Library\Session;
 use RuntimeException;

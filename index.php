@@ -14,7 +14,9 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL | E_STRICT);
 
-echo (new Invoker())->getInstance(Request::class)
+echo (isset($this) && isset($this->invoker) ? $this->invoker : new Invoker())
+        ->getInstance(Invoker::class)
+        ->getInstance(Request::class)
         ->setRoutes([
             'public' => [
                 'GET' => [
@@ -27,7 +29,7 @@ echo (new Invoker())->getInstance(Request::class)
                     'reset' => [Auth::class, 'reset'],
                 ],
                 'POST' => [
-                    '' => [Auth::class, 'login'],
+                    '' => [Auth::class, 'doLogin'],
                     'login' => [Auth::class, 'doLogin'],
                     'registry' => [Auth::class, 'doRegistry'],
                     'resend' => [Auth::class, 'doResend'],

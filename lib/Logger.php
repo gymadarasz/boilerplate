@@ -37,24 +37,80 @@ class Logger
     const CH_TEST = 'test';
     const CH_FAIL = 'fail';
     const CH_EXCEPTION = 'exception';
-
+    
     /**
      * Variable channels
      *
      * @var string[] $channels
      */
     protected array $channels = [];
+    
+    protected bool $collect = false;
+    
+    /**
+     * Variable $collection
+     *
+     * @var string[]
+     */
+    protected array $collection = [];
 
     /**
      * Method setChannels
      *
      * @param string[] $channels channels
      *
-     * @return void
+     * @return self
      */
-    public function setChannels(array $channels): void
+    public function setChannels(array $channels): self
     {
         $this->channels = $channels;
+        return $this;
+    }
+    
+    /**
+     * Method setCollect
+     *
+     * @param bool $collect collect
+     *
+     * @return self
+     */
+    public function setCollect(bool $collect): self
+    {
+        $this->collect = $collect;
+        return $this;
+    }
+    
+    /**
+     * Method getCollection
+     *
+     * @return string[]
+     */
+    public function getCollection(): array
+    {
+        return $this->collection;
+    }
+    
+    /**
+     * Method setCollection
+     *
+     * @param string[] $collection collection
+     *
+     * @return self
+     */
+    public function setCollection(array $collection = []): self
+    {
+        $this->collection = $collection;
+        return $this;
+    }
+    
+    /**
+     * Method clearCollection
+     *
+     * @return self
+     */
+    public function clearCollection(): self
+    {
+        return $this->setCollection([]);
     }
 
     /**
@@ -186,6 +242,10 @@ class Logger
     {
         if (!$this->channels || in_array($channel, $this->channels)) {
             $fullmsg = "[" . date("Y-m-d H:i:s") . "] [$channel] $msg";
+            if ($this->collect) {
+                $this->collection[] = $fullmsg;
+                return;
+            }
             if (!file_put_contents(
                 self::LOG_FILE,
                 "$fullmsg\n",

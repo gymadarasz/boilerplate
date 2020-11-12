@@ -13,7 +13,10 @@
 
 namespace Madsoft\Library\Test\Ctrlr;
 
+use Madsoft\Library\Invoker;
+use Madsoft\Library\Logger;
 use Madsoft\Library\RequestTest;
+use function count;
 
 /**
  * IndexTest
@@ -27,6 +30,21 @@ use Madsoft\Library\RequestTest;
  */
 class ErrorTest extends RequestTest
 {
+    protected Logger $logger;
+    protected Invoker $invoker;
+    
+    /**
+     * Method __construct
+     *
+     * @param Logger  $logger  logger
+     * @param Invoker $invoker invoker
+     */
+    public function __construct(Logger $logger, Invoker $invoker)
+    {
+        $this->logger = $logger;
+        $this->invoker = $invoker;
+    }
+    
     /**
      * Method testError
      *
@@ -34,7 +52,11 @@ class ErrorTest extends RequestTest
      */
     public function testError(): void
     {
+        $this->logger->setCollect(true);
         $response = $this->get('q=non-exists-request');
+        $collection = $this->logger->setCollect(false)->getCollection();
+        $this->assertEquals(1, count($collection));
+        $this->assertEquals('???', $collection[0]);
         $this->assertStringContains('Error', $response);
         $this->assertStringContains('Something went wrong', $response);
     }

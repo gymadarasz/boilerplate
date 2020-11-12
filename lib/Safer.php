@@ -42,7 +42,14 @@ class Safer
         if (is_array($value) || is_object($value)) {
             $ret = [];
             foreach ((array)$value as $key => $value) {
-                $ret[$key] = $this->freez($callback, $value);
+                $ret[
+                    $this->freez(
+                        $callback,
+                        $key
+                    )] = $this->freez(
+                        $callback,
+                        $value
+                    );
             }
             return $ret;
         }

@@ -148,9 +148,9 @@ class Request
             || !isset($this->routes[$area][$method][$query])
         ) {
             throw new RuntimeException(
-                "Route not found for request: "
-                    . "areae: '$area', method: '$method', query: '"
-                    . self::QUERY_KEY . "=$query'"
+                "Route not found for requested area: '$area', "
+                    . "method: '$method', "
+                    . "query: '" . self::QUERY_KEY . "=$query'"
             );
         }
         return $this->invoker->invoke($this->routes[$area][$method][$query]);
