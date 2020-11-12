@@ -28,6 +28,13 @@ namespace Madsoft\Library;
 class Session implements Assoc
 {
     /**
+     * Method __construct
+     */
+    public function __construct()
+    {
+        $this->start();
+    }
+    /**
      * Method start
      *
      * @return bool

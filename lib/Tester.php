@@ -13,6 +13,7 @@
 
 namespace Madsoft\Library;
 
+use Exception;
 use RuntimeException;
 
 /**
@@ -27,17 +28,20 @@ use RuntimeException;
  */
 class Tester extends Test
 {
+    protected Logger $logger;
     protected Invoker $invoker;
     protected Coverage $coverage;
 
     /**
      * Method __construct
      *
+     * @param Logger   $logger   logger
      * @param Invoker  $invoker  invoker
      * @param Coverage $coverage coverage
      */
-    public function __construct(Invoker $invoker, Coverage $coverage)
+    public function __construct(Logger $logger, Invoker $invoker, Coverage $coverage)
     {
+        $this->logger = $logger;
         $this->invoker = $invoker;
         $this->coverage = $coverage;
     }
@@ -66,13 +70,22 @@ class Tester extends Test
         $test = $this->invoker->getInstance($class);
         foreach ($methods as $method) {
             if (preg_match('/^test/', $method)) {
-                $this->invoker->invoke([$class, $method]);
+                try {
+                    $this->invoker->invoke([$class, $method]);
+                } catch (Exception $exception) {
+                    $this->assertFalse(
+                        true,
+                        "Tests should not throws exception but it's happened at "
+                            . "$class::$method(), exception details:\n"
+                            . (new Logger())->exceptionToString($exception)
+                    );
+                }
                 if (!$test->asserts) {
                     throw new RuntimeException(
                         "$class::$method() has not any assertation."
                     );
                 }
-                $this->failInfos = array_merge($this->failInfos, $test->failInfos);
+                $this->failInfos = array_merge($test->failInfos, $this->failInfos);
                 $this->asserts += $test->asserts;
                 $this->success += $test->success;
                 $this->fails += $test->fails;

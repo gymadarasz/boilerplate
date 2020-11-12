@@ -87,9 +87,10 @@ abstract class Test
         } catch (Exception $exception) {
             $trace = $exception->getTraceAsString();
         }
-        $this->failInfos[] = "$message\nExpected: "
-                . $this->varDump($expected) . "\nResult: "
-                . $this->varDump($result) . "\nTrace:\n"
+        $this->failInfos[] = "Test failed: $message"
+                . "\nExpected: " . $this->varDump($expected)
+                . "\nResult: " . $this->varDump($result)
+                . "\nTrace:\n"
                 . $trace;
     }
     
@@ -132,7 +133,7 @@ abstract class Test
         bool $result,
         string $message = 'Assert false failed.'
     ): void {
-        $this->assertTrue($result, $message);
+        $this->assertTrue(!$result, $message);
     }
     
     /**

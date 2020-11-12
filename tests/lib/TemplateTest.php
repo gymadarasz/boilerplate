@@ -13,6 +13,8 @@
 
 namespace Madsoft\Library\Test;
 
+use Madsoft\Library\Csrf;
+use Madsoft\Library\Invoker;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
@@ -33,11 +35,16 @@ class TemplateTest extends Test
     /**
      * Method testTemplate
      *
+     * @param Invoker $invoker invoker
+     *
      * @return void
      */
-    public function testTemplate(): void
+    public function testTemplate(Invoker $invoker): void
     {
-        $template = new Template(new Safer);
+        $template = new Template(
+            new Safer(),
+            $invoker->getInstance(Csrf::class)
+        );
         $template->tplDir = __DIR__ . '/Mock/';
         $msg = '';
         

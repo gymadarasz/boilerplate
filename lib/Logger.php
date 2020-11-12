@@ -132,15 +132,18 @@ class Logger
     /**
      * Method exception
      *
-     * @param Exception $exception exception
+     * @param Exception $exception  exception
+     * @param string    $infoPrefix infoPrefix
      *
      * @return void
      */
-    public function exception(Exception $exception): void
-    {
+    public function exception(
+        Exception $exception,
+        string $infoPrefix = "Exception occured: "
+    ): void {
         $this->log(
             Logger::CH_EXCEPTION,
-            "Exception occured: " . $this->exceptionToString($exception)
+            $infoPrefix . $this->exceptionToString($exception)
         );
     }
     
@@ -151,7 +154,7 @@ class Logger
      *
      * @return string
      */
-    protected function exceptionToString(Throwable $exception): string
+    public function exceptionToString(Throwable $exception): string
     {
         $class = get_class($exception);
         $code = $exception->getCode();

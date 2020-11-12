@@ -4,8 +4,38 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "45ad8d9108b6ee97a38421a88a35bef0",
-    "packages": [],
+    "content-hash": "2717d36cbbbaeb35eb63a631f2d20f20",
+    "packages": [
+        {
+            "name": "gymadarasz/xparser",
+            "version": "v0.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gymadarasz/xparser.git",
+                "reference": "1c81aa10afee2941a24092791b98a1952ed64599"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gymadarasz/xparser/zipball/1c81aa10afee2941a24092791b98a1952ed64599",
+                "reference": "1c81aa10afee2941a24092791b98a1952ed64599",
+                "shasum": ""
+            },
+            "require-dev": {
+                "gymadarasz/minitest": "dev-master",
+                "symfony/css-selector": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "gymadarasz\\xparser\\": "",
+                    "gymadarasz\\xparser\\tests\\": "tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Fast XHTML DOM parser in PHP",
+            "time": "2016-01-03T10:25:15+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "composer/semver",

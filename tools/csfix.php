@@ -16,7 +16,7 @@ function fixit(string $phpfile): string {
         '/<\?php declare\(strict_types = 1\);\s*namespace ([a-zA-Z0-9_\\\\]+);/' => '<?php declare(strict_types = 1);\n\n/**\n *\n *\n * PHP version 7.4\n *\n * @category  PHP\n * @package   $1\n * @author    Gyula Madarasz <gyula.madarasz@gmail.com>\n * @copyright 2020 Gyula Madarasz\n * @license   Copyright (c) All rights reserved.\n * @link      this\n */\n\nnamespace $1;',
         '/;\s*class\s+([\w\d_]+)\b/' => ';\n\n/**\n * $1\n *\n * @category  PHP\n * @package   \n * @author    Gyula Madarasz <gyula.madarasz@gmail.com>\n * @copyright 2020 Gyula Madarasz\n * @license   Copyright (c) All rights reserved.\n * @link      this\n */\nclass $1 ',
         '/;\s*interface\s+([\w\d_]+)\b/' => ';\n\n/**\n * $1\n *\n * @category  PHP\n * @package   \n * @author    Gyula Madarasz <gyula.madarasz@gmail.com>\n * @copyright 2020 Gyula Madarasz\n * @license   Copyright (c) All rights reserved.\n * @link      this\n */\ninterface $1 ',
-        '/\bnamespace (.*);(.*@package)\s+\*/s' => 'namespace $1;$2 $1\n *',        
+        '/\bnamespace ([a-zA-Z_][a-zA-Z_0-9\\\]*);(.*@package)\s+\*/s' => 'namespace $1;$2 $1\n *',        
     ];
     
 

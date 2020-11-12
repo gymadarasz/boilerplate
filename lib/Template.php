@@ -30,19 +30,28 @@ class Template
     public string $tplDir = __DIR__ . '/tpls/';
             
     const RESERVED_VARS = [
-        'safer', 'filename'
+        'tplDir',
+        'safer',
+        'filename',
+        'csrf',
+        'csrfgen',
     ];
     
+    public string $csrf;
+    
     protected Safer $safer;
+    protected Csrf $csrfgen;
     
     /**
      * Method __construct
      *
      * @param Safer $safer safer
+     * @param Csrf  $csrf  csrf
      */
-    public function __construct(Safer $safer)
+    public function __construct(Safer $safer, Csrf $csrf)
     {
         $this->safer = $safer;
+        $this->csrfgen = $csrf;
     }
    
     /**
@@ -54,7 +63,7 @@ class Template
      * @return string
      * @throws RuntimeException
      */
-    public function process(string $filename, $data): string
+    public function process(string $filename, $data = []): string
     {
         foreach ($this->safer->freez('htmlentities', $data) as $key => $value) {
             if (is_numeric($key)) {
@@ -69,6 +78,7 @@ class Template
             }
             $this->$key = $value;
         }
+        $this->csrf = $this->csrfgen->get();
         ob_start();
         $this->include($this->tplDir . $filename);
         $contents = (string)ob_get_contents();

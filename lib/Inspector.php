@@ -4,32 +4,34 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Talkbot
+ * @package   Madsoft\Library
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Talkbot;
+namespace Madsoft\Library;
+
+use gymadarasz\xparser\XNode;
 
 /**
- * Talkbot
+ * Inspector
  *
  * @category  PHP
- * @package   Madsoft\Talkbot
+ * @package   Madsoft\Library
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Talkbot
+class Inspector extends XNode
 {
     /**
-     * Method __construct()
+     * Method __construct
      */
     public function __construct()
     {
-        // TODO ...
+        parent::__construct();
     }
 }

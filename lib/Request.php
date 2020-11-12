@@ -50,6 +50,7 @@ class Request
     protected Server $server;
     protected Params $params;
     protected Json $json;
+    protected Csrf $csrf;
 
     /**
      * Method __construct
@@ -60,6 +61,7 @@ class Request
      * @param Server  $server  server
      * @param Params  $params  params
      * @param Json    $json    json
+     * @param Csrf    $csrf    csrf
      */
     public function __construct(
         Invoker $invoker,
@@ -67,7 +69,8 @@ class Request
         User $user,
         Server $server,
         Params $params,
-        Json $json
+        Json $json,
+        Csrf $csrf
     ) {
         $this->invoker = $invoker;
         $this->logger = $logger;
@@ -75,6 +78,7 @@ class Request
         $this->server = $server;
         $this->params = $params;
         $this->json = $json;
+        $this->csrf = $csrf;
     }
     
     /**
@@ -113,6 +117,9 @@ class Request
         try {
             $area = $this->user->isVisitor() ? 'public' : 'protected';
             $method = $this->server->getMethod();
+            if ($method === 'POST' && !$this->csrf->check()) {
+                throw new RuntimeException('CSRF token mismatch.');
+            }
             $query = $this->params->get(self::QUERY_KEY, '');
             $response = $this->call($area, $method, $query);
         } catch (Exception $exception) {
@@ -140,7 +147,11 @@ class Request
             || !isset($this->routes[$area][$method])
             || !isset($this->routes[$area][$method][$query])
         ) {
-            throw new RuntimeException('Route not found');
+            throw new RuntimeException(
+                "Route not found for request: "
+                    . "areae: '$area', method: '$method', query: '"
+                    . self::QUERY_KEY . "=$query'"
+            );
         }
         return $this->invoker->invoke($this->routes[$area][$method][$query]);
     }

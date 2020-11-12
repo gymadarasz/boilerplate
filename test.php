@@ -3,6 +3,7 @@
 namespace Madsoft\Test;
 
 use Madsoft\Library\Invoker;
+use Madsoft\Library\Test\Ctrlr\AuthTest;
 use Madsoft\Library\Test\Ctrlr\ErrorTest;
 use Madsoft\Library\Test\Ctrlr\IndexTest;
 use Madsoft\Library\Test\InvokerTest;
@@ -34,6 +35,7 @@ $tester->run(TesterTest::class);
 
 $tester->run(IndexTest::class);
 $tester->run(ErrorTest::class);
+$tester->run(AuthTest::class);
 
 // Talkbot tests
 $tester->run(TalkbotTest::class);

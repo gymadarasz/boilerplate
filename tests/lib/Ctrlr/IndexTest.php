@@ -34,7 +34,7 @@ class IndexTest extends RequestTest
      */
     public function testIndex(): void
     {
-        $response = $this->get();
+        $response = $this->get('q=index');
         $this->assertStringContains('Index', $response);
     }
 }
