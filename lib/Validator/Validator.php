@@ -13,6 +13,8 @@
 
 namespace Madsoft\Library\Validator;
 
+use Madsoft\Library\Invoker;
+
 /**
  * Validator
  *
@@ -23,16 +25,35 @@ namespace Madsoft\Library\Validator;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-interface Validator
+class Validator
 {
+    protected Invoker $invoker;
     
     /**
-     * Method getErrors
+     * Method __construct
      *
-     * @param string $value  value
-     * @param string $prefix prefix
-     *
-     * @return string[]
+     * @param Invoker $invoker invoker
      */
-    public function getErrors(string $value, string $prefix = ''): array;
+    public function __construct(Invoker $invoker)
+    {
+        $this->invoker = $invoker;
+    }
+    
+    /**
+     * Method check
+     *
+     * @param string   $value value
+     * @param string[] $rules rules
+     *
+     * @return bool
+     */
+    public function check(string $value, array $rules): bool
+    {
+        foreach ($rules as $class) {
+            if (!$this->invoker->getInstance($class)->check($value)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

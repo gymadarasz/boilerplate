@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Validator;
 
 /**
- * Email
+ * Rule
  *
  * @category  PHP
  * @package   Madsoft\Library\Validator
@@ -23,23 +23,14 @@ namespace Madsoft\Library\Validator;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Email implements Validator
+interface Rule
 {
-    
     /**
-     * Method getErrors
+     * Method check
      *
-     * @param string $value  value
-     * @param string $prefix prefix
+     * @param string $value value
      *
-     * @return string[]
+     * @return bool
      */
-    public function getErrors(string $value, string $prefix = ''): array
-    {
-        $errors = [];
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = $prefix . 'Invalid email format';
-        }
-        return $errors;
-    }
+    public function check(string $value): bool;
 }

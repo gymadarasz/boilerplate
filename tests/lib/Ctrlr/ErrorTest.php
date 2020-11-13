@@ -57,8 +57,10 @@ class ErrorTest extends RequestTest
         $collection = $this->logger->setCollect(false)->getCollection();
         $this->assertEquals(1, count($collection));
         $this->assertStringContains(
-                "Message: 'Route not found for requested area: 'public', "
-                . "method: 'GET', query: 'q=non-exists-request''", $collection[0]);
+            "Message: 'Route not found for requested area: 'public', "
+                . "method: 'GET', query: 'q=non-exists-request''",
+            $collection[0]
+        );
         $this->assertStringContains('Error', $response);
         $this->assertStringContains('Something went wrong', $response);
     }

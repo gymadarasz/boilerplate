@@ -97,6 +97,7 @@ class AuthTest extends RequestTest
     {
         $contents = $this->get('q=login');
         $this->assertStringContains('Login', $contents);
+        // TODO check if correct form exists
     }
     
     /**
@@ -165,7 +166,8 @@ class AuthTest extends RequestTest
     protected function canSeeRegistry(): void
     {
         $contents = $this->get('q=registry');
-        $this->assertStringContains('Registry', $contents);
+        $this->assertStringContains('Registration', $contents);
+        // TODO check if correct form exists
     }
     
     /**
@@ -175,7 +177,6 @@ class AuthTest extends RequestTest
      */
     protected function canSeeRegistryFails(): void
     {
-        // TODO: negative tests for invalid registry form, user already exists etc..
         $contents = $this->post(
             'q=registry',
             [
@@ -399,6 +400,7 @@ class AuthTest extends RequestTest
     {
         $contents = $this->get('q=reset');
         $this->assertStringContains('Password reset', $contents);
+        // TODO check if correct form exists
     }
     
     /**
@@ -520,6 +522,7 @@ class AuthTest extends RequestTest
     {
         $contents = $this->get('q=reset&token=' . $this->getResetToken());
         $this->assertStringContains('New password', $contents);
+        // TODO check if correct form exists
     }
     
     /**

@@ -18,8 +18,10 @@ use Madsoft\Library\Logger;
 use Madsoft\Library\Params;
 use Madsoft\Library\Template;
 use Madsoft\Library\User;
-use Madsoft\Library\Validator\Email;
-use Madsoft\Library\Validator\Password;
+use Madsoft\Library\Validator\Rule\Email;
+use Madsoft\Library\Validator\Rule\Number;
+use Madsoft\Library\Validator\Rule\Password;
+use Madsoft\Library\Validator\Validator;
 
 /**
  * Auth
@@ -38,39 +40,35 @@ class Auth
     
     protected Crud $crud;
     protected Logger $logger;
-    protected Email $email;
-    protected Password $password;
     protected User $user;
     protected params $params;
     protected Template $template;
+    protected Validator $validator;
     
     /**
      * Method __construct
      *
-     * @param Crud     $crud     crud
-     * @param Logger   $logger   logger
-     * @param Email    $email    email
-     * @param Password $password password
-     * @param User     $user     user
-     * @param Params   $params   params
-     * @param Template $template template
+     * @param Crud      $crud      crud
+     * @param Logger    $logger    logger
+     * @param User      $user      user
+     * @param Params    $params    params
+     * @param Template  $template  template
+     * @param Validator $validator validator
      */
     public function __construct(
         Crud $crud,
         Logger $logger,
-        Email $email,
-        Password $password,
         User $user,
         Params $params,
-        Template $template
+        Template $template,
+        Validator $validator
     ) {
         $this->crud = $crud;
         $this->logger = $logger;
-        $this->email = $email;
-        $this->password = $password;
         $this->user = $user;
         $this->params = $params;
         $this->template = $template;
+        $this->validator = $validator;
     }
     
     /**
@@ -90,8 +88,7 @@ class Auth
      */
     public function registry(): string
     {
-        // TODO ...
-        return 'unimplementd';
+        return $this->template->process('registry.phtml');
     }
     
     /**
@@ -134,26 +131,25 @@ class Auth
      */
     public function doLogin(): string
     {
+        $email = (string)$this->params->get('email');
+        
         if (false === sleep(self::LOGIN_DELAY)) {
-            return $this->loginError(['Login delay error']);
+            return $this->loginError($email, 'Login delay error');
         }
         
-        $email = (string)$this->params->get('email');
-        $errors = $this->email->getErrors($email);
-        if ($errors) {
-            return $this->loginError($errors);
+        if (!$this->validator->check($email, [Email::class])) {
+            return $this->loginError($email, 'Invalid email address');
         }
         
         $password = (string)$this->params->get('password');
-        $errors = $this->password->getErrors($password);
-        if ($errors) {
-            return $this->loginError($errors);
+        if (!$this->validator->check($password, [Password::class])) {
+            return $this->loginError($email, 'Invalid password');
         }
         
         $user = $this->crud->row('user', ['id', 'email'], ['email' => $email]);
         
-        if (!$user->get('id')) {
-            return $this->loginError(['User is not found, email: ' . $email]);
+        if (!$this->validator->check($user->get('id'), [Number::class])) {
+            return $this->loginError($email, 'Email not found');
         }
         
         if (!password_verify(
@@ -161,7 +157,7 @@ class Auth
             $user->get('password')
         )
         ) {
-            return $this->loginError(['Invalid password, email: ' . $email]);
+            return $this->loginError($email, 'Invalid password');
         }
         
         $this->user->setUid($user->get('id'));
@@ -180,13 +176,14 @@ class Auth
     /**
      * Method loginError
      *
-     * @param string[] $errors errors
+     * @param string $email  email
+     * @param string $reason reason
      *
      * @return string
      */
-    protected function loginError(array $errors): string
+    protected function loginError(string $email, string $reason): string
     {
-        $this->logger->error('Invalid login credentials: ' . implode(', ', $errors));
+        $this->logger->error("Login error, email: $email, reason: '$reason'");
         return $this->template->process(
             'login.phtml',
             [
@@ -204,7 +201,37 @@ class Auth
      */
     public function doRegistry(): string
     {
-        // TODO ...
+        $errors = [];
+        
+        $email = (string)$this->params->get('email');
+        if (!$this->validator->check($email, [Email::class])) {
+            $errors[] = 'Invalid email address';
+        }
+        
+        $password = (string)$this->params->get('password');
+        if (!$this->validator->check($password, [Password::class])) {
+            $errors[] = 'Invalid password';
+        }
+        
+        $emailRetype = (string)$this->params->get('email_retype');
+        if ($email !== $emailRetype) {
+            $errors[] = 'Email addresses are not identical';
+        }
+        
+        if ($errors) {
+            return $this->template->process(
+                'registry.phtml',
+                [
+                    'messages' => [
+                        'errors' => $errors,
+                    ],
+                    'email' => $email,
+                    'password' => $password,
+                ]
+            );
+        }
+        
+        
         return 'unimplementd';
     }
     

@@ -36,14 +36,19 @@ class Tester extends Test
     protected Coverage $coverage;
 
     /**
-     * 
-     * @param \Madsoft\Library\Folders $folders
-     * @param \Madsoft\Library\Logger $logger
-     * @param \Madsoft\Library\Invoker $invoker
-     * @param \Madsoft\Library\Coverage $coverage
+     * Method __construct
+     *
+     * @param Folders  $folders  folders
+     * @param Logger   $logger   logger
+     * @param Invoker  $invoker  invoker
+     * @param Coverage $coverage coverage
      */
-    public function __construct(Folders $folders, Logger $logger, Invoker $invoker, Coverage $coverage)
-    {
+    public function __construct(
+        Folders $folders,
+        Logger $logger,
+        Invoker $invoker,
+        Coverage $coverage
+    ) {
         $this->folders = $folders;
         $this->logger = $logger;
         $this->invoker = $invoker;
@@ -61,15 +66,18 @@ class Tester extends Test
     }
     
     /**
-     * 
-     * @param string $path
-     * @return self
+     * Method test
+     *
+     * @param string $path path
+     *
+     * @return void
      */
-    public function test($path = self::TESTS_PATH): void {
+    public function test($path = self::TESTS_PATH): void
+    {
         $files = $this->folders->getFilesRecursive($path);
         foreach ($files as $file) {
             $matches = [];
-            if (preg_match('/^(.+Test).php$/', $file->getFilename(), $matches)) {                
+            if (preg_match('/^(.+Test).php$/', $file->getFilename(), $matches)) {
                 $class = $matches[1];
                 
                 $fullname = $file->getPath() . '/' . $file->getFilename();
@@ -84,22 +92,26 @@ class Tester extends Test
     }
     
     /**
-     * 
-     * @param string $fullname
+     * Method getPhpNamespace
+     *
+     * @param string $fullname fullname
+     *
      * @return string
      * @throws RuntimeException
      */
-    protected function getPhpNamespace(string $fullname): string {
+    protected function getPhpNamespace(string $fullname): string
+    {
         $contents = file_get_contents($fullname);
         if (false === $contents) {
             throw new RuntimeException(
-                    'Unable to read test file: ' . $fullname);
+                'Unable to read test file: ' . $fullname
+            );
         }
         $matches = [];
         if (preg_match('/namespace\s+(.+);/', $contents, $matches)) {
             return $matches[1];
         }
-        return '';        
+        return '';
     }
     
     /**
