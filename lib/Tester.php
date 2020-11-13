@@ -28,19 +28,23 @@ use RuntimeException;
  */
 class Tester extends Test
 {
+    const TESTS_PATH = __DIR__ . '/../tests';
+    
+    protected Folders $folders;
     protected Logger $logger;
     protected Invoker $invoker;
     protected Coverage $coverage;
 
     /**
-     * Method __construct
-     *
-     * @param Logger   $logger   logger
-     * @param Invoker  $invoker  invoker
-     * @param Coverage $coverage coverage
+     * 
+     * @param \Madsoft\Library\Folders $folders
+     * @param \Madsoft\Library\Logger $logger
+     * @param \Madsoft\Library\Invoker $invoker
+     * @param \Madsoft\Library\Coverage $coverage
      */
-    public function __construct(Logger $logger, Invoker $invoker, Coverage $coverage)
+    public function __construct(Folders $folders, Logger $logger, Invoker $invoker, Coverage $coverage)
     {
+        $this->folders = $folders;
         $this->logger = $logger;
         $this->invoker = $invoker;
         $this->coverage = $coverage;
@@ -57,6 +61,48 @@ class Tester extends Test
     }
     
     /**
+     * 
+     * @param string $path
+     * @return self
+     */
+    public function test($path = self::TESTS_PATH): void {
+        $files = $this->folders->getFilesRecursive($path);
+        foreach ($files as $file) {
+            $matches = [];
+            if (preg_match('/^(.+Test).php$/', $file->getFilename(), $matches)) {                
+                $class = $matches[1];
+                
+                $fullname = $file->getPath() . '/' . $file->getFilename();
+                $namespace = $this->getPhpNamespace($fullname);
+                
+                $fullclass = "$namespace\\$class";
+                
+                include_once $fullname;
+                $this->run($fullclass);
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param string $fullname
+     * @return string
+     * @throws RuntimeException
+     */
+    protected function getPhpNamespace(string $fullname): string {
+        $contents = file_get_contents($fullname);
+        if (false === $contents) {
+            throw new RuntimeException(
+                    'Unable to read test file: ' . $fullname);
+        }
+        $matches = [];
+        if (preg_match('/namespace\s+(.+);/', $contents, $matches)) {
+            return $matches[1];
+        }
+        return '';        
+    }
+    
+    /**
      * Method run
      *
      * @param string $class class
@@ -64,7 +110,7 @@ class Tester extends Test
      * @return void
      * @throws RuntimeException
      */
-    public function run(string $class): void
+    protected function run(string $class): void
     {
         $methods = get_class_methods($class);
         $test = $this->invoker->getInstance($class);

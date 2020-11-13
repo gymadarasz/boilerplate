@@ -26,18 +26,6 @@ $tester->getCoverage()->start([
     __DIR__ . "/tests/lib/Mock/",
 ]);
 
-// Library tests
-$tester->run(InvokerTest::class);
-$tester->run(SaferTest::class);
-$tester->run(TemplateTest::class);
-$tester->run(TestTest::class);
-$tester->run(TesterTest::class);
-
-$tester->run(IndexTest::class);
-$tester->run(ErrorTest::class);
-$tester->run(AuthTest::class);
-
-// Talkbot tests
-$tester->run(TalkbotTest::class);
+$tester->test();
 
 exit($tester->stat() ? 0 : 1);
