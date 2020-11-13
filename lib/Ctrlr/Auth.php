@@ -19,6 +19,7 @@ use Madsoft\Library\Params;
 use Madsoft\Library\Template;
 use Madsoft\Library\User;
 use Madsoft\Library\Validator\Rule\Email;
+use Madsoft\Library\Validator\Rule\Mandatory;
 use Madsoft\Library\Validator\Rule\Number;
 use Madsoft\Library\Validator\Rule\Password;
 use Madsoft\Library\Validator\Validator;
@@ -148,7 +149,15 @@ class Auth
         
         $user = $this->crud->row('user', ['id', 'email'], ['email' => $email]);
         
-        if (!$this->validator->check($user->get('id'), [Number::class])) {
+        if (!$this->validator->check((string)$user->get('id'), [Number::class])) {
+            return $this->loginError($email, 'User not found');
+        }
+        
+        if (!$this->validator->check(
+            (string)$user->get('email'),
+            [Mandatory::class]
+        )
+        ) {
             return $this->loginError($email, 'Email not found');
         }
         

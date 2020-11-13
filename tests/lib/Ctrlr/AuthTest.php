@@ -34,8 +34,8 @@ use SplFileInfo;
 class AuthTest extends RequestTest
 {
     const EMAIL = 'tester@testing.com';
-    const PASSWORD_FIRST = 'first1234';
-    const PASSWORD = 'pass1234';
+    const PASSWORD_FIRST = 'First1234!';
+    const PASSWORD = 'Pass1234!';
     const MAILS_FOLDER = __DIR__ . '/../../../mails';
 
     protected Session $session;
@@ -186,9 +186,8 @@ class AuthTest extends RequestTest
             //                'password' => '',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains('Email field is missing', $contents);
-        $this->assertStringContains('Password field is missing', $contents);
+        $this->assertStringContains('Invalid email address', $contents);
+        $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
             'q=registry',
@@ -199,9 +198,8 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains('Email field is missing', $contents);
-        $this->assertStringContains('Password field is missing', $contents);
+        $this->assertStringContains('Invalid email address', $contents);
+        $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
             'q=registry',
@@ -212,9 +210,8 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains('Email field is invalid', $contents);
-        $this->assertStringContains('Password field is missing', $contents);
+        $this->assertStringContains('Invalid email address', $contents);
+        $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
             'q=registry',
@@ -225,9 +222,8 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains('Email fields are mismatch', $contents);
-        $this->assertStringContains('Password field is missing', $contents);
+        $this->assertStringContains('Email addresses are not identical', $contents);
+        $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
             'q=registry',
@@ -238,8 +234,7 @@ class AuthTest extends RequestTest
                 'password' => 'short',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains('Password is too short', $contents);
+        $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
             'q=registry',
@@ -250,11 +245,7 @@ class AuthTest extends RequestTest
                 'password' => 'longbutdoesnothavenumber',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains(
-            'Password does not any contains number',
-            $contents
-        );
+        $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
             'q=registry',
@@ -265,11 +256,7 @@ class AuthTest extends RequestTest
                 'password' => 'nospecchar123',
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains(
-            'Password does not contains any special character',
-            $contents
-        );
+        $this->assertStringContains('Invalid password', $contents);
     }
 
     /**

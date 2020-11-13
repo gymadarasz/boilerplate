@@ -3,16 +3,7 @@
 namespace Madsoft\Test;
 
 use Madsoft\Library\Invoker;
-use Madsoft\Library\Test\Ctrlr\AuthTest;
-use Madsoft\Library\Test\Ctrlr\ErrorTest;
-use Madsoft\Library\Test\Ctrlr\IndexTest;
-use Madsoft\Library\Test\InvokerTest;
-use Madsoft\Library\Test\SaferTest;
-use Madsoft\Library\Test\TemplateTest;
-use Madsoft\Library\Test\TesterTest;
-use Madsoft\Library\Test\TestTest;
 use Madsoft\Library\Tester;
-use Madsoft\Talkbot\Test\TalkbotTest;
 
 include __DIR__ . '/vendor/autoload.php';
 
