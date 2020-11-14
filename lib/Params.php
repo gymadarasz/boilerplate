@@ -56,7 +56,13 @@ class Params extends Server implements Assoc
         default:
             throw new RuntimeException('Incorrect method: "' . $method . '"');
         }
-        return $_REQUEST[$key] ?? $default;
+        if (isset($_REQUEST[$key])) {
+            return $_REQUEST[$key];
+        }
+        if (null !== $default) {
+            return $default;
+        }
+        throw new RuntimeException('Parameter not found: "' . $key . '"');
     }
     
     /**

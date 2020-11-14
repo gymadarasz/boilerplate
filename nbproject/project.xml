@@ -10,6 +10,7 @@
             <word>Madsoft</word>
             <word>params</word>
             <word>Talkbot</word>
+            <word>validator</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

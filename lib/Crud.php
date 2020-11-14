@@ -56,17 +56,17 @@ class Crud
     ): Assoc {
         $table = $this->mysql->escape($tableUnsafe);
         $fields = implode(
-            ', ',
+            '`, `',
             $this->safer->freez([$this->mysql, 'escape'], $fieldsUnsafe)
         );
         $filter = $this->safer->freez([$this->mysql, 'escape'], $filterUnsafe);
         
-        $query = "SELECT $fields FROM $table";
+        $query = "SELECT `$fields` FROM `$table`";
         
         if ($filter) {
             $conds = [];
             foreach ($filter as $key => $value) {
-                $conds[] = "$key = '$value'";
+                $conds[] = "`$key` = '$value'";
             }
             $where = implode(' OR ', $conds);
             $query .= " WHERE $where";

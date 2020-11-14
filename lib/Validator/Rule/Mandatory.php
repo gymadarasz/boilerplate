@@ -25,19 +25,19 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Mandatory implements Rule
+class Mandatory extends Rule
 {
-    public bool $mandatory = true;
+    const MESSAGE = "Mandatory";
     
     /**
      * Method check
      *
-     * @param string $value value
+     * @param mixed $value value
      *
      * @return bool
      */
-    public function check(string $value): bool
+    public function check($value): bool
     {
-        return $this->mandatory && (bool)$value;
+        return (bool)$value;
     }
 }

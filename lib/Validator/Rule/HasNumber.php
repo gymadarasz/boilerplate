@@ -13,8 +13,6 @@
 
 namespace Madsoft\Library\Validator\Rule;
 
-use Madsoft\Library\Validator\Rule;
-
 /**
  * HasNumber
  *
@@ -25,7 +23,8 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class HasNumber extends RegexMatch implements Rule
+class HasNumber extends RegexMatch
 {
-    public string $pattern = '/[0-9]/';
+    const MESSAGE = "Doesn't contains any number";
+    const PATTERN = '/[0-9]/';
 }

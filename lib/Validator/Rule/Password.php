@@ -25,75 +25,112 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Password implements Rule
+class Password extends Rule
 {
-    public Mandatory $mandatory;
-    public MinLength $minLength;
-    public HasLetter $hasLetter;
-    public HasLower $hasLower;
-    public HasUpper $hasUpper;
-    public HasNumber $hasNumber;
-    public HasSpecChar $hasSpecChar;
+    const MESSAGE = "Invalid password";
     
+    protected bool $checkMinLength = true;
+    protected bool $checkHasLower = true;
+    protected bool $checkHasUpper = true;
+    protected bool $checkHasNumber = true;
+    protected bool $checkHasSpecChar = true;
+    
+    protected MinLength $minLength;
+    protected HasLower $hasLower;
+    protected HasUpper $hasUpper;
+    protected HasNumber $hasNumber;
+    protected HasSpecChar $hasSpecChar;
+
     /**
      * Method __construct
      *
-     * @param Mandatory   $mandatory   mandatory
      * @param MinLength   $minLength   minLength
-     * @param HasLetter   $hasLetter   hasLetter
      * @param HasLower    $hasLower    hasLower
      * @param HasUpper    $hasUpper    hasUpper
      * @param HasNumber   $hasNumber   hasNumber
      * @param HasSpecChar $hasSpecChar hasSpecChar
      */
     public function __construct(
-        Mandatory $mandatory,
         MinLength $minLength,
-        HasLetter $hasLetter,
         HasLower $hasLower,
         HasUpper $hasUpper,
         HasNumber $hasNumber,
         HasSpecChar $hasSpecChar
     ) {
-        $this->mandatory = $mandatory;
         $this->minLength = $minLength;
-        $this->hasLetter = $hasLetter;
-        $this->hasLower  =$hasLower;
+        $this->hasLower = $hasLower;
         $this->hasUpper = $hasUpper;
-        $this->hasNumber  =$hasNumber;
+        $this->hasNumber = $hasNumber;
         $this->hasSpecChar = $hasSpecChar;
-        
-        $this->minLength->min = 8;
     }
     
     /**
      * Method check
      *
-     * @param string $value value
+     * @param mixed $value value
      *
      * @return bool
      */
-    public function check(string $value): bool
+    public function check($value): bool
     {
-        if (!$this->mandatory->check($value)) {
+        if (!$this->checkBasic((string)$value)) {
             return false;
         }
-        if (!$this->minLength->check($value)) {
+        if (!$this->checkMedium((string)$value)) {
             return false;
         }
-        if (!$this->hasLetter->check($value)) {
+        if (!$this->checkComplex((string)$value)) {
             return false;
         }
-        if (!$this->hasLower->check($value)) {
+        return true;
+    }
+    
+    /**
+     * Method checkBasic
+     *
+     * @param string $value value
+     *
+     * @return boolean
+     */
+    protected function checkBasic(string $value)
+    {
+        if ($this->checkMinLength && !$this->minLength->check($value)) {
             return false;
         }
-        if (!$this->hasUpper->check($value)) {
+        return true;
+    }
+    
+    /**
+     * Method checkMedium
+     *
+     * @param string $value value
+     *
+     * @return boolean
+     */
+    protected function checkMedium(string $value)
+    {
+        if ($this->checkHasLower && !$this->hasLower->check($value)) {
             return false;
         }
-        if (!$this->hasNumber->check($value)) {
+        if ($this->checkHasUpper && !$this->hasUpper->check($value)) {
             return false;
         }
-        if (!$this->hasSpecChar->check($value)) {
+        return true;
+    }
+    
+    /**
+     * Method checkComplex
+     *
+     * @param string $value value
+     *
+     * @return boolean
+     */
+    protected function checkComplex(string $value)
+    {
+        if ($this->checkHasNumber && !$this->hasNumber->check($value)) {
+            return false;
+        }
+        if ($this->checkHasSpecChar && !$this->hasSpecChar->check($value)) {
             return false;
         }
         return true;

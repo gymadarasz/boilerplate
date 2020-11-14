@@ -26,22 +26,23 @@ use RuntimeException;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class RegexMatch implements Rule
+abstract class RegexMatch extends Rule
 {
-    public string $pattern = '/.*/';
+    const MESSAGE = "Incorrect format";
+    const PATTERN = '//';
     
     /**
      * Method check
      *
-     * @param string $value value
+     * @param mixed $value value
      *
      * @return bool
      */
-    public function check(string $value): bool
+    public function check($value): bool
     {
-        $results = preg_match($this->pattern, $value);
+        $results = preg_match($this::PATTERN, (string)$value);
         if (false === $results) {
-            throw new RuntimeException('Regex matching error');
+            throw new RuntimeException('Regexp matching error');
         }
         return (bool)$results;
     }

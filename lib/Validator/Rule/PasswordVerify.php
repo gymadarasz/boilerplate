@@ -16,7 +16,7 @@ namespace Madsoft\Library\Validator\Rule;
 use Madsoft\Library\Validator\Rule;
 
 /**
- * MinLength
+ * PasswordVerify
  *
  * @category  PHP
  * @package   Madsoft\Library\Validator\Rule
@@ -25,11 +25,23 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class MinLength extends Rule
+class PasswordVerify extends Rule
 {
-    const MESSAGE = "Too short";
+    const MESSAGE = "Password isn't match";
     
-    protected int $min = 0;
+    protected string $password = '';
+    
+    protected StringRule $stringRule;
+    
+    /**
+     * Method __construct
+     *
+     * @param StringRule $stringRule stringRule
+     */
+    public function __construct(StringRule $stringRule)
+    {
+        $this->stringRule = $stringRule;
+    }
     
     /**
      * Method check
@@ -40,6 +52,9 @@ class MinLength extends Rule
      */
     public function check($value): bool
     {
-        return strlen((string)$value) >= $this->min;
+        if ($this->stringRule->check($value)) {
+            return password_verify((string)$value, $this->password);
+        }
+        return false;
     }
 }

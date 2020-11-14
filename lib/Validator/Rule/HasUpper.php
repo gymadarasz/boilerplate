@@ -13,8 +13,6 @@
 
 namespace Madsoft\Library\Validator\Rule;
 
-use Madsoft\Library\Validator\Rule;
-
 /**
  * HasUpper
  *
@@ -25,7 +23,8 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class HasUpper extends RegexMatch implements Rule
+class HasUpper extends RegexMatch
 {
-    public string $pattern = '/[A-Z]/';
+    const MESSAGE = "Doesn't contains any uppercase letter";
+    const PATTERN = '/[A-Z]/';
 }

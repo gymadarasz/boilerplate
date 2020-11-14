@@ -13,9 +13,6 @@
 
 namespace Madsoft\Library\Ctrlr;
 
-use Exception;
-use Madsoft\Library\Logger;
-
 /**
  * Error
  *

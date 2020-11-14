@@ -14,6 +14,7 @@
 namespace Madsoft\Library\Validator\Rule;
 
 use Madsoft\Library\Validator\Rule;
+use RuntimeException;
 
 /**
  * RegexNotMatch
@@ -25,19 +26,24 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class RegexNotMatch implements Rule
+abstract class RegexNotMatch extends Rule
 {
-    public string $pattern = '/.*/';
+    const MESSAGE = "Incorrect format";
+    const PATTERN = '//';
     
     /**
      * Method check
      *
-     * @param string $value value
+     * @param mixed $value value
      *
      * @return bool
      */
-    public function check(string $value): bool
+    public function check($value): bool
     {
-        return !preg_match($this->pattern, $value);
+        $results = preg_match($this::PATTERN, $value);
+        if (false === $results) {
+            throw new RuntimeException('Regexp matching error');
+        }
+        return !$results;
     }
 }

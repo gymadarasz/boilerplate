@@ -14,6 +14,7 @@
 namespace Madsoft\Library\Validator;
 
 use Madsoft\Library\Invoker;
+use RuntimeException;
 
 /**
  * Validator
@@ -40,20 +41,113 @@ class Validator
     }
     
     /**
-     * Method check
+     * Method addErrors
      *
-     * @param string   $value value
-     * @param string[] $rules rules
+     * @param string[][] $errors errors
+     * @param string     $fname  fname
+     * @param mixed      $value  value
+     * @param mixed[]    $rules  rules
      *
-     * @return bool
+     * @return string[][]
      */
-    public function check(string $value, array $rules): bool
+    protected function addErrors(
+        array &$errors,
+        string $fname,
+        $value,
+        array $rules
+    ): array {
+        $errs = $this->getValueErrors($value, $rules);
+        if ($errs) {
+            $errors[$fname] = $errs;
+        }
+        return $errors;
+    }
+    
+    /**
+     * Method getErrors
+     *
+     * @param mixed[] $fields fields
+     *
+     * @return string[][]
+     */
+    public function getErrors(array $fields): array
     {
-        foreach ($rules as $class) {
-            if (!$this->invoker->getInstance($class)->check($value)) {
-                return false;
+        $errors = [];
+        foreach ($fields as $fname => $field) {
+            $errors = $this->addErrors(
+                $errors,
+                $fname,
+                $field['value'],
+                $field['rules']
+            );
+        }
+        return $errors;
+    }
+    
+    /**
+     * Method getFirstError
+     *
+     * @param mixed[] $fields fields
+     *
+     * @return string[][]
+     */
+    public function getFirstError(array $fields): array
+    {
+        $errors = [];
+        foreach ($fields as $fname => $field) {
+            $errors = $this->addErrors(
+                $errors,
+                $fname,
+                $field['value'],
+                $field['rules']
+            );
+            if (array_key_exists($fname, $errors)) {
+                break;
             }
         }
-        return true;
+        return $errors;
+    }
+    
+    /**
+     * Method checkValue
+     *
+     * @param mixed   $value value
+     * @param mixed[] $args  args
+     *
+     * @return string[]
+     * @throws RuntimeException
+     */
+    public function getValueErrors($value, array $args): array
+    {
+        if (empty($args)) {
+            throw new RuntimeException(
+                'Validation rule arguments can not be empty. '
+                    . 'Empty array given.'
+            );
+        }
+        $restargs = $args;
+        $errors = [];
+        foreach ($args as $class => $params) {
+            if (is_numeric($class)) {
+                throw new RuntimeException(
+                    "Non-associative validation rule contract descriptor given. "
+                        . "Format should looks like array[rule][property] = value."
+                );
+            }
+            $rule = $this->invoker->getInstance($class);
+            $rule->apply($params ?: []);
+            if (!$rule->check($value)) {
+                $errors[] = $rule::MESSAGE;
+            }
+            unset($restargs[$class]);
+        }
+        if (!empty($restargs)) {
+            $classes = implode("', '", array_keys($restargs));
+            throw new RuntimeException(
+                "Trying to apply some validation rule properties "
+                    . "but rules are not defined or missing: '$classes'"
+            );
+        }
+        return $errors;
     }
 }

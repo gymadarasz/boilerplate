@@ -186,7 +186,8 @@ class AuthTest extends RequestTest
             //                'password' => '',
             ]
         );
-        $this->assertStringContains('Invalid email address', $contents);
+        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid email format', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -198,7 +199,8 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Invalid email address', $contents);
+        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid email format', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -210,7 +212,8 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Invalid email address', $contents);
+        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid email format', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -222,7 +225,8 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Email addresses are not identical', $contents);
+        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Doesn\'t match', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -234,6 +238,7 @@ class AuthTest extends RequestTest
                 'password' => 'short',
             ]
         );
+        $this->assertStringContains('Registration error', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -245,6 +250,7 @@ class AuthTest extends RequestTest
                 'password' => 'longbutdoesnothavenumber',
             ]
         );
+        $this->assertStringContains('Registration error', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -256,6 +262,7 @@ class AuthTest extends RequestTest
                 'password' => 'nospecchar123',
             ]
         );
+        $this->assertStringContains('Registration error', $contents);
         $this->assertStringContains('Invalid password', $contents);
     }
 

@@ -13,8 +13,6 @@
 
 namespace Madsoft\Library\Validator\Rule;
 
-use Madsoft\Library\Validator\Rule;
-
 /**
  * Number
  *
@@ -25,7 +23,8 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Number extends RegexMatch implements Rule
+class Number extends RegexMatch
 {
-    public string $pattern = '/^[0-9]$/';
+    const MESSAGE = "Not a number";
+    const PATTERN = '/^[0-9]$/';
 }

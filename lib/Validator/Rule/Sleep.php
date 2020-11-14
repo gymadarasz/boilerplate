@@ -13,8 +13,10 @@
 
 namespace Madsoft\Library\Validator\Rule;
 
+use Madsoft\Library\Validator\Rule;
+
 /**
- * HasSpecChar
+ * Sleep
  *
  * @category  PHP
  * @package   Madsoft\Library\Validator\Rule
@@ -23,8 +25,18 @@ namespace Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class HasSpecChar extends RegexNotMatch
+class Sleep extends Rule
 {
-    const MESSAGE = "Doesn't contains any special character";
-    const PATTERN = '/^[a-zA-Z0-9]$/';
+    const MESSAGE = "Delay error";
+    /**
+     * Method check
+     *
+     * @param mixed $value value
+     *
+     * @return bool
+     */
+    public function check($value): bool
+    {
+        return false !== sleep($value);
+    }
 }

@@ -26,16 +26,18 @@ use RuntimeException;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Email implements Rule
+class Email extends Rule
 {
+    const MESSAGE = 'Invalid email format';
+    
     /**
      * Method check
      *
-     * @param string $value value
+     * @param mixed $value value
      *
      * @return bool
      */
-    public function check(string $value): bool
+    public function check($value): bool
     {
         return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
     }

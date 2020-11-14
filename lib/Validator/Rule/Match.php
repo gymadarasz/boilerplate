@@ -13,8 +13,10 @@
 
 namespace Madsoft\Library\Validator\Rule;
 
+use Madsoft\Library\Validator\Rule;
+
 /**
- * HasSpecChar
+ * Match
  *
  * @category  PHP
  * @package   Madsoft\Library\Validator\Rule
@@ -23,8 +25,26 @@ namespace Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class HasSpecChar extends RegexNotMatch
+class Match extends Rule
 {
-    const MESSAGE = "Doesn't contains any special character";
-    const PATTERN = '/^[a-zA-Z0-9]$/';
+    const MESSAGE = "Doesn't match";
+    
+    /**
+     * Variable $equalTo
+     *
+     * @var mixed
+     */
+    protected $equalTo;
+    
+    /**
+     * Method check
+     *
+     * @param mixed $value value
+     *
+     * @return bool
+     */
+    public function check($value): bool
+    {
+        return $this->equalTo === $value;
+    }
 }

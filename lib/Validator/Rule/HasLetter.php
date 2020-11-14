@@ -25,10 +25,12 @@ use Madsoft\Library\Validator\Rule;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class HasLetter implements Rule
+class HasLetter extends Rule
 {
-    public HasLower $hasLower;
-    public HasUpper $hasUpper;
+    const MESSAGE = "Doesn't contains any letter";
+    
+    protected HasLower $hasLower;
+    protected HasUpper $hasUpper;
     
     /**
      * Method __construct
@@ -45,11 +47,11 @@ class HasLetter implements Rule
     /**
      * Method check
      *
-     * @param string $value value
+     * @param mixed $value value
      *
      * @return bool
      */
-    public function check(string $value): bool
+    public function check($value): bool
     {
         return $this->hasLower->check($value) || $this->hasUpper->check($value);
     }
