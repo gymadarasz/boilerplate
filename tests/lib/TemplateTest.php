@@ -45,24 +45,32 @@ class TemplateTest extends Test
             new Safer(),
             $invoker->getInstance(Csrf::class)
         );
-        $template->tplDir = __DIR__ . '/Mock/';
         $msg = '';
         
         try {
-            $template->process('test.phtml', ['foo']);
+            $template->process(
+                __DIR__ . '/Mock/test.phtml',
+                ['foo']
+            );
         } catch (RuntimeException $exception) {
             $msg = $exception->getMessage();
         }
         $this->assertEquals("Variable name can not be number: '0'", $msg);
         
         try {
-            $template->process('test.phtml', ['safer' => 'never!']);
+            $template->process(
+                __DIR__ . '/Mock/test.phtml',
+                ['safer' => 'never!']
+            );
         } catch (RuntimeException $exception) {
             $msg = $exception->getMessage();
         }
         $this->assertEquals("Variable name is reserved: 'safer'", $msg);
         
-        $results = $template->process('test.phtml', ['data1' => 'foo']);
+        $results = $template->process(
+            __DIR__ . '/Mock/test.phtml',
+            ['data1' => 'foo']
+        );
         $this->assertEquals('Hello Template foo!', $results);
         
         $template->restrict();

@@ -126,10 +126,19 @@ class Tester extends Test
     {
         $methods = get_class_methods($class);
         $test = $this->invoker->getInstance($class);
+        if (method_exists($test, 'beforeAll')) {
+            $this->invoker->invoke([$class, 'beforeAll']);
+        }
         foreach ($methods as $method) {
             if (preg_match('/^test/', $method)) {
                 try {
+                    if (method_exists($test, 'before')) {
+                        $this->invoker->invoke([$class, 'before']);
+                    }
                     $this->invoker->invoke([$class, $method]);
+                    if (method_exists($test, 'after')) {
+                        $this->invoker->invoke([$class, 'after']);
+                    }
                 } catch (Exception $exception) {
                     $this->assertFalse(
                         true,
@@ -148,6 +157,9 @@ class Tester extends Test
                 $this->success += $test->success;
                 $this->fails += $test->fails;
             }
+        }
+        if (method_exists($test, 'afterAll')) {
+            $this->invoker->invoke([$class, 'afterAll']);
         }
         $this->invoker->free($class);
     }

@@ -13,10 +13,14 @@
 
 namespace Madsoft\Library\Test\Ctrlr;
 
+use DiDom\Document;
+use DOMElement;
+use Madsoft\Library\Config;
+use Madsoft\Library\Crud;
 use Madsoft\Library\Folders;
-use Madsoft\Library\Inspector;
-use Madsoft\Library\Logger;
+use Madsoft\Library\Mailer;
 use Madsoft\Library\RequestTest;
+use Madsoft\Library\Server;
 use Madsoft\Library\Session;
 use RuntimeException;
 use SplFileInfo;
@@ -36,27 +40,60 @@ class AuthTest extends RequestTest
     const EMAIL = 'tester@testing.com';
     const PASSWORD_FIRST = 'First1234!';
     const PASSWORD = 'Pass1234!';
-    const MAILS_FOLDER = __DIR__ . '/../../../mails';
 
     protected Session $session;
-    protected Inspector $inspector;
     protected Folders $folders;
+    protected Crud $crud;
+    protected Mailer $mailer;
+    protected Server $server;
+    protected Config $config;
     
     /**
      * Method __construct
      *
-     * @param Session   $session   session
-     * @param Inspector $inspector inspector
-     * @param Folders   $folders   folders
+     * @param Session $session session
+     * @param Folders $folders folders
+     * @param Crud    $crud    crud
+     * @param Mailer  $mailer  mailer
+     * @param Server  $server  server
+     * @param Config  $config  config
      */
     public function __construct(
         Session $session,
-        Inspector $inspector,
-        Folders $folders
+        Folders $folders,
+        Crud $crud,
+        Mailer $mailer,
+        Server $server,
+        Config $config
     ) {
         $this->session = $session;
-        $this->inspector = $inspector;
         $this->folders = $folders;
+        $this->crud = $crud;
+        $this->mailer = $mailer;
+        $this->server = $server;
+        $this->config = $config;
+    }
+    
+    /**
+     * Method before
+     *
+     * @return void
+     */
+    public function beforeAll(): void
+    {
+        $this->crud->del('user', ['email' => self::EMAIL]);
+        $mails = $this->folders->getFilesRecursive(
+            $this->config->get(Mailer::CONFIG_SECION)->get('save_mail_path')
+        );
+        foreach ($mails as $mail) {
+            if (!$mail->isDir()) {
+                if (!unlink($mail->getPathname())) {
+                    throw new RuntimeException(
+                        'Unable to delete file: ' . $mail->getPathname()
+                    );
+                }
+            }
+        }
     }
 
 
@@ -186,7 +223,7 @@ class AuthTest extends RequestTest
             //                'password' => '',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Invalid email format', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
@@ -199,7 +236,7 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Invalid email format', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
@@ -212,7 +249,7 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Invalid email format', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
@@ -225,7 +262,7 @@ class AuthTest extends RequestTest
                 'password' => '',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Doesn\'t match', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
@@ -238,7 +275,7 @@ class AuthTest extends RequestTest
                 'password' => 'short',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -250,7 +287,7 @@ class AuthTest extends RequestTest
                 'password' => 'longbutdoesnothavenumber',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Invalid password', $contents);
         
         $contents = $this->post(
@@ -262,7 +299,7 @@ class AuthTest extends RequestTest
                 'password' => 'nospecchar123',
             ]
         );
-        $this->assertStringContains('Registration error', $contents);
+        $this->assertStringContains('Invalid registration data', $contents);
         $this->assertStringContains('Invalid password', $contents);
     }
 
@@ -282,8 +319,8 @@ class AuthTest extends RequestTest
                 'password' => self::PASSWORD_FIRST,
             ]
         );
-        $this->assertStringContains('Registration success', $contents);
-        $this->assertStringContains('Activation email', $contents);
+        $this->assertStringContains('Activate your account', $contents);
+        $this->assertStringContains('activation email', $contents);
     }
     
     /**
@@ -295,13 +332,19 @@ class AuthTest extends RequestTest
     {
         $emailFilename = $this->getLastEmailFilename();
         $this->assertStringContains(self::EMAIL, $emailFilename);
-        $this->assertStringContains('Account activation', $emailFilename);
+        $this->assertStringContains('Activate your account', $emailFilename);
         
-        $emailContents = $this->getLastEmailContents();
+        $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
+        $activationLink = $this->config->get('Site')->get('base')
+                . '?q=activate&token=' . $user->get('token');
+        $links = (new Document($emailFilename, true))->find('a');
         $found = false;
-        $activationLink = $this->getActivationLink(self::EMAIL);
-        foreach ($this->inspector->outer($emailContents)('a') as $link) {
-            if ($link->href === $activationLink) {
+        foreach ($links as $link) {
+            if ($link instanceof DOMElement) {
+                throw new RuntimeException('Invalid DOM context');
+            }
+            $href = $link->attr('href');
+            if ($href === $activationLink) {
                 $found = true;
                 break;
             }
@@ -317,7 +360,8 @@ class AuthTest extends RequestTest
     protected function canSeeActivationFails(): void
     {
         $contents = $this->get('q=activate');
-        $this->assertStringContains('Invalid token', $contents);
+        $this->assertStringContains('Account activation failed', $contents);
+        $this->assertStringContains('Mandatory', $contents);
         
         $contents = $this->get('q=activate&token=wrong-token');
         $this->assertStringContains('Invalid token', $contents);
@@ -330,8 +374,9 @@ class AuthTest extends RequestTest
      */
     protected function canSeeActivationWorks(): void
     {
-        $contents = $this->get('q=activate&token=' . $this->getActivationToken());
-        $this->assertStringContains('Account activated', $contents);
+        $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
+        $contents = $this->get('q=activate&token=' . $user->get('token'));
+        $this->assertStringContains('Account is now activated', $contents);
     }
     
     /**
@@ -350,8 +395,7 @@ class AuthTest extends RequestTest
                 'password' => self::PASSWORD_FIRST,
             ]
         );
-        $this->assertStringContains('Registration failed', $contents);
-        $this->assertStringContains('User already exists', $contents);
+        $this->assertStringContains('Email address already registered', $contents);
     }
     
     /**
@@ -371,7 +415,7 @@ class AuthTest extends RequestTest
                 'password' => $password,
             ]
         );
-        $this->assertStringContains('Login failed', $contents);
+        $this->assertStringContains('Login success', $contents);
     }
     
     /**
@@ -450,8 +494,10 @@ class AuthTest extends RequestTest
         $contents = $this->get('q=reset&token=wron-token');
         $this->assertStringContains('Invalid token', $contents);
         
+        $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
+        $token = $user->get('token');
         $contents = $this->post(
-            'q=reset&token=' . $this->getResetToken(),
+            'q=reset&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
             //                'password' => '',
@@ -461,7 +507,7 @@ class AuthTest extends RequestTest
         $this->assertStringContains('Password is missing', $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $this->getResetToken(),
+            'q=reset&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => '',
@@ -471,7 +517,7 @@ class AuthTest extends RequestTest
         $this->assertStringContains('Password is missing', $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $this->getResetToken(),
+            'q=reset&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => 'short',
@@ -481,7 +527,7 @@ class AuthTest extends RequestTest
         $this->assertStringContains('Password is too short', $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $this->getResetToken(),
+            'q=reset&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => 'longwithoutnumbers',
@@ -494,7 +540,7 @@ class AuthTest extends RequestTest
         );
         
         $contents = $this->post(
-            'q=reset&token=' . $this->getResetToken(),
+            'q=reset&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => 'withoutspecchar1234',
@@ -514,7 +560,8 @@ class AuthTest extends RequestTest
      */
     protected function canSeeNewPassword(): void
     {
-        $contents = $this->get('q=reset&token=' . $this->getResetToken());
+        $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
+        $contents = $this->get('q=reset&token=' . $user->get('token'));
         $this->assertStringContains('New password', $contents);
         // TODO check if correct form exists
     }
@@ -526,8 +573,9 @@ class AuthTest extends RequestTest
      */
     protected function canSeeNewPasswordWorks(): void
     {
+        $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
         $contents = $this->post(
-            'q=reset&token=' . $this->getResetToken(),
+            'q=reset&token=' . $user->get('token'),
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => self::EMAIL,
@@ -540,17 +588,16 @@ class AuthTest extends RequestTest
     /**
      * Method getLastEmail
      *
-     * @param string $folder folder
-     *
      * @return SplFileInfo
      * @throws RuntimeException
      */
-    protected function getLastEmail(string $folder = self::MAILS_FOLDER): SplFileInfo
+    protected function getLastEmail(): SplFileInfo
     {
         //        $dir = realpath($folder);
         //        if (false === $dir) {
         //            throw new RuntimeException('Folder not exists: ' . $folder);
         //        }
+        $folder = $this->config->get(Mailer::CONFIG_SECION)->get('save_mail_path');
         $mails = $this->folders->getFilesRecursive($folder);
         $latest = null;
         foreach ($mails as $mail) {
@@ -580,7 +627,8 @@ class AuthTest extends RequestTest
      */
     protected function getLastEmailFilename(): string
     {
-        return $this->getLastEmail()->getFilename();
+        $lastEmail = $this->getLastEmail();
+        return $lastEmail->getPathname(); // $lastEmail->getFilename();
     }
     
     /**
@@ -597,37 +645,5 @@ class AuthTest extends RequestTest
             throw new RuntimeException('Unable to read: ' . $mailfile);
         }
         return $contents;
-    }
-    
-    /**
-     * Method getActivationLink
-     *
-     * @param string $email email
-     *
-     * @return string
-     */
-    protected function getActivationLink(string $email): string
-    {
-        return $email.''; // TODO ...
-    }
-    
-    /**
-     * Method getActivationToken
-     *
-     * @return string
-     */
-    protected function getActivationToken(): string
-    {
-        return ''; // TODO ...
-    }
-    
-    /**
-     * Method getResetToken
-     *
-     * @return string
-     */
-    protected function getResetToken(): string
-    {
-        return ''; // TODO ...
     }
 }

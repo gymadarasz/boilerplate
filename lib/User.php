@@ -113,4 +113,16 @@ class User
     {
         return !isset($this->uid) || !$this->uid;
     }
+    
+    /**
+     * Method logout
+     *
+     * @return self
+     */
+    public function logout(): self
+    {
+        $this->uid = 0;
+        $this->email = '';
+        return $this->store();
+    }
 }

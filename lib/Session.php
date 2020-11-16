@@ -43,6 +43,13 @@ class Session implements Assoc
     {
         $ret = false;
         if (session_status() == PHP_SESSION_NONE) {
+            if (php_sapi_name() === 'cli') {
+                if (!isset($_SESSION)) {
+                    $_SESSION = [];
+                    return true;
+                }
+                return false;
+            }
             $ret = session_start();
         }
         return $ret;
@@ -55,6 +62,13 @@ class Session implements Assoc
      */
     public function destroy(): bool
     {
+        foreach (array_keys($_SESSION) as $key) {
+            unset($_SESSION[$key]);
+        }
+        if (php_sapi_name() === 'cli') {
+            unset($_SESSION);
+            return true;
+        }
         return session_destroy();
     }
     

@@ -116,7 +116,7 @@ class Request
     {
         try {
             $area = $this->user->isVisitor() ? 'public' : 'protected';
-            $method = $this->server->getMethod();
+            $method = $this->server->get('REQUEST_METHOD');
             if ($method === 'POST' && !$this->csrf->check()) {
                 throw new RuntimeException('CSRF token mismatch.');
             }

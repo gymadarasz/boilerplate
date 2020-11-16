@@ -13,10 +13,8 @@
 
 namespace Madsoft\Library;
 
-use RuntimeException;
-
 /**
- * Server
+ * Section
  *
  * @category  PHP
  * @package   Madsoft\Library
@@ -24,39 +22,31 @@ use RuntimeException;
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
- *
- * @SuppressWarnings(PHPMD.Superglobals)
  */
-class Server implements Assoc
+class Section implements Assoc
 {
     
     /**
-     * Method getMethod
+     * Variable $data
      *
-     * @return string
+     * @var mixed[]
      */
-    //public function getMethod(): string
-    //{
-    //    return $this->get('REQUEST_METHOD');
-    //}
+    protected array $data = [];
     
     /**
-     * Method getBaseUrl
+     * Method create
      *
-     * @return string
+     * @param mixed[] $values values
+     *
+     * @return self
      */
-    public function getBaseUrl(): string
+    protected function create(array $values): self
     {
-        return sprintf(
-            "%s://%s%s",
-            $this->has('HTTPS') && $this->get('HTTPS') != 'off' ?
-                'https' :
-                'http',
-            $this->get('SERVER_NAME'),
-            $this->get('REQUEST_URI')
-        );
+        $section = new self();
+        $section->data = $values;
+        return $section;
     }
-
+    
     /**
      * Method get
      *
@@ -67,7 +57,13 @@ class Server implements Assoc
      */
     public function get(string $key, $default = null)
     {
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : $default;
+        if (!array_key_exists($key, $this->data)) {
+            return $default;
+        }
+        if (is_array($this->data[$key])) {
+            $this->data[$key] = $this->create($this->data[$key]);
+        }
+        return $this->data[$key];
     }
 
     /**
@@ -79,7 +75,7 @@ class Server implements Assoc
      */
     public function has(string $key): bool
     {
-        return isset($_SERVER[$key]);
+        return array_key_exists($key, $this->data);
     }
 
     /**
@@ -89,13 +85,10 @@ class Server implements Assoc
      * @param mixed  $value value
      *
      * @return Assoc
-     * @throws RuntimeException
      */
     public function set(string $key, $value): Assoc
     {
-        throw new RuntimeException(
-            '$_SERVER Superglobals is not writeable. '
-                . 'Trying to access to $_SERVER at key: ' . $key
-        );
+        $this->data[$key] = $value;
+        return $this;
     }
 }

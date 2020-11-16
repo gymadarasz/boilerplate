@@ -1,5 +1,7 @@
 /vendor/
 /nbproject/private/
 /coverage/coverage.html
+/mails/
+/lib/config/config.*.ini
 *.cache
 *.log

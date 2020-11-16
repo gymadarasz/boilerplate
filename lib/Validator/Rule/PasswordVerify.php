@@ -53,7 +53,7 @@ class PasswordVerify extends Rule
     public function check($value): bool
     {
         if ($this->stringRule->check($value)) {
-            return password_verify((string)$value, $this->password);
+            return password_verify($this->password, (string)$value);
         }
         return false;
     }

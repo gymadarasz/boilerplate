@@ -26,5 +26,5 @@ namespace Madsoft\Library\Validator\Rule;
 class Number extends RegexMatch
 {
     const MESSAGE = "Not a number";
-    const PATTERN = '/^[0-9]$/';
+    const PATTERN = '/^[0-9]+$/';
 }

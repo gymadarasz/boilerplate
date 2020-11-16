@@ -40,7 +40,7 @@ class Params extends Server implements Assoc
      */
     public function get(string $key, $default = null)
     {
-        $method = $this->getMethod();
+        $method = parent::get('REQUEST_METHOD');
         switch ($method) {
         case 'GET':
             if (isset($_GET[$key])) {
@@ -75,7 +75,7 @@ class Params extends Server implements Assoc
      */
     public function has(string $key): bool
     {
-        $method = $this->getMethod();
+        $method = parent::get('REQUEST_METHOD');
         switch ($method) {
         case 'GET':
             if (isset($_GET[$key])) {

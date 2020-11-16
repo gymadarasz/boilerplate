@@ -60,7 +60,7 @@ class InvokerTest extends Test
         } catch (RuntimeException $exception) {
             $msg = $exception->getMessage();
         }
-        $this->assertEquals(
+        $this->assertStringContains(
             sprintf(
                 Invoker::ERR_METHOD_HAS_NONCLASS_ARG,
                 NotInjectable::class,

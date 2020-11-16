@@ -27,10 +27,9 @@ use RuntimeException;
  */
 class Template
 {
-    public string $tplDir = __DIR__ . '/tpls/';
+    //    public string $tplDir = __DIR__ . '/tpls/';
             
     const RESERVED_VARS = [
-        'tplDir',
         'safer',
         'filename',
         'csrf',
@@ -80,7 +79,7 @@ class Template
         }
         $this->csrf = $this->csrfgen->get();
         ob_start();
-        $this->include($this->tplDir . $filename);
+        $this->include($filename);
         $contents = (string)ob_get_contents();
         ob_end_clean();
         return $contents;

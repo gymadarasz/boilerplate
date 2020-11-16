@@ -154,6 +154,18 @@ class Mysql
         }
         return $this->mysqli->affected_rows;
     }
+    
+    /**
+     * Method delete
+     *
+     * @param string $query query
+     *
+     * @return int
+     */
+    public function delete(string $query): int
+    {
+        return $this->update($query);
+    }
 
     /**
      * Method insert

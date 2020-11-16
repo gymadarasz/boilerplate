@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Validator;
 
 use Madsoft\Library\Assoc;
-use Madsoft\Library\Ctrlr\Auth;
+use Madsoft\Library\Ctrlr\AuthPublic;
 use Madsoft\Library\Validator\Rule\Email;
 use Madsoft\Library\Validator\Rule\Mandatory;
 use Madsoft\Library\Validator\Rule\Match;
@@ -58,7 +58,7 @@ class AuthValidator extends Validator
             [
                 'delay' =>
                 [
-                    'value' => Auth::LOGIN_DELAY,
+                    'value' => AuthPublic::LOGIN_DELAY,
                     'rules' =>
                     [
                         //Mandatory::class => null, // TODO add it on live
@@ -123,9 +123,9 @@ class AuthValidator extends Validator
                         Email::class => null,
                     ],
                 ],
-                'password_hash' =>
+                'hash' =>
                 [
-                    'value' => $user->get('password_hash'),
+                    'value' => $user->get('hash'),
                     'rules' =>
                     [
                         Mandatory::class => null,
@@ -178,6 +178,28 @@ class AuthValidator extends Validator
             ],
         );
         
+        return $errors;
+    }
+    
+    /**
+     * Method validateActivate
+     *
+     * @param Assoc $params params
+     *
+     * @return string[][]
+     */
+    public function validateActivate(Assoc $params): array
+    {
+        $errors = $this->getErrors(
+            [
+            'token' => [
+                'value' => $params->get('token', ''),
+                'rules' => [
+                    Mandatory::class => null
+                ],
+            ],
+            ]
+        );
         return $errors;
     }
 }

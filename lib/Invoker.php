@@ -15,9 +15,11 @@
 
 namespace Madsoft\Library;
 
-use RuntimeException;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
+use RuntimeException;
+use function count;
 
 /**
  * Invoker
@@ -68,6 +70,11 @@ class Invoker
         array $methodArgs = []
     ) {
         $ctrlr = $this->instance($route[0], $constructorArgs);
+        if (!isset($route[1])) {
+            throw new RuntimeException(
+                'Missing route controller: ' . $route[0] . '::???'
+            );
+        }
         $method = $ctrlr[1]->getMethod($route[1]);
         $args = $this->argsMerge(
             $method,
@@ -99,9 +106,17 @@ class Invoker
      *
      * @return void
      */
-    public function free(string $class): void
+    public function free(string $class = null): void
     {
-        unset($this->instances[$class]);
+        if (!$class) {
+            foreach (array_keys($this->instances) as $class) {
+                $this->free($class);
+            }
+            return;
+        }
+        if ($class != Invoker::class) {
+            unset($this->instances[$class]);
+        }
     }
 
     /**
@@ -177,9 +192,22 @@ class Invoker
         $params = $method->getParameters();
         $args = [];
         foreach ($params as $param) {
-            $paramClass = $param->getClass();
-            if (!$paramClass) {
-                throw new RuntimeException($messageOnError);
+            $paramClass = null;
+            $exception = null;
+            try {
+                $paramClass = $param->getClass();
+            } catch (ReflectionException $exc) {
+                $exception = $exc;
+            }
+            if (/*!isset($paramClass) || */!$paramClass || $exception) {
+                throw new RuntimeException(
+                    $messageOnError . " Parameter: " .
+                    (null !== $param->getDeclaringClass() ?
+                        $param->getDeclaringClass()->name :
+                        '???') . ' => ' . $param->getName(),
+                    0,
+                    isset($exception) ? $exception : null
+                );
             }
             $args[] = $this->instance($paramClass->name)[0];
         }
