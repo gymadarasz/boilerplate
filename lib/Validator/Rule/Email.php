@@ -14,7 +14,6 @@
 namespace Madsoft\Library\Validator\Rule;
 
 use Madsoft\Library\Validator\Rule;
-use RuntimeException;
 
 /**
  * Email

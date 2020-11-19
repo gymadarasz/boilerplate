@@ -26,7 +26,7 @@ use RuntimeException;
 use SplFileInfo;
 
 /**
- * AuthTest
+ * AccountTest
  *
  * @category  PHP
  * @package   Madsoft\Library\Test\Ctrlr
@@ -35,7 +35,7 @@ use SplFileInfo;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AuthTest extends RequestTest
+class AccountTest extends RequestTest
 {
     const EMAIL = 'tester@testing.com';
     const PASSWORD_FIRST = 'First1234!';
@@ -102,7 +102,7 @@ class AuthTest extends RequestTest
      *
      * @return void
      */
-    public function testLogin(): void
+    public function testAccount(): void
     {
         $this->canSeeLogin();
         $this->canSeeLoginFails();
@@ -112,7 +112,7 @@ class AuthTest extends RequestTest
         $this->canSeeActivationMail();
         $this->canSeeActivationFails();
         $this->canSeeActivationWorks();
-        $this->canSeeRegistryFailsByUserExists();
+        $this->canSeeActivationUserAlreayActiveFail();
         $this->canSeeLoginWorks(self::PASSWORD_FIRST);
         $this->canSeeLogoutWorks();
         $this->canSeeResetPassword();
@@ -380,6 +380,17 @@ class AuthTest extends RequestTest
     }
     
     /**
+     * 
+     * @return void
+     */
+    protected function canSeeActivationUserAlreayActiveFail(): void
+    {
+        $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
+        $contents = $this->get('q=activate&token=' . $user->get('token'));
+        $this->assertStringContains('User is active already', $contents);
+    }
+    
+    /**
      * Method canSeeRegistryFailsByUserExists
      *
      * @return void
@@ -464,7 +475,7 @@ class AuthTest extends RequestTest
                 'email' => 'nonexist@useremail.com',
             ]
         );
-        $this->assertStringContains('Reset password failed', $contents);
+        $this->assertStringContains('Email address not found', $contents);
     }
     
     /**
@@ -497,60 +508,62 @@ class AuthTest extends RequestTest
         $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
         $token = $user->get('token');
         $contents = $this->post(
-            'q=reset&token=' . $token,
+            'q=change&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
             //                'password' => '',
             //                'password_retype' => '',
             ]
         );
-        $this->assertStringContains('Password is missing', $contents);
+        $this->assertStringContains('Password change failed', $contents);
+        $this->assertStringContains('Mandatory, Invalid password', $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $token,
+            'q=change&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => '',
             //                'password_retype' => '',
             ]
         );
-        $this->assertStringContains('Password is missing', $contents);
+        $this->assertStringContains('Password change failed', $contents);
+        $this->assertStringContains('Mandatory, Invalid password', $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $token,
+            'q=change&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => 'short',
                 'password_retype' => '',
             ]
         );
-        $this->assertStringContains('Password is too short', $contents);
+        $this->assertStringContains('Password change failed', $contents);
+        $this->assertStringContains('Invalid password', $contents);
+        $this->assertStringContains("Doesn't match", $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $token,
+            'q=change&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => 'longwithoutnumbers',
                 'password_retype' => '',
             ]
         );
-        $this->assertStringContains(
-            "Password doesn't contain any numbers",
-            $contents
-        );
+        $this->assertStringContains('Password change failed', $contents);
+        $this->assertStringContains('Invalid password', $contents);
+        $this->assertStringContains("Doesn't match", $contents);
         
         $contents = $this->post(
-            'q=reset&token=' . $token,
+            'q=change&token=' . $token,
             [
                 'csrf' => $this->session->get('csrf'),
                 'password' => 'withoutspecchar1234',
                 'password_retype' => '',
             ]
         );
-        $this->assertStringContains(
-            "Password doesn't contain any special character",
-            $contents
-        );
+        $this->assertStringContains('Password change failed', $contents);
+        $this->assertStringContains('Invalid password', $contents);
+        $this->assertStringContains("Doesn't match", $contents);
     }
     
     /**
@@ -562,7 +575,7 @@ class AuthTest extends RequestTest
     {
         $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
         $contents = $this->get('q=reset&token=' . $user->get('token'));
-        $this->assertStringContains('New password', $contents);
+        $this->assertStringContains('Change password', $contents);
         // TODO check if correct form exists
     }
     
@@ -575,10 +588,10 @@ class AuthTest extends RequestTest
     {
         $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
         $contents = $this->post(
-            'q=reset&token=' . $user->get('token'),
+            'q=change&token=' . $user->get('token'),
             [
                 'csrf' => $this->session->get('csrf'),
-                'password' => self::EMAIL,
+                'password' => self::PASSWORD,
                 'password_retype' => self::PASSWORD,
             ]
         );

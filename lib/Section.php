@@ -29,18 +29,18 @@ class Section implements Assoc
     /**
      * Variable $data
      *
-     * @var mixed[]
+     * @var mixed[]|Assoc
      */
-    protected array $data = [];
+    protected $data = [];
     
     /**
      * Method create
      *
-     * @param mixed[] $values values
+     * @param Assoc|mixed[] $values values
      *
      * @return self
      */
-    protected function create(array $values): self
+    protected function create($values): self
     {
         $section = new self();
         $section->data = $values;
@@ -57,13 +57,19 @@ class Section implements Assoc
      */
     public function get(string $key, $default = null)
     {
-        if (!array_key_exists($key, $this->data)) {
-            return $default;
+        if (is_array($this->data)) {
+            if (!array_key_exists($key, $this->data)) {
+                return $default;
+            }
+            if (is_array($this->data[$key])) {
+                $this->data[$key] = $this->create($this->data[$key]);
+            }
+            return $this->data[$key];
         }
-        if (is_array($this->data[$key])) {
-            $this->data[$key] = $this->create($this->data[$key]);
+        if ($this->data->has($key)) {
+            return $this->data->get($key);
         }
-        return $this->data[$key];
+        return $default;
     }
 
     /**
@@ -75,7 +81,10 @@ class Section implements Assoc
      */
     public function has(string $key): bool
     {
-        return array_key_exists($key, $this->data);
+        if (is_array($this->data)) {
+            return array_key_exists($key, $this->data);
+        }
+        return $this->data->has($key);
     }
 
     /**
@@ -88,7 +97,11 @@ class Section implements Assoc
      */
     public function set(string $key, $value): Assoc
     {
-        $this->data[$key] = $value;
+        if (is_array($this->data)) {
+            $this->data[$key] = $value;
+            return $this;
+        }
+        $this->data->set($key, $value);
         return $this;
     }
 }

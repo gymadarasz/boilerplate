@@ -13,6 +13,7 @@
 
 namespace Madsoft\Library;
 
+use Madsoft\Library\Validator\Rule\StringRule;
 use RuntimeException;
 
 /**
@@ -67,7 +68,7 @@ class Server implements Assoc
      */
     public function get(string $key, $default = null)
     {
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : $default;
+        return $_SERVER[$key] ?? $default;
     }
 
     /**
@@ -96,6 +97,7 @@ class Server implements Assoc
         throw new RuntimeException(
             '$_SERVER Superglobals is not writeable. '
                 . 'Trying to access to $_SERVER at key: ' . $key
+                . ' Value: ' . ((new StringRule())->check($value) ? $value : '???')
         );
     }
 }

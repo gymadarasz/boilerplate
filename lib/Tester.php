@@ -125,7 +125,7 @@ class Tester extends Test
     protected function run(string $class): void
     {
         $methods = get_class_methods($class);
-        $test = $this->invoker->getInstance($class);
+        $test = $this->getTest($class);
         if (method_exists($test, 'beforeAll')) {
             $this->invoker->invoke([$class, 'beforeAll']);
         }
@@ -162,6 +162,18 @@ class Tester extends Test
             $this->invoker->invoke([$class, 'afterAll']);
         }
         $this->invoker->free($class);
+    }
+    
+    /**
+     * Method getTest
+     *
+     * @param string $class class
+     *
+     * @return Test
+     */
+    protected function getTest(string $class): Test
+    {
+        return $this->invoker->getInstance($class);
     }
     
     /**

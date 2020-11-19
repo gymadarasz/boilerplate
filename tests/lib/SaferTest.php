@@ -13,6 +13,8 @@
 
 namespace Madsoft\Library\Test;
 
+use Madsoft\Library\Test;
+
 /**
  * SaferTest
  *
@@ -23,7 +25,7 @@ namespace Madsoft\Library\Test;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class SaferTest
+class SaferTest extends Test
 {
     //TODO put your code here
 }

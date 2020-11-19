@@ -4,34 +4,35 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Ctrlr
+ * @package   Madsoft\Library
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Ctrlr;
+namespace Madsoft\Library;
 
 /**
- * Error
+ * Index
  *
  * @category  PHP
- * @package   Madsoft\Library\Ctrlr
+ * @package   Madsoft\Library
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Error
+class Index
 {
+    
     /**
-     * Method error
+     * Method index
      *
      * @return string
      */
-    public function error(): string
+    public function index(): string
     {
-        return 'Error: Hoops! Something went wrong...';
+        return 'Index Page';
     }
 }

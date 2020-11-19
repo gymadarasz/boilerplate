@@ -102,14 +102,20 @@ class Invoker
     /**
      * Method free
      *
-     * @param string $class class
+     * @param string|null $class class
      *
      * @return void
      */
-    public function free(string $class = null): void
+    public function free(?string $class = null): void
     {
         if (!$class) {
             foreach (array_keys($this->instances) as $class) {
+                if (!is_string($class)) {
+                    throw new RuntimeException(
+                        'Class name should be a string, '
+                            . gettype($class) . ' found.'
+                    );
+                }
                 $this->free($class);
             }
             return;
@@ -202,11 +208,11 @@ class Invoker
             if (/*!isset($paramClass) || */!$paramClass || $exception) {
                 throw new RuntimeException(
                     $messageOnError . " Parameter: " .
-                    (null !== $param->getDeclaringClass() ?
-                        $param->getDeclaringClass()->name :
-                        '???') . ' => ' . $param->getName(),
+                        (null !== $param->getDeclaringClass() ?
+                            ($param->getDeclaringClass()->name ?? '???') : '???')
+                        . ' => ' . $param->getName(),
                     0,
-                    isset($exception) ? $exception : null
+                    $exception ?? null
                 );
             }
             $args[] = $this->instance($paramClass->name)[0];

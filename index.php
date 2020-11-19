@@ -2,10 +2,8 @@
 
 namespace Madsoft\Talkbot;
 
-use Madsoft\Library\Ctrlr\AuthProtected;
-use Madsoft\Library\Ctrlr\AuthPublic;
-use Madsoft\Library\Ctrlr\Error;
-use Madsoft\Library\Ctrlr\Index;
+use Madsoft\Library\Account\Account;
+use Madsoft\Library\Error;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Request;
 
@@ -19,36 +17,7 @@ $invoker = isset($this) && isset($this->invoker) ? $this->invoker : new Invoker(
 $output = $invoker
     ->getInstance(Invoker::class)
     ->getInstance(Request::class)
-    ->setRoutes([
-        'public' => [
-            'GET' => [
-                '' => [AuthPublic::class, 'login'],
-                'index' => [Index::class, 'index'],
-                'login' => [AuthPublic::class, 'login'],
-                'registry' => [AuthPublic::class, 'registry'],
-                'resend' => [AuthPublic::class, 'resend'],
-                'activate' => [AuthPublic::class, 'doActivate'],
-                'reset' => [AuthPublic::class, 'reset'],
-            ],
-            'POST' => [
-                '' => [AuthPublic::class, 'doLogin'],
-                'login' => [AuthPublic::class, 'doLogin'],
-                'registry' => [AuthPublic::class, 'doRegistry'],
-                'resend' => [AuthPublic::class, 'doResend'],
-                'reset' => [AuthPublic::class, 'doReset'],
-            ],
-        ],
-        'protected' => [
-            'GET' => [
-                '' => [Index::class, 'restricted'],
-                'password-change' => [AuthProtected::class, 'passwordChange'],
-                'logout' => [AuthProtected::class, 'doLogout'],
-            ],
-            'POST' => [
-                'password-change' => [AuthProtected::class, 'doPasswordChange'],
-            ],
-        ],
-    ])
+    ->setRoutes(Account::ROUTES)
     ->setError([Error::class, 'error'])
     ->process();
 $invoker->free();

@@ -91,9 +91,9 @@ class Session implements Assoc
      * @param string $key   key
      * @param mixed  $value value
      *
-     * @return self
+     * @return Assoc
      */
-    public function set(string $key, $value): self
+    public function set(string $key, $value): Assoc
     {
         $_SESSION[$key] = $value;
         return $this;

@@ -240,7 +240,7 @@ class Logger
      */
     protected function log(string $channel, string $msg): void
     {
-        if (!$this->channels || in_array($channel, $this->channels)) {
+        if (!$this->channels || in_array($channel, $this->channels, true)) {
             $fullmsg = "[" . date("Y-m-d H:i:s") . "] [$channel] $msg";
             if ($this->collect) {
                 $this->collection[] = $fullmsg;

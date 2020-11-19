@@ -82,7 +82,7 @@ class Crud
     protected function getWhere(array $filterUnsafe, string $logic): string
     {
         $filter = $this->safer->freez([$this->mysql, 'escape'], $filterUnsafe);
-        if (!in_array($logic, self::LOGICS)) {
+        if (!in_array($logic, self::LOGICS, true)) {
             throw new RuntimeException("Invalid logic: '$logic'");
         }
         $query = '';

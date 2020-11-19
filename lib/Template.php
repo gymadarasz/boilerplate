@@ -70,7 +70,7 @@ class Template
                     "Variable name can not be number: '$key'"
                 );
             }
-            if (in_array($key, self::RESERVED_VARS)) {
+            if (in_array($key, self::RESERVED_VARS, true)) {
                 throw new RuntimeException(
                     "Variable name is reserved: '$key'"
                 );
@@ -91,6 +91,9 @@ class Template
      * @param string $filename filename
      *
      * @return void
+     *
+     * @suppress PhanUnusedVariable
+     * @suppress PhanPluginDollarDollar
      */
     protected function include(string $filename): void
     {

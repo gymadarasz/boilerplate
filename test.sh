@@ -55,6 +55,9 @@ vendor/bin/phpmd lib text cleancode,codesize,controversial,design,naming,unusedc
 vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
 vendor/bin/phpmd tests text cleancode,codesize,controversial,design,naming,unusedcode
 
+show_next "phan"
+vendor/bin/phan
+
 show_next "test.php"
 php test.php
 

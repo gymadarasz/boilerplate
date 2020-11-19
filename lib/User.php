@@ -27,8 +27,8 @@ class User
 {
     const SESSION_KEY = 'User';
 
-    protected int $uid;
-    protected string $email;
+    protected int $uid = 0;
+    protected string $email = '';
     
     protected Session $session;
     
@@ -111,7 +111,7 @@ class User
      */
     public function isVisitor(): bool
     {
-        return !isset($this->uid) || !$this->uid;
+        return !$this->uid;
     }
     
     /**

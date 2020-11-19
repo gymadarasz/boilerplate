@@ -106,7 +106,7 @@ class Params extends Server implements Assoc
      * @return self
      * @throws RuntimeException
      */
-    public function set(string $key, $value): self
+    public function set(string $key, $value): Assoc
     {
         throw new RuntimeException(
             "Parameters are not accessible, "

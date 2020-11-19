@@ -51,6 +51,8 @@ class Coverage
      * Method isStarted
      *
      * @return bool
+     *
+     * @suppress PhanUndeclaredFunction
      */
     public function isStarted(): bool
     {
@@ -64,6 +66,9 @@ class Coverage
      *
      * @return void
      * @throws RuntimeException
+     *
+     * @suppress PhanUndeclaredConstant
+     * @suppress PhanUndeclaredFunction
      */
     public function start(array $blacklist): void
     {
@@ -81,6 +86,8 @@ class Coverage
      *
      * @return void
      * @throws RuntimeException
+     *
+     * @suppress PhanUndeclaredFunction
      */
     public function stop(): void
     {
@@ -95,6 +102,8 @@ class Coverage
      *
      * @return int[][]
      * @throws RuntimeException
+     *
+     * @suppress PhanUndeclaredFunction
      */
     public function getCoverageData(): array
     {
@@ -164,6 +173,9 @@ class Coverage
             'files' => [],
         ];
         foreach ($coverageData as $file => $lines) {
+            if (!is_string($file)) {
+                throw new RuntimeException('Filename should be a string.');
+            }
             $countLines = 0; //count($lines);
             //            $all += $countLines;
             $contents = file_get_contents($file);
@@ -209,6 +221,9 @@ class Coverage
     public function generateCoverageInfo(array $coverageData): string
     {
         $coverageInfo = $this->getCoverageInfo($coverageData);
-        return $this->template->process('coverage.phtml', $coverageInfo);
+        return $this->template->process(
+            __DIR__ . '/tpls/coverage/coverage.phtml',
+            $coverageInfo
+        );
     }
 }

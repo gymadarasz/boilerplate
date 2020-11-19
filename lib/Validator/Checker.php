@@ -17,7 +17,7 @@ use Madsoft\Library\Invoker;
 use RuntimeException;
 
 /**
- * Validator
+ * Checker
  *
  * @category  PHP
  * @package   Madsoft\Library\Validator
@@ -26,7 +26,7 @@ use RuntimeException;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Validator
+class Checker
 {
     protected Invoker $invoker;
     
@@ -74,6 +74,18 @@ class Validator
     {
         $errors = [];
         foreach ($fields as $fname => $field) {
+            if (!is_string($fname)) {
+                throw new RuntimeException(
+                    "Field name should be string, "
+                        . "descriptor array should be associative"
+                );
+            }
+            if (!isset($field['value'])) {
+                throw new RuntimeException("Field 'value' is missing: '$fname'");
+            }
+            if (!isset($field['rules'])) {
+                throw new RuntimeException("Field 'rules' are missing: '$fname'");
+            }
             $errors = $this->addErrors(
                 $errors,
                 $fname,
@@ -95,6 +107,12 @@ class Validator
     {
         $errors = [];
         foreach ($fields as $fname => $field) {
+            if (!is_string($fname)) {
+                throw new RuntimeException(
+                    "Field name should be string, "
+                        . "descriptor array should be associative"
+                );
+            }
             $errors = $this->addErrors(
                 $errors,
                 $fname,
