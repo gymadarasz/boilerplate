@@ -28,7 +28,6 @@ class User
     const SESSION_KEY = 'User';
 
     protected int $uid = 0;
-    protected string $email = '';
     
     protected Session $session;
     
@@ -62,18 +61,6 @@ class User
     public function setUid(int $uid): void
     {
         $this->uid = $uid;
-    }
-    
-    /**
-     * Method setEmail
-     *
-     * @param string $email email
-     *
-     * @return void
-     */
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
     }
     
     /**
@@ -122,7 +109,6 @@ class User
     public function logout(): self
     {
         $this->uid = 0;
-        $this->email = '';
         return $this->store();
     }
 }

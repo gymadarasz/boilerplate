@@ -31,7 +31,6 @@ class Tester extends Test
     const TESTS_PATH = __DIR__ . '/../tests';
     
     protected Folders $folders;
-    protected Logger $logger;
     protected Invoker $invoker;
     protected Coverage $coverage;
 
@@ -39,18 +38,15 @@ class Tester extends Test
      * Method __construct
      *
      * @param Folders  $folders  folders
-     * @param Logger   $logger   logger
      * @param Invoker  $invoker  invoker
      * @param Coverage $coverage coverage
      */
     public function __construct(
         Folders $folders,
-        Logger $logger,
         Invoker $invoker,
         Coverage $coverage
     ) {
         $this->folders = $folders;
-        $this->logger = $logger;
         $this->invoker = $invoker;
         $this->coverage = $coverage;
     }
@@ -59,6 +55,8 @@ class Tester extends Test
      * Method getCoverage
      *
      * @return Coverage
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function getCoverage(): Coverage
     {
@@ -140,7 +138,7 @@ class Tester extends Test
                         $this->invoker->invoke([$class, 'after']);
                     }
                 } catch (Exception $exception) {
-                    $this->assertFalse(
+                    $test->assertFalse(
                         true,
                         "Tests should not throws exception but it's happened at "
                             . "$class::$method(), exception details:\n"
@@ -183,6 +181,8 @@ class Tester extends Test
      * @param float  $coverageThreshold coverageThreshold
      *
      * @return bool
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function stat(
         string $coverageOutput = __DIR__ . '/../coverage/coverage.html',

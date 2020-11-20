@@ -30,20 +30,16 @@ class Config extends Section
     const ENV = 'test';
     const PATH = __DIR__ . '/config/';
     
-    protected Section $section;
     protected Template $template;
     
     /**
      * Method __construct
      *
-     * @param Section  $section  section
      * @param Template $template template
      */
     public function __construct(
-        Section $section,
         Template $template
     ) {
-        $this->section = $section;
         $this->template = $template;
         
         $cfg = $this->readConfig(self::PATH . 'config.ini');

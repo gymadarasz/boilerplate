@@ -68,6 +68,16 @@ class Logger
     }
     
     /**
+     * Method getChannels
+     *
+     * @return string[]
+     */
+    public function getChannels(): array
+    {
+        return $this->channels;
+    }
+    
+    /**
      * Method setCollect
      *
      * @param bool $collect collect
@@ -78,6 +88,16 @@ class Logger
     {
         $this->collect = $collect;
         return $this;
+    }
+    
+    /**
+     * Method isCollect
+     *
+     * @return bool
+     */
+    public function isCollect(): bool
+    {
+        return $this->collect;
     }
     
     /**

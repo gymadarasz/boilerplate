@@ -69,6 +69,7 @@ class Coverage
      *
      * @suppress PhanUndeclaredConstant
      * @suppress PhanUndeclaredFunction
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function start(array $blacklist): void
     {
@@ -88,6 +89,7 @@ class Coverage
      * @throws RuntimeException
      *
      * @suppress PhanUndeclaredFunction
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function stop(): void
     {

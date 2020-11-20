@@ -4,42 +4,39 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Talkbot\Test
+ * @package   Madsoft\Library\Test\Mock\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Talkbot\Test;
+namespace Madsoft\Library\Test\Mock\Validator\Rule;
 
-use Madsoft\Library\Test;
-use Madsoft\Talkbot\Talkbot;
+use Madsoft\Library\Validator\Rule\Match;
 
 /**
- * TalkbotTest
+ * MatchMock
  *
  * @category  PHP
- * @package   Madsoft\Talkbot\Test
+ * @package   Madsoft\Library\Test\Mock\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
- *
- * @suppress PhanUnreferencedClass
  */
-class TalkbotTest extends Test
+class MatchMock extends Match
 {
     /**
-     * Method testTalkbot
+     * Method setEqualTo
      *
-     * @return void
+     * @param mixed $equalTo equalTo
      *
-     * @suppress PhanUnreferencedPublicMethod
+     * @return self
      */
-    public function testTalkbot(): void
+    public function setEqualTo($equalTo): self
     {
-        $talkbot = new Talkbot();
-        $this->assertTrue((bool)$talkbot);
+        $this->equalTo = $equalTo;
+        return $this;
     }
 }

@@ -4,23 +4,29 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Ctrlr
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Ctrlr;
+namespace Madsoft\Library\Test;
 
 use DiDom\Document;
 use DOMElement;
+use Madsoft\Library\Account\Account;
+use Madsoft\Library\Account\Login;
+use Madsoft\Library\Account\Logout;
+use Madsoft\Library\Account\Registry;
+use Madsoft\Library\Account\Resend;
+use Madsoft\Library\Account\Reset;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Folders;
+use Madsoft\Library\Invoker;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\RequestTest;
-use Madsoft\Library\Server;
 use Madsoft\Library\Session;
 use RuntimeException;
 use SplFileInfo;
@@ -29,11 +35,13 @@ use SplFileInfo;
  * AccountTest
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Ctrlr
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AccountTest extends RequestTest
 {
@@ -44,8 +52,6 @@ class AccountTest extends RequestTest
     protected Session $session;
     protected Folders $folders;
     protected Crud $crud;
-    protected Mailer $mailer;
-    protected Server $server;
     protected Config $config;
     
     /**
@@ -54,23 +60,17 @@ class AccountTest extends RequestTest
      * @param Session $session session
      * @param Folders $folders folders
      * @param Crud    $crud    crud
-     * @param Mailer  $mailer  mailer
-     * @param Server  $server  server
      * @param Config  $config  config
      */
     public function __construct(
         Session $session,
         Folders $folders,
         Crud $crud,
-        Mailer $mailer,
-        Server $server,
         Config $config
     ) {
         $this->session = $session;
         $this->folders = $folders;
         $this->crud = $crud;
-        $this->mailer = $mailer;
-        $this->server = $server;
         $this->config = $config;
     }
     
@@ -78,6 +78,8 @@ class AccountTest extends RequestTest
      * Method before
      *
      * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function beforeAll(): void
     {
@@ -96,11 +98,77 @@ class AccountTest extends RequestTest
         }
     }
 
+    /**
+     * Method testRoutes
+     *
+     * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function testRoutes(): void
+    {
+        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['login']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['registry']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['resend']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['activate']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['reset']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['login']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['registry']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['reset']);
+        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['change']);
+        $this->assertNotEquals(null, Account::ROUTES['protected']['GET']['logout']);
+    }
+    
+    /**
+     * Method testMethods
+     *
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function testMethods(): void
+    {
+        $tmp = $_SERVER;
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        
+        $invoker = new Invoker();
+        $login = $invoker->getInstance(Login::class);
+        $result = $login->login();
+        $this->assertTrue((bool)$result);
+        $result = $login->doLogin();
+        $this->assertTrue((bool)$result);
+        
+        $logout = $invoker->getInstance(Logout::class);
+        $result = $logout->doLogout();
+        $this->assertTrue((bool)$result);
+        
+        $registry = $invoker->getInstance(Registry::class);
+        $result = $registry->registry();
+        $this->assertTrue((bool)$result);
+        
+        $resend = $invoker->getInstance(Resend::class);
+        $result = $resend->resend();
+        $this->assertTrue((bool)$result);
+        $result = $resend->doResend();
+        $this->assertTrue((bool)$result);
+        
+        $reset = $invoker->getInstance(Reset::class);
+        $result = $reset->reset();
+        $this->assertTrue((bool)$result);
+        $result = $reset->doReset();
+        $this->assertTrue((bool)$result);
+        
+        $_SERVER = $tmp;
+    }
 
     /**
      * Method testLogin
      *
      * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function testAccount(): void
     {
@@ -109,6 +177,7 @@ class AccountTest extends RequestTest
         $this->canSeeRegistry();
         $this->canSeeRegistryFails();
         $this->canSeeRegistryWorks();
+        $this->canSeeRegistryUserAlreadyRegisteredFail();
         $this->canSeeActivationMail();
         $this->canSeeActivationFails();
         $this->canSeeActivationWorks();
@@ -324,6 +393,25 @@ class AccountTest extends RequestTest
     }
     
     /**
+     * Method canSeeRegistryUserAlreadyRegisteredFail
+     *
+     * @return void
+     */
+    protected function canSeeRegistryUserAlreadyRegisteredFail(): void
+    {
+        $contents = $this->post(
+            'q=registry',
+            [
+                'csrf' => $this->session->get('csrf'),
+                'email' => self::EMAIL,
+                'email_retype' => self::EMAIL,
+                'password' => self::PASSWORD_FIRST,
+            ]
+        );
+        $this->assertStringContains('Email address already registered', $contents);
+    }
+    
+    /**
      * Method canSeeActivationMail
      *
      * @return void
@@ -380,7 +468,8 @@ class AccountTest extends RequestTest
     }
     
     /**
-     * 
+     * Method canSeeActivationUserAlreayActiveFail
+     *
      * @return void
      */
     protected function canSeeActivationUserAlreayActiveFail(): void
@@ -388,25 +477,6 @@ class AccountTest extends RequestTest
         $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
         $contents = $this->get('q=activate&token=' . $user->get('token'));
         $this->assertStringContains('User is active already', $contents);
-    }
-    
-    /**
-     * Method canSeeRegistryFailsByUserExists
-     *
-     * @return void
-     */
-    protected function canSeeRegistryFailsByUserExists(): void
-    {
-        $contents = $this->post(
-            'q=registry',
-            [
-                'csrf' => $this->session->get('csrf'),
-                'email' => self::EMAIL,
-                'email_retype' => self::EMAIL,
-                'password' => self::PASSWORD_FIRST,
-            ]
-        );
-        $this->assertStringContains('Email address already registered', $contents);
     }
     
     /**
@@ -649,6 +719,8 @@ class AccountTest extends RequestTest
      *
      * @return string
      * @throws RuntimeException
+     *
+     * @suppress PhanUnreferencedProtectedMethod
      */
     protected function getLastEmailContents(): string
     {

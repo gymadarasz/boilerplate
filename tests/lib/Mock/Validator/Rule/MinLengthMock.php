@@ -4,42 +4,39 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Talkbot\Test
+ * @package   Madsoft\Library\Test\Mock\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Talkbot\Test;
+namespace Madsoft\Library\Test\Mock\Validator\Rule;
 
-use Madsoft\Library\Test;
-use Madsoft\Talkbot\Talkbot;
+use Madsoft\Library\Validator\Rule\MinLength;
 
 /**
- * TalkbotTest
+ * MinLengthMock
  *
  * @category  PHP
- * @package   Madsoft\Talkbot\Test
+ * @package   Madsoft\Library\Test\Mock\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
- *
- * @suppress PhanUnreferencedClass
  */
-class TalkbotTest extends Test
+class MinLengthMock extends MinLength
 {
     /**
-     * Method testTalkbot
+     * Method setMin
      *
-     * @return void
+     * @param int $min min
      *
-     * @suppress PhanUnreferencedPublicMethod
+     * @return self
      */
-    public function testTalkbot(): void
+    public function setMin(int $min): self
     {
-        $talkbot = new Talkbot();
-        $this->assertTrue((bool)$talkbot);
+        $this->min = $min;
+        return $this;
     }
 }

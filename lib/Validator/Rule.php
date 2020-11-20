@@ -30,6 +30,16 @@ abstract class Rule
     const MESSAGE = 'Invalid value';
     
     /**
+     * Method getMessage
+     *
+     * @return string
+     */
+    public function getMessage(): string
+    {
+        return $this::MESSAGE;
+    }
+    
+    /**
      * Method apply
      *
      * @param mixed[] $props props

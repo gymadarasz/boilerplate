@@ -13,7 +13,6 @@
 
 namespace Madsoft\Library\Account;
 
-use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Logger;
 use Madsoft\Library\Merger;
@@ -38,7 +37,6 @@ class Login extends Account
     protected User $user;
     protected Params $params;
     protected Validator $validator;
-    protected Config $config;
     
     /**
      * Method __construct
@@ -50,7 +48,6 @@ class Login extends Account
      * @param User      $user      user
      * @param Params    $params    params
      * @param Validator $validator validator
-     * @param Config    $config    config
      */
     public function __construct(
         Template $template,
@@ -59,8 +56,7 @@ class Login extends Account
         Logger $logger,
         User $user,
         Params $params,
-        Validator $validator,
-        Config $config
+        Validator $validator
     ) {
         parent::__construct($template, $merger);
         $this->crud = $crud;
@@ -68,7 +64,6 @@ class Login extends Account
         $this->user = $user;
         $this->params = $params;
         $this->validator = $validator;
-        $this->config = $config;
     }
     
     /**
@@ -113,7 +108,6 @@ class Login extends Account
         }
         
         $this->user->setUid((int)$user->get('id'));
-        $this->user->setEmail($user->get('email'));
         
         return $this->getSuccesResponse('index.phtml', 'Login success');
     }
@@ -134,8 +128,7 @@ class Login extends Account
                     . implode("', '", $errors) . "'";
         }
         $this->logger->error(
-            "Login error, reason:$reasonstr"
-                . ($email ? ", email: '$email'" : '')
+            "Login error, reason:$reasonstr" . ($email ? ", email: '$email'" : '')
         );
         return $this->getErrorResponse('login.phtml', 'Login failed');
     }

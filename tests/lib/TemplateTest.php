@@ -15,7 +15,9 @@ namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Invoker;
+use Madsoft\Library\Params;
 use Madsoft\Library\Safer;
+use Madsoft\Library\Session;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
 use RuntimeException;
@@ -29,6 +31,8 @@ use RuntimeException;
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
+ *
+ * @suppress PhanUnreferencedClass
  */
 class TemplateTest extends Test
 {
@@ -38,6 +42,8 @@ class TemplateTest extends Test
      * @param Invoker $invoker invoker
      *
      * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function testTemplate(Invoker $invoker): void
     {
@@ -72,6 +78,21 @@ class TemplateTest extends Test
             ['data1' => 'foo']
         );
         $this->assertEquals('Hello Template foo!', $results);
+        $csrf = $template->csrf;
+        $this->assertTrue((bool)$csrf);
+        
+        $template = new Template(
+            new Safer(),
+            new Csrf(new Session(), new Params())
+        );
+        $results = $template->process(
+            __DIR__ . '/Mock/test.phtml',
+            ['data1' => 'bazz']
+        );
+        $this->assertEquals('Hello Template bazz!', $results);
+        $this->assertNotEquals($csrf, $template->csrf);
+        $csrf = $template->csrf;
+        $this->assertTrue((bool)$csrf);
         
         $template->restrict();
     }

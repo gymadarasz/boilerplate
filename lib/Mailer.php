@@ -40,7 +40,6 @@ class Mailer
     const CONFIG_SECION = 'Mailer';
     
     protected Section $section;
-    protected Config $config;
     protected Logger $logger;
 
     /**
@@ -51,7 +50,6 @@ class Mailer
      */
     public function __construct(Config $config, Logger $logger)
     {
-        $this->config = $config;
         $this->logger = $logger;
         $this->section = $config->get(self::CONFIG_SECION);
     }

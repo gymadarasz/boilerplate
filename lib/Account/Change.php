@@ -91,8 +91,8 @@ class Change extends Account
                 'Password is not saved',
                 [],
                 [
-                        'token' => $this->params->get('token')
-                    ]
+                    'token' => $this->params->get('token')
+                ]
             );
         }
         

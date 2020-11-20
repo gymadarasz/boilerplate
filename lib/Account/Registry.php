@@ -112,7 +112,6 @@ class Registry extends Account
             ]
         )
         ) {
-            // TODO: test what if a user already exists
             return $this->registryError('User is not saved', []);
         }
         $this->session->set('resend', ['email' => $email, 'token' => $token]);

@@ -49,6 +49,22 @@ class Server implements Assoc
     public function getBaseUrl(): string
     {
         return sprintf(
+            "%s://%s",
+            $this->has('HTTPS') && $this->get('HTTPS') != 'off' ?
+                'https' :
+                'http',
+            $this->get('SERVER_NAME')
+        );
+    }
+    
+    /**
+     * Method getBaseUri
+     *
+     * @return string
+     */
+    public function getBaseUri(): string
+    {
+        return sprintf(
             "%s://%s%s",
             $this->has('HTTPS') && $this->get('HTTPS') != 'off' ?
                 'https' :

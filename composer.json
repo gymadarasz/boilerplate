@@ -26,6 +26,8 @@
         "phpstan/phpstan": "^0.12.52",
         "phpmd/phpmd" : "@stable",
         "imangazaliev/didom": "^1.16",
-        "phan/phan": "^3.2"
+        "phan/phan": "^3.2",
+        "mockery/mockery": "^1.4",
+        "phpstan/phpstan-mockery": "^0.12.7"
     }
 }

@@ -4,23 +4,24 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Talkbot\Test
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Talkbot\Test;
+namespace Madsoft\Library\Test;
 
+use Madsoft\Library\App;
+use Madsoft\Library\Invoker;
 use Madsoft\Library\Test;
-use Madsoft\Talkbot\Talkbot;
 
 /**
- * TalkbotTest
+ * AppTest
  *
  * @category  PHP
- * @package   Madsoft\Talkbot\Test
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -28,18 +29,20 @@ use Madsoft\Talkbot\Talkbot;
  *
  * @suppress PhanUnreferencedClass
  */
-class TalkbotTest extends Test
+class AppTest extends Test
 {
     /**
-     * Method testTalkbot
+     * Method testApp
+     *
+     * @param Invoker $invoker invoker
      *
      * @return void
      *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function testTalkbot(): void
+    public function testApp(Invoker $invoker): void
     {
-        $talkbot = new Talkbot();
-        $this->assertTrue((bool)$talkbot);
+        $output = (new App())->getOutput($invoker);
+        $this->assertTrue((bool)$output);
     }
 }

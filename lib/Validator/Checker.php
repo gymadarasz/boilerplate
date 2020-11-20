@@ -155,7 +155,7 @@ class Checker
             $rule = $this->invoker->getInstance($class);
             $rule->apply($params ?: []);
             if (!$rule->check($value)) {
-                $errors[] = $rule::MESSAGE;
+                $errors[] = $rule->getMessage();
             }
             unset($restargs[$class]);
         }

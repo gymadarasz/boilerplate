@@ -25,6 +25,13 @@ namespace Madsoft\Library\Test\Mock;
  */
 class NotInjectable
 {
+    /**
+     * Variable $param
+     *
+     * @var int
+     *
+     * @suppress PhanWriteOnlyProtectedProperty
+     */
     protected int $param;
 
     /**
@@ -35,20 +42,5 @@ class NotInjectable
     public function __construct(int $param = 100)
     {
         $this->param = $param;
-    }
-    
-    /**
-     * Method param
-     *
-     * @param int|null $param param
-     *
-     * @return int
-     */
-    public function param(?int $param): int
-    {
-        if (null !== $param) {
-            $this->param = $param;
-        }
-        return $this->param;
     }
 }

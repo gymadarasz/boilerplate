@@ -14,6 +14,9 @@
 namespace Madsoft\Library;
 
 use Exception;
+use Mockery;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 
 /**
  * Test
@@ -37,6 +40,22 @@ abstract class Test
     protected int $asserts = 0;
     protected int $success = 0;
     protected int $fails = 0;
+    
+    /**
+     * Method getMock
+     *
+     * @param string $class class
+     *
+     * @return MockInterface|LegacyMockInterface
+     *
+     * @SuppressWarnings(PHPMD)
+     * @suppress                PhanUndeclaredTypeReturnType
+     * @suppress                PhanUndeclaredClassMethod
+     */
+    protected function getMock(string $class)
+    {
+        return Mockery::mock($class);
+    }
     
     /**
      * Method showTick

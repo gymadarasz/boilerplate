@@ -4,15 +4,16 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Ctrlr
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Ctrlr;
+namespace Madsoft\Library\Test;
 
+use Madsoft\Library\Error;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Logger;
 use Madsoft\Library\RequestTest;
@@ -22,7 +23,7 @@ use function count;
  * IndexTest
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Ctrlr
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -32,7 +33,7 @@ class ErrorTest extends RequestTest
 {
     protected Logger $logger;
     protected Invoker $invoker;
-    
+
     /**
      * Method __construct
      *
@@ -49,6 +50,8 @@ class ErrorTest extends RequestTest
      * Method testError
      *
      * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function testError(): void
     {
@@ -63,5 +66,19 @@ class ErrorTest extends RequestTest
         );
         $this->assertStringContains('Error', $response);
         $this->assertStringContains('Something went wrong', $response);
+    }
+    
+    /**
+     * Method testMethods
+     *
+     * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function testMethods(): void
+    {
+        $error = $this->invoker->getInstance(Error::class);
+        $result = $error->error();
+        $this->assertTrue((bool)$result);
     }
 }

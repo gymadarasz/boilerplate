@@ -30,7 +30,6 @@ use Madsoft\Library\Template;
 abstract class Account
 {
     const LOGIN_DELAY = 0; // TODO: set to 3;
-    const ERR_LOGIN = 'Login failed';
     const TPL_PATH = __DIR__ . '/../tpls/';
     const ROUTES = [
         'public' => [

@@ -28,6 +28,8 @@ use RuntimeException;
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
+ *
+ * @suppress PhanUnreferencedClass
  */
 class InvokerTest extends Test
 {
@@ -38,6 +40,8 @@ class InvokerTest extends Test
      * @param Invoker $invoker invoker
      *
      * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function testGetInstance(Invoker $invoker): void
     {
