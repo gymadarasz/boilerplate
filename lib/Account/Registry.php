@@ -78,7 +78,7 @@ class Registry extends Account
      */
     public function registry(): string
     {
-        return $this->template->process($this::TPL_PATH . 'registry.phtml');
+        return $this->getResponse('registry.phtml');
     }
     
     
@@ -91,7 +91,11 @@ class Registry extends Account
     {
         $errors = $this->validator->validateRegistry($this->params);
         if ($errors) {
-            return $this->registryError('Invalid registration data', $errors);
+            return $this->getErrorResponse(
+                'registry.phtml',
+                'Invalid registration data',
+                $errors
+            );
         }
         
         $email = $this->params->get('email');
@@ -99,7 +103,11 @@ class Registry extends Account
         
         $user = $this->crud->get('user', ['email'], ['email' => $email]);
         if ($user->get('email') === $email) {
-            return $this->registryError('Email address already registered', $errors);
+            return $this->getErrorResponse(
+                'registry.phtml',
+                'Email address already registered',
+                $errors
+            );
         }
         
         if (!$this->crud->add(
@@ -112,44 +120,26 @@ class Registry extends Account
             ]
         )
         ) {
-            return $this->registryError('User is not saved', []);
+            return $this->getErrorResponse(
+                'registry.phtml',
+                'User is not saved'
+            );
         }
         $this->session->set('resend', ['email' => $email, 'token' => $token]);
         
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->registryError(
+            return $this->getErrorResponse(
+                'activate.phtml',
                 'Activation email is not sent',
                 [],
-                $this::TPL_PATH . 'activate.phtml'
+                $user->getFields()
             );
         }
         
-        return $this->registrySuccess(
+        return $this->getSuccesResponse(
+            'activate.phtml',
             'We sent an activation email to your email account, '
-                            . 'please follow the instructions.'
-        );
-    }
-
-    /**
-     * Method registrySuccess
-     *
-     * @param string $message message
-     *
-     * @return string
-     */
-    protected function registrySuccess(string $message): string
-    {
-        return $this->template->process(
-            $this::TPL_PATH . 'activate.phtml',
-            [
-                'messages' =>
-                [
-                    'sucesses' =>
-                    [
-                        $message
-                    ]
-                ]
-            ]
+                . 'please follow the instructions.'
         );
     }
     
@@ -164,16 +154,16 @@ class Registry extends Account
         $email = $resend['email'];
         $token = $resend['token'];
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->registryError(
-                'Activation email is not sent',
-                [],
-                $this::TPL_PATH . 'activate.phtml'
+            return $this->getErrorResponse(
+                'activate.phtml',
+                'Activation email is not sent'
             );
         }
         
-        return $this->registrySuccess(
+        return $this->getSuccesResponse(
+            'activate.phtml',
             'We re-sent an activation email to your email account, '
-                            . 'please follow the instructions.'
+                . 'please follow the instructions.'
         );
     }
 
@@ -198,33 +188,6 @@ class Registry extends Account
             $email,
             'Activate your account',
             $message
-        );
-    }
-    
-    /**
-     * Method registryError
-     *
-     * @param string      $error   error
-     * @param string[][]  $errors  errors
-     * @param string|null $tplfile tplfile
-     *
-     * @return string
-     */
-    protected function registryError(
-        string $error,
-        array $errors,
-        ?string $tplfile = null
-    ): string {
-        return $this->template->process(
-            $tplfile ?: $this::TPL_PATH . 'registry.phtml',
-            [
-                'messages' =>
-                [
-                    'errors' => [$error],
-                ],
-                'params' => $this->params,
-                'errors' => $errors,
-            ]
         );
     }
 }

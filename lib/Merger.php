@@ -25,27 +25,40 @@ namespace Madsoft\Library;
  */
 class Merger
 {
-    
-
     /**
      * Method merge
      *
-     * @param mixed[] $array1 array1
-     * @param mixed[] $array2 array2
+     * @param mixed[] $arr1 arr1
+     * @param mixed[] $arr2 arr2
      *
      * @return mixed[]
+     *
+     * @suppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function merge(array $array1, array $array2): array
+    public function merge(array $arr1, array $arr2): array
     {
-        $merged = $array1;
+        $merg = $arr1;
 
-        foreach ($array2 as $key => & $value) {
-            $merged[$key] = is_array($value)
-                    && isset($merged[$key]) && is_array($merged[$key]) ?
-                    $this->merge($merged[$key], $value) :
-                    $merged[$key] = $value;
+        foreach ($arr2 as $key => $value) {
+            if (isset($merg[$key]) && is_array($merg[$key]) && is_array($value)) {
+                $merg[$key] = $this->merge($merg[$key], $value);
+                continue;
+            }
+            
+            if (is_string($key)
+                && (!isset($merg[$key])
+                || !(is_array($merg[$key]) && is_array($value)))
+            ) {
+                $merg[$key] = $value;
+                continue;
+            }
+            
+            if (is_numeric($key) && !in_array($value, $merg, true)) {
+                $merg[] = $value;
+                continue;
+            }
         }
 
-        return $merged;
+        return $merg;
     }
 }

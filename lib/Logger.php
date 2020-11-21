@@ -266,14 +266,14 @@ class Logger
                 $this->collection[] = $fullmsg;
                 return;
             }
-            if (!file_put_contents(
-                self::LOG_FILE,
+            if (false === file_put_contents(
+                $this::LOG_FILE,
                 "$fullmsg\n",
                 FILE_APPEND
             )
             ) {
                 throw new RuntimeException(
-                    "Log file error, (" . self::LOG_FILE .
+                    "Log file error, (" . $this::LOG_FILE .
                         ") message is not logged: $fullmsg"
                 );
             }

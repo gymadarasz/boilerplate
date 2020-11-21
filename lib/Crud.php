@@ -51,13 +51,13 @@ class Crud
      * @param string[] $fieldsUnsafe fieldsUnsafe
      * @param string[] $filterUnsafe filterUnsafe
      *
-     * @return Assoc
+     * @return Row
      */
     public function get(
         string $tableUnsafe,
         array $fieldsUnsafe = ['*'],
         array $filterUnsafe = []
-    ): Assoc {
+    ): Row {
         $table = $this->mysql->escape($tableUnsafe);
         $fields = implode(
             '`, `',

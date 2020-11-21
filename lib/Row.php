@@ -84,4 +84,14 @@ class Row implements Assoc
         $this->fields[$key] = $value;
         return $this;
     }
+    
+    /**
+     * Method getFields
+     *
+     * @return string[]
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
 }

@@ -78,16 +78,11 @@ class Reset extends Account
         if ($token) {
             $user = $this->crud->get('user', ['id'], ['token' => $token]);
             if (!$user->get('id')) {
-                return $this->resetError('Invalid token', []);
+                return $this->getErrorResponse('reset.phtml', 'Invalid token');
             }
-            return $this->template->process(
-                $this::TPL_PATH . 'change.phtml',
-                [
-                    'token' => $token
-                ]
-            );
+            return $this->getResponse('change.phtml', ['token' => $token]);
         }
-        return $this->template->process($this::TPL_PATH .'reset.phtml');
+        return $this->getResponse('reset.phtml');
     }
     
     /**
@@ -99,32 +94,40 @@ class Reset extends Account
     {
         $errors = $this->validator->validateReset($this->params);
         if ($errors) {
-            return $this->resetError('Reset password failed', $errors);
+            return $this->getErrorResponse(
+                'reset.phtml',
+                'Reset password failed',
+                $errors
+            );
         }
         
-        $email = $this->params->get('email');
+        $email = (string)$this->params->get('email');
         $user = $this->crud->get('user', ['email'], ['email' => $email]);
         if ($user->get('email') !== $email) {
-            return $this->resetError('Email address not found', []);
+            return $this->getErrorResponse(
+                'reset.phtml',
+                'Email address not found'
+            );
         }
         
         $token = $this->generateToken();
         if (!$this->crud->set('user', ['token' => $token], ['email' => $email])) {
-            return $this->resetError('Token is not updated', []);
+            return $this->getErrorResponse(
+                'reset.phtml',
+                'Token is not updated'
+            );
         }
         
         if (!$this->sendResetEmail($email, $token)) {
-            return $this->resetError('Email sending failed', []);
+            return $this->getErrorResponse(
+                'reset.phtml',
+                'Email sending failed'
+            );
         }
         
-        return $this->template->process(
-            $this::TPL_PATH .'reset.phtml',
-            [
-                'messages' =>
-                [
-                    'sucesses' => ['Paswword reset request email sent'],
-                ]
-            ]
+        return $this->getSuccesResponse(
+            'reset.phtml',
+            'Password reset request email sent'
         );
     }
     
@@ -149,29 +152,6 @@ class Reset extends Account
             $email,
             'Pasword reset requested',
             $message
-        );
-    }
-    
-    /**
-     * Method resetError
-     *
-     * @param string     $error  error
-     * @param string[][] $errors errors
-     *
-     * @return string
-     */
-    protected function resetError(string $error, array $errors): string
-    {
-        return $this->template->process(
-            $this::TPL_PATH . 'reset.phtml',
-            [
-                'messages' =>
-                [
-                    'errors' => [$error],
-                ],
-                'params' => $this->params,
-                'errors' => $errors,
-            ]
         );
     }
 }

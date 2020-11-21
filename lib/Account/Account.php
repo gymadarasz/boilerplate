@@ -158,4 +158,17 @@ abstract class Account
             )
         );
     }
+    
+    /**
+     * Method getResponse
+     *
+     * @param string  $tplfile tplfile
+     * @param mixed[] $data    data
+     *
+     * @return string
+     */
+    protected function getResponse(string $tplfile, array $data = []): string
+    {
+        return $this->template->process($this::TPL_PATH . $tplfile, $data);
+    }
 }

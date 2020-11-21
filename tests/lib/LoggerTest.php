@@ -17,6 +17,7 @@ use Exception;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Logger;
 use Madsoft\Library\Test;
+use RuntimeException;
 use function count;
 
 /**
@@ -96,5 +97,26 @@ class LoggerTest extends Test
         $this->assertFalse($collect);
         $collection = $logger->getCollection();
         $this->assertTrue(empty($collection));
+    }
+    
+    /**
+     * Method testLogFileErrorFails
+     *
+     * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function testLogFileErrorFails(): void
+    {
+        $errlvl = error_reporting();
+        error_reporting(0);
+        $loggerMock = new LoggerMock();
+        try {
+            $loggerMock->debug('foo');
+            $this->assertTrue(false);
+        } catch (RuntimeException $exception) {
+            $this->assertStringContains('foo', $exception->getMessage());
+        }
+        error_reporting($errlvl);
     }
 }

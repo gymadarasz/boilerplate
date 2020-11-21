@@ -15,11 +15,11 @@ namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Account\Activate;
 use Madsoft\Library\Account\Validator;
-use Madsoft\Library\Assoc;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
@@ -55,7 +55,7 @@ class ActivateTest extends Test
      */
     public function testDoActivateDbFails(): void
     {
-        $user = $this->getMock(Assoc::class);
+        $user = $this->getMock(Row::class);
         $user->shouldReceive('get')->andReturnUsing(
             static function ($arg) {
                 if ($arg === 'id') {

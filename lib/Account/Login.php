@@ -73,7 +73,7 @@ class Login extends Account
      */
     public function login(): string
     {
-        return $this->template->process($this::TPL_PATH . 'login.phtml');
+        return $this->getResponse('login.phtml');
     }
     
     /**

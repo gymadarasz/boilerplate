@@ -15,13 +15,13 @@ namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Account\Registry;
 use Madsoft\Library\Account\Validator;
-use Madsoft\Library\Assoc;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
@@ -72,7 +72,7 @@ class RegistryTest extends Test
         
         $merger = new Merger();
         
-        $user = $this->getMock(Assoc::class);
+        $user = $this->getMock(Row::class);
         $user->shouldReceive('get')->andReturnUsing(
             static function ($arg) {
                 if ($arg === 'email') {
@@ -134,7 +134,7 @@ class RegistryTest extends Test
         
         $merger = new Merger();
         
-        $user = $this->getMock(Assoc::class);
+        $user = $this->getMock(Row::class);
         $user->shouldReceive('get')->andReturnUsing(
             static function ($arg) {
                 if ($arg === 'email') {
@@ -143,6 +143,7 @@ class RegistryTest extends Test
                 throw new RuntimeException('Invalid argument: ' . $arg);
             }
         );
+        $user->shouldReceive('getFields')->andReturn(['email' => 'an-email-2']);
         
         $crud = $this->getMock(Crud::class);
         $crud->shouldReceive('get')->andReturn($user);

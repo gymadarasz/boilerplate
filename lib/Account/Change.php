@@ -70,8 +70,8 @@ class Change extends Account
                 'Password change failed',
                 $errors,
                 [
-                        'token' => $this->params->get('token')
-                    ]
+                    'token' => $this->params->get('token')
+                ]
             );
         }
         
