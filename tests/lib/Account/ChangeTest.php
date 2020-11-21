@@ -52,7 +52,7 @@ class ChangeTest extends Test
      */
     public function testDoChangePasswordDbFails(): void
     {
-        $tmp = $_GET;
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['token'] = 'a-token';
         $_GET['password'] = 'a-password';
         $params = new Params();
@@ -77,7 +77,5 @@ class ChangeTest extends Test
         $change = new Change($template, $merger, $crud, $params, $validator);
         $result = $change->doChangePassword();
         $this->assertStringContains('Password is not saved', $result);
-        
-        $_GET = $tmp;
     }
 }

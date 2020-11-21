@@ -4,24 +4,24 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test
+ * @package   Madsoft\Library\Test\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test;
+namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\App;
 use Madsoft\Library\Invoker;
+use Madsoft\Library\Params;
 use Madsoft\Library\Test;
 
 /**
- * AppTest
+ * ValidatorTest
  *
  * @category  PHP
- * @package   Madsoft\Library\Test
+ * @package   Madsoft\Library\Test\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -29,23 +29,21 @@ use Madsoft\Library\Test;
  *
  * @suppress PhanUnreferencedClass
  */
-class AppTest extends Test
+class ValidatorTest extends Test
 {
     /**
-     * Method testApp
+     * Method testValidator
      *
      * @param Invoker $invoker invoker
      *
      * @return void
      *
-     * @suppressWarnings(PHPMD.Superglobals);
-     *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function testApp(Invoker $invoker): void
+    public function testValidator(Invoker $invoker): void
     {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $output = (new App())->getOutput($invoker);
-        $this->assertTrue((bool)$output);
+        $validator = new ValidatorMock($invoker);
+        $result = $validator->validateLogin(new Params());
+        $this->assertEquals([['an error']], $result);
     }
 }

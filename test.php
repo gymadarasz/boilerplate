@@ -14,9 +14,16 @@ $tester->getCoverage()->start([
     __DIR__ . "/lib/Coverage.php",
     __DIR__ . "/lib/Test.php",
     __DIR__ . "/lib/Tester.php",
-    __DIR__ . "/tests/lib/Mock/",
+    __DIR__ . "/tests/",
 ]);
 
-$tester->test();
+array_shift($argv);
+if (empty($argv)) {
+    $tester->test();
+} else {
+    foreach ($argv as $arg) {
+        $tester->runTestFile($arg, '');
+    }
+}
 
 exit($tester->stat() ? 0 : 1);

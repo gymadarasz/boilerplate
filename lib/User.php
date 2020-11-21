@@ -25,10 +25,6 @@ namespace Madsoft\Library;
  */
 class User
 {
-    const SESSION_KEY = 'User';
-
-    protected int $uid = 0;
-    
     protected Session $session;
     
     /**
@@ -40,55 +36,6 @@ class User
     {
         $this->session = $session;
         //        $this->session->destroy();
-        $this->restore();
-    }
-    
-    /**
-     * Method __destruct
-     */
-    public function __destruct()
-    {
-        $this->store();
-    }
-    
-    /**
-     * Method setUid
-     *
-     * @param int $uid uid
-     *
-     * @return void
-     */
-    public function setUid(int $uid): void
-    {
-        $this->uid = $uid;
-    }
-    
-    /**
-     * Method restore
-     *
-     * @return bool
-     */
-    protected function restore(): bool
-    {
-        $that = $this->session->get(self::SESSION_KEY, null);
-        if (null !== $that) {
-            foreach ($that as $key => $value) {
-                $this->$key = $value;
-            }
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * Method store
-     *
-     * @return self
-     */
-    protected function store(): self
-    {
-        $this->session->set(self::SESSION_KEY, $this);
-        return $this;
     }
     
     /**
@@ -98,17 +45,28 @@ class User
      */
     public function isVisitor(): bool
     {
-        return !$this->uid;
+        return !$this->session->get('uid', 0);
+    }
+    
+    /**
+     * Method login
+     *
+     * @param int $uid uid
+     *
+     * @return void
+     */
+    public function login(int $uid): void
+    {
+        $this->session->set('uid', $uid);
     }
     
     /**
      * Method logout
      *
-     * @return self
+     * @return void
      */
-    public function logout(): self
+    public function logout(): void
     {
-        $this->uid = 0;
-        return $this->store();
+        $this->session->set('uid', 0);
     }
 }

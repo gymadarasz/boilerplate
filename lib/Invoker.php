@@ -16,7 +16,7 @@
 namespace Madsoft\Library;
 
 use ReflectionClass;
-use ReflectionException;
+//use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
 use function count;
@@ -198,21 +198,21 @@ class Invoker
         $params = $method->getParameters();
         $args = [];
         foreach ($params as $param) {
-            $paramClass = null;
-            $exception = null;
-            try {
-                $paramClass = $param->getClass();
-            } catch (ReflectionException $exc) {
-                $exception = $exc;
-            }
-            if (/*!isset($paramClass) || */!$paramClass || $exception) {
+            //$paramClass = null;
+            //$exception = null;
+            //            try {
+            $paramClass = $param->getClass();
+            //            } catch (ReflectionException $exc) {
+            //                $exception = $exc;
+            //            }
+            if (/*!isset($paramClass) || */!$paramClass/* || $exception*/) {
                 throw new RuntimeException(
                     $messageOnError . " Parameter: " .
                         (null !== $param->getDeclaringClass() ?
                             ($param->getDeclaringClass()->name ?? '???') : '???')
                         . ' => ' . $param->getName(),
-                    0,
-                    $exception ?? null
+                    0 //,
+                    //$exception ?? null
                 );
             }
             $args[] = $this->instance($paramClass->name)[0];

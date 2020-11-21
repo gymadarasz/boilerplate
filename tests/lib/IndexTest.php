@@ -15,7 +15,7 @@ namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Index;
 use Madsoft\Library\Invoker;
-use Madsoft\Library\RequestTest;
+use Madsoft\Library\Test;
 
 /**
  * IndexTest
@@ -27,7 +27,7 @@ use Madsoft\Library\RequestTest;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class IndexTest extends RequestTest
+class IndexTest extends Test
 {
     /**
      * Method testIndex

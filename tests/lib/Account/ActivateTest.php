@@ -75,7 +75,7 @@ class ActivateTest extends Test
         $validator = $this->getMock(Validator::class);
         $validator->shouldReceive('validateActivate')->andReturn([]);
         
-        $tmp = $_GET;
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['token'] = 'a-token';
         $params = new Params();
         
@@ -93,7 +93,5 @@ class ActivateTest extends Test
         $activate = new Activate($template, $merger, $crud, $params, $validator);
         $result = $activate->doActivate();
         $this->assertStringContains('User activation failed', $result);
-        
-        $_GET = $tmp;
     }
 }

@@ -55,7 +55,7 @@ class TemplateTest extends Test
         
         try {
             $template->process(
-                __DIR__ . '/Mock/test.phtml',
+                __DIR__ . '/test.phtml',
                 ['foo']
             );
         } catch (RuntimeException $exception) {
@@ -65,7 +65,7 @@ class TemplateTest extends Test
         
         try {
             $template->process(
-                __DIR__ . '/Mock/test.phtml',
+                __DIR__ . '/test.phtml',
                 ['safer' => 'never!']
             );
         } catch (RuntimeException $exception) {
@@ -74,7 +74,7 @@ class TemplateTest extends Test
         $this->assertEquals("Variable name is reserved: 'safer'", $msg);
         
         $results = $template->process(
-            __DIR__ . '/Mock/test.phtml',
+            __DIR__ . '/test.phtml',
             ['data1' => 'foo']
         );
         $this->assertEquals('Hello Template foo!', $results);
@@ -86,7 +86,7 @@ class TemplateTest extends Test
             new Csrf(new Session(), new Params())
         );
         $results = $template->process(
-            __DIR__ . '/Mock/test.phtml',
+            __DIR__ . '/test.phtml',
             ['data1' => 'bazz']
         );
         $this->assertEquals('Hello Template bazz!', $results);

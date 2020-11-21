@@ -43,8 +43,6 @@ class ServerTest extends Test
      */
     public function testServer(Server $server): void
     {
-        $tmp = $_SERVER;
-        
         $_SERVER['HTTPS'] = 'off';
         $_SERVER['SERVER_NAME'] = 'myserver.test';
         $_SERVER['REQUEST_URI'] = '?foo=bar';
@@ -62,7 +60,5 @@ class ServerTest extends Test
         $this->assertEquals('https://myserver.test', $result);
         $result = $server->getBaseUri();
         $this->assertEquals('https://myserver.test?foo=bar', $result);
-        
-        $_SERVER = $tmp;
     }
 }

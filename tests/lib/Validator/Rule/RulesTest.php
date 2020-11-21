@@ -14,10 +14,10 @@
 namespace Madsoft\Library\Test\Validator\Rule;
 
 use Madsoft\Library\Test;
-use Madsoft\Library\Test\Mock\Validator\Rule\MatchMock;
-use Madsoft\Library\Test\Mock\Validator\Rule\MinLengthMock;
-use Madsoft\Library\Test\Mock\Validator\Rule\PasswordMock;
-use Madsoft\Library\Test\Mock\Validator\Rule\PasswordVerifyMock;
+use Madsoft\Library\Test\Validator\Rule\MatchMock;
+use Madsoft\Library\Test\Validator\Rule\MinLengthMock;
+use Madsoft\Library\Test\Validator\Rule\PasswordMock;
+use Madsoft\Library\Test\Validator\Rule\PasswordVerifyMock;
 use Madsoft\Library\Validator\Rule\HasLower;
 use Madsoft\Library\Validator\Rule\HasNumber;
 use Madsoft\Library\Validator\Rule\HasSpecChar;

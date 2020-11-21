@@ -42,8 +42,8 @@ class Config extends Section
     ) {
         $this->template = $template;
         
-        $cfg = $this->readConfig(self::PATH . 'config.ini');
-        $ext = $this->readConfig(self::PATH . 'config.' . self::ENV . '.ini');
+        $cfg = $this->readConfig($this::PATH . 'config.ini');
+        $ext = $this->readConfig($this::PATH . 'config.' . $this::ENV . '.ini');
         $this->data = $this->merge($cfg, $ext);
     }
     

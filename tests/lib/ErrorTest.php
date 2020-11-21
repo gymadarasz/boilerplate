@@ -16,7 +16,7 @@ namespace Madsoft\Library\Test;
 use Madsoft\Library\Error;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Logger;
-use Madsoft\Library\RequestTest;
+use Madsoft\Library\Test;
 use function count;
 
 /**
@@ -29,7 +29,7 @@ use function count;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class ErrorTest extends RequestTest
+class ErrorTest extends Test
 {
     protected Logger $logger;
     protected Invoker $invoker;

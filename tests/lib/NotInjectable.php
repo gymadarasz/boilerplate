@@ -4,49 +4,43 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library;
+namespace Madsoft\Library\Test;
 
 /**
- * Index
+ * NotInjectable
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Index
+class NotInjectable
 {
-    
     /**
-     * Method index
+     * Variable $param
      *
-     * @return string
+     * @var int
      *
-     * @suppress PhanUnreferencedPublicMethod
+     * @suppress PhanWriteOnlyProtectedProperty
      */
-    public function index(): string
-    {
-        return 'Public Index Page';
-    }
-    
+    protected int $param;
+
     /**
-     * Method restricted
+     * Method __construct
      *
-     * @return string
-     *
-     * @suppress PhanUnreferencedPublicMethod
+     * @param int $param param
      */
-    public function restricted(): string
+    public function __construct(int $param = 100)
     {
-        return 'Restricted Index Page';
+        $this->param = $param;
     }
 }

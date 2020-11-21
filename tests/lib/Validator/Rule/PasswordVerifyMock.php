@@ -4,39 +4,39 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Mock\Validator\Rule;
+namespace Madsoft\Library\Test\Validator\Rule;
 
-use Madsoft\Library\Validator\Rule\MinLength;
+use Madsoft\Library\Validator\Rule\PasswordVerify;
 
 /**
- * MinLengthMock
+ * PasswordVerifyMock
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class MinLengthMock extends MinLength
+class PasswordVerifyMock extends PasswordVerify
 {
     /**
-     * Method setMin
+     * Method setPassword
      *
-     * @param int $min min
+     * @param string $password password
      *
      * @return self
      */
-    public function setMin(int $min): self
+    public function setPassword(string $password): self
     {
-        $this->min = $min;
+        $this->password = $password;
         return $this;
     }
 }

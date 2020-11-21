@@ -37,7 +37,7 @@ class App
     public function getOutput(Invoker $invoker): string
     {
         $output = $invoker
-            ->getInstance(Invoker::class)
+            //->getInstance(Invoker::class)
             ->getInstance(Request::class)
             ->setRoutes(Account::ROUTES)
             ->setError([Error::class, 'error'])

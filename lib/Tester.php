@@ -70,22 +70,42 @@ class Tester extends Test
      *
      * @return void
      */
-    public function test($path = self::TESTS_PATH): void
+    public function test(string $path = self::TESTS_PATH): void
     {
         $files = $this->folders->getFilesRecursive($path);
         foreach ($files as $file) {
-            $matches = [];
-            if (preg_match('/^(.+Test).php$/', $file->getFilename(), $matches)) {
-                $class = $matches[1];
-                
-                $fullname = $file->getPath() . '/' . $file->getFilename();
-                $namespace = $this->getPhpNamespace($fullname);
-                
-                $fullclass = "$namespace\\$class";
-                
-                include_once $fullname;
-                $this->run($fullclass);
-            }
+            $this->runTestFile($file->getFilename(), $file->getPath());
+        }
+    }
+    
+    /**
+     * Method runTestFile
+     *
+     * @param string $filename filename
+     * @param string $path     path
+     *
+     * @return void
+     */
+    public function runTestFile(
+        string $filename,
+        string $path = self::TESTS_PATH
+    ): void {
+        $matches = [];
+        if (preg_match(
+            '/([a-zA-Z0-9][a-zA-Z0-9_]*Test).php$/',
+            $filename,
+            $matches
+        )
+        ) {
+            $class = $matches[1];
+
+            $fullname = $path . '/' . $filename;
+            $namespace = $this->getPhpNamespace($fullname);
+
+            $fullclass = "$namespace\\$class";
+
+            include_once $fullname;
+            $this->run($fullclass);
         }
     }
     

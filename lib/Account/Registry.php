@@ -117,10 +117,64 @@ class Registry extends Account
         $this->session->set('resend', ['email' => $email, 'token' => $token]);
         
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->registryError('Activation email is not sent', []);
+            return $this->registryError(
+                'Activation email is not sent',
+                [],
+                $this::TPL_PATH . 'activate.phtml'
+            );
         }
         
-        return $this->template->process($this::TPL_PATH . 'activate.phtml');
+        return $this->registrySuccess(
+            'We sent an activation email to your email account, '
+                            . 'please follow the instructions.'
+        );
+    }
+
+    /**
+     * Method registrySuccess
+     *
+     * @param string $message message
+     *
+     * @return string
+     */
+    protected function registrySuccess(string $message): string
+    {
+        return $this->template->process(
+            $this::TPL_PATH . 'activate.phtml',
+            [
+                'messages' =>
+                [
+                    'sucesses' =>
+                    [
+                        $message
+                    ]
+                ]
+            ]
+        );
+    }
+    
+    /**
+     * Method doResend
+     *
+     * @return string
+     */
+    public function doResend(): string
+    {
+        $resend = $this->session->get('resend');
+        $email = $resend['email'];
+        $token = $resend['token'];
+        if (!$this->sendActivationEmail($email, $token)) {
+            return $this->registryError(
+                'Activation email is not sent',
+                [],
+                $this::TPL_PATH . 'activate.phtml'
+            );
+        }
+        
+        return $this->registrySuccess(
+            'We re-sent an activation email to your email account, '
+                            . 'please follow the instructions.'
+        );
     }
 
     /**
@@ -150,15 +204,19 @@ class Registry extends Account
     /**
      * Method registryError
      *
-     * @param string     $error  error
-     * @param string[][] $errors errors
+     * @param string      $error   error
+     * @param string[][]  $errors  errors
+     * @param string|null $tplfile tplfile
      *
      * @return string
      */
-    protected function registryError(string $error, array $errors): string
-    {
+    protected function registryError(
+        string $error,
+        array $errors,
+        ?string $tplfile = null
+    ): string {
         return $this->template->process(
-            $this::TPL_PATH . 'registry.phtml',
+            $tplfile ?: $this::TPL_PATH . 'registry.phtml',
             [
                 'messages' =>
                 [

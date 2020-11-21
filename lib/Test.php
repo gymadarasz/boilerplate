@@ -17,6 +17,7 @@ use Exception;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
+use RuntimeException;
 
 /**
  * Test
@@ -42,6 +43,148 @@ abstract class Test
     protected int $fails = 0;
     
     /**
+     * Variable $globalsStack
+     *
+     * @var mixed[]
+     */
+    protected static array $globalsStack = [];
+    
+    /**
+     * Method before
+     *
+     * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function before(): void
+    {
+        $this->pushGlobals();
+    }
+    
+    /**
+     * Method after
+     *
+     * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function after(): void
+    {
+        $this->popGlobals();
+    }
+    
+    /**
+     * Method get
+     *
+     * @param string $params params
+     *
+     * @return string
+     * @throws RuntimeException
+     *
+     * @suppressWarnings(PHPMD.Superglobals)
+     */
+    protected function get(string $params = ''): string
+    {
+        $this->pushGlobals();
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        parse_str($params, $_GET);
+        $_REQUEST = $_GET;
+        unset($_POST);
+        $contents = $this->getContents();
+        $this->popGlobals();
+        return $contents;
+    }
+    
+    /**
+     * Method post
+     *
+     * @param string  $params params
+     * @param mixed[] $data   data
+     *
+     * @return string
+     * @throws RuntimeException
+     *
+     * @suppressWarnings(PHPMD.Superglobals)
+     */
+    protected function post(string $params = '', array $data = []): string
+    {
+        $this->pushGlobals();
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        parse_str($params, $_GET);
+        $_REQUEST = $_GET;
+        $_POST = $data;
+        $_REQUEST = array_merge($_REQUEST, $_POST);
+        $contents = $this->getContents();
+        $this->popGlobals();
+        return $contents;
+    }
+    
+    /**
+     * Method getContents
+     *
+     * @return string
+     * @throws RuntimeException
+     */
+    protected function getContents(): string
+    {
+        ob_start();
+        include __DIR__ . '/../index.php';
+        $contents = ob_get_contents();
+        ob_end_clean();
+        if (false === $contents) {
+            throw new RuntimeException("Output buffering isn't active");
+        }
+        return $contents;
+    }
+    
+    /**
+     * Method pushGlobals
+     *
+     * @return void
+     *
+     * @suppressWarnings(PHPMD.Superglobals)
+     */
+    protected function pushGlobals(): void
+    {
+        array_push(
+            self::$globalsStack,
+            [
+            '_GET' => $_GET ?? null,
+            '_POST' => $_POST ?? null,
+            '_REQUEST' => $_REQUEST ?? null,
+            '_SERVER' => $_SERVER ?? null,
+            ]
+        );
+    }
+    
+    /**
+     * Method popGlobals
+     *
+     * @return void
+     *
+     * @suppressWarnings(PHPMD.Superglobals)
+     */
+    protected function popGlobals(): void
+    {
+        $storedGlobals = array_pop(self::$globalsStack);
+        if (null === $storedGlobals) {
+            throw new RuntimeException('Empty globals stack');
+        }
+        if (null !== $storedGlobals['_GET']) {
+            $_GET = $storedGlobals['_GET'];
+        }
+        if (null !== $storedGlobals['_POST']) {
+            $_POST = $storedGlobals['_POST'];
+        }
+        if (null !== $storedGlobals['_REQUEST']) {
+            $_REQUEST = $storedGlobals['_REQUEST'];
+        }
+        if (null !== $storedGlobals['_SERVER']) {
+            $_SERVER = $storedGlobals['_SERVER'];
+        }
+    }
+    
+    /**
      * Method getMock
      *
      * @param string $class class
@@ -49,8 +192,9 @@ abstract class Test
      * @return MockInterface|LegacyMockInterface
      *
      * @SuppressWarnings(PHPMD)
-     * @suppress                PhanUndeclaredTypeReturnType
-     * @suppress                PhanUndeclaredClassMethod
+     *
+     * @suppress PhanUndeclaredTypeReturnType
+     * @suppress PhanUndeclaredClassMethod
      */
     protected function getMock(string $class)
     {

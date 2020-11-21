@@ -38,7 +38,7 @@ abstract class Account
                 'index' => [Index::class, 'index'],
                 'login' => [Login::class, 'login'],
                 'registry' => [Registry::class, 'registry'],
-                'resend' => [Resend::class, 'resend'],
+                'resend' => [Registry::class, 'doResend'],
                 'activate' => [Activate::class, 'doActivate'],
                 'reset' => [Reset::class, 'reset'],
             ],
@@ -46,7 +46,6 @@ abstract class Account
                 '' => [Login::class, 'doLogin'],
                 'login' => [Login::class, 'doLogin'],
                 'registry' => [Registry::class, 'doRegistry'],
-                'resend' => [Resend::class, 'doResend'],
                 'reset' => [Reset::class, 'doReset'],
                 'change' => [Change::class, 'doChangePassword'],
             ],
@@ -54,6 +53,7 @@ abstract class Account
         'protected' => [
             'GET' => [
                 '' => [Index::class, 'restricted'],
+                'index' => [Index::class, 'restricted'],
                 'logout' => [Logout::class, 'doLogout'],
             ],
         ],

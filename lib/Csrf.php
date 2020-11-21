@@ -70,7 +70,7 @@ class Csrf
         if (!$csrf) {
             throw new RuntimeException('CSRF token is missing from session.');
         }
-        $sent = $this->params->get('csrf');
+        $sent = $this->params->get('csrf', '');
         if (!$sent) {
             throw new RuntimeException('CSRF token is not recieved by request.');
         }

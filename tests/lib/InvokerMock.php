@@ -4,39 +4,39 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Mock\Validator\Rule;
+namespace Madsoft\Library\Test;
 
-use Madsoft\Library\Validator\Rule\Match;
+use Madsoft\Library\Invoker;
 
 /**
- * MatchMock
+ * InvokerMock
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class MatchMock extends Match
+class InvokerMock extends Invoker
 {
     /**
-     * Method setEqualTo
+     * Method setInstances
      *
-     * @param mixed $equalTo equalTo
+     * @param mixed[] $instances instances
      *
      * @return self
      */
-    public function setEqualTo($equalTo): self
+    public function setInstances(array $instances): self
     {
-        $this->equalTo = $equalTo;
+        $this->instances = $instances;
         return $this;
     }
 }

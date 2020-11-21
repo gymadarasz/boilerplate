@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 /**
  * PHP version 7.4
@@ -15,8 +15,8 @@ namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Test;
-use Madsoft\Library\Test\Mock\Injectable;
-use Madsoft\Library\Test\Mock\NotInjectable;
+use Madsoft\Library\Test\Injectable;
+use Madsoft\Library\Test\NotInjectable;
 use RuntimeException;
 
 /**
@@ -33,7 +33,6 @@ use RuntimeException;
  */
 class InvokerTest extends Test
 {
-    
     /**
      * Method testGetInstance
      *
@@ -47,10 +46,10 @@ class InvokerTest extends Test
     {
         $invoker = $invoker->getInstance(Invoker::class);
         $this->assertEquals($invoker, $invoker);
-        
+
         $newInvoker = new Invoker();
         $this->assertNotEquals($invoker, $newInvoker);
-        
+
         $msg = '';
         try {
             $invoker->getInstance('ThisClassNotExists');
@@ -58,7 +57,7 @@ class InvokerTest extends Test
             $msg = $exception->getMessage();
         }
         $this->assertEquals('Class not exists: "ThisClassNotExists"', $msg);
-        
+
         try {
             $invoker->getInstance(NotInjectable::class);
         } catch (RuntimeException $exception) {
@@ -72,7 +71,28 @@ class InvokerTest extends Test
             ),
             $msg
         );
-        
         $invoker->getInstance(Injectable::class);
+
+        try {
+            $invoker->invoke([Injectable::class]);
+            $this->assertTrue(false);
+        } catch (RuntimeException $exc) {
+            $this->assertEquals(
+                'Missing route controller: Madsoft\Library\Test\Injectable::???',
+                $exc->getMessage()
+            );
+        }
+
+        $invokerMock = new InvokerMock();
+        $invokerMock->setInstances([1, 2, 3]);
+        try {
+            $invokerMock->free();
+            $this->assertTrue(false);
+        } catch (RuntimeException $exc) {
+            $this->assertEquals(
+                'Class name should be a string, integer found.',
+                $exc->getMessage()
+            );
+        }
     }
 }

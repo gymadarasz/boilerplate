@@ -107,7 +107,7 @@ class Login extends Account
             return $this->loginError($errors, $email);
         }
         
-        $this->user->setUid((int)$user->get('id'));
+        $this->user->login((int)$user->get('id'));
         
         return $this->getSuccesResponse('index.phtml', 'Login success');
     }

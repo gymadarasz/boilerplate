@@ -4,49 +4,39 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library;
+namespace Madsoft\Library\Test;
+
+use Madsoft\Library\Crud;
 
 /**
- * Index
+ * CrudMock
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Test
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Index
+class CrudMock extends Crud
 {
-    
     /**
-     * Method index
+     * Method getWherePublic
+     *
+     * @param string[] $filterUnsafe filterUnsafe
+     * @param string   $logic        logic
      *
      * @return string
-     *
-     * @suppress PhanUnreferencedPublicMethod
      */
-    public function index(): string
+    public function getWherePublic(array $filterUnsafe, string $logic): string
     {
-        return 'Public Index Page';
-    }
-    
-    /**
-     * Method restricted
-     *
-     * @return string
-     *
-     * @suppress PhanUnreferencedPublicMethod
-     */
-    public function restricted(): string
-    {
-        return 'Restricted Index Page';
+        return parent::getWhere($filterUnsafe, $logic);
     }
 }

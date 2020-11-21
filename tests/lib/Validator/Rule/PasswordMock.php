@@ -4,14 +4,14 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Mock\Validator\Rule;
+namespace Madsoft\Library\Test\Validator\Rule;
 
 use Madsoft\Library\Validator\Rule\Password;
 
@@ -19,7 +19,7 @@ use Madsoft\Library\Validator\Rule\Password;
  * PasswordMock
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.

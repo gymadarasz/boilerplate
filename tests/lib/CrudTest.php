@@ -13,12 +13,12 @@
 
 namespace Madsoft\Library\Test;
 
-use Madsoft\Library\App;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Test;
+use RuntimeException;
 
 /**
- * AppTest
+ * CrudTest
  *
  * @category  PHP
  * @package   Madsoft\Library\Test
@@ -29,23 +29,27 @@ use Madsoft\Library\Test;
  *
  * @suppress PhanUnreferencedClass
  */
-class AppTest extends Test
+class CrudTest extends Test
 {
     /**
-     * Method testApp
+     * Method testCrudInvalidLogicFails
      *
      * @param Invoker $invoker invoker
      *
      * @return void
      *
-     * @suppressWarnings(PHPMD.Superglobals);
-     *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function testApp(Invoker $invoker): void
+    public function testCrudInvalidLogicFails(Invoker $invoker): void
     {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $output = (new App())->getOutput($invoker);
-        $this->assertTrue((bool)$output);
+        $exc = null;
+        $crud = $invoker->getInstance(CrudMock::class);
+        try {
+            $crud->getWherePublic([], 'NOT VALID LOGIC');
+            $this->assertTrue(false);
+        } catch (RuntimeException $exc) {
+            $this->assertTrue(true);
+        }
+        $this->assertNotEquals(null, $exc);
     }
 }

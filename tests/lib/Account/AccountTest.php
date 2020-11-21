@@ -4,14 +4,14 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test
+ * @package   Madsoft\Library\Test\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test;
+namespace Madsoft\Library\Test\Account;
 
 use DiDom\Document;
 use DOMElement;
@@ -19,15 +19,14 @@ use Madsoft\Library\Account\Account;
 use Madsoft\Library\Account\Login;
 use Madsoft\Library\Account\Logout;
 use Madsoft\Library\Account\Registry;
-use Madsoft\Library\Account\Resend;
 use Madsoft\Library\Account\Reset;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Folders;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Mailer;
-use Madsoft\Library\RequestTest;
 use Madsoft\Library\Session;
+use Madsoft\Library\Test;
 use RuntimeException;
 use SplFileInfo;
 
@@ -35,15 +34,16 @@ use SplFileInfo;
  * AccountTest
  *
  * @category  PHP
- * @package   Madsoft\Library\Test
+ * @package   Madsoft\Library\Test\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class AccountTest extends RequestTest
+class AccountTest extends Test
 {
     const EMAIL = 'tester@testing.com';
     const PASSWORD_FIRST = 'First1234!';
@@ -84,6 +84,17 @@ class AccountTest extends RequestTest
     public function beforeAll(): void
     {
         $this->crud->del('user', ['email' => self::EMAIL]);
+        $this->deleteMails();
+    }
+    
+    /**
+     * Method deleteMails
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    protected function deleteMails(): void
+    {
         $mails = $this->folders->getFilesRecursive(
             $this->config->get(Mailer::CONFIG_SECION)->get('save_mail_path')
         );
@@ -130,7 +141,6 @@ class AccountTest extends RequestTest
      */
     public function testMethods(): void
     {
-        $tmp = $_SERVER;
         $_SERVER['REQUEST_METHOD'] = 'GET';
         
         $invoker = new Invoker();
@@ -147,11 +157,7 @@ class AccountTest extends RequestTest
         $registry = $invoker->getInstance(Registry::class);
         $result = $registry->registry();
         $this->assertTrue((bool)$result);
-        
-        $resend = $invoker->getInstance(Resend::class);
-        $result = $resend->resend();
-        $this->assertTrue((bool)$result);
-        $result = $resend->doResend();
+        $result = $registry->doResend();
         $this->assertTrue((bool)$result);
         
         $reset = $invoker->getInstance(Reset::class);
@@ -159,8 +165,6 @@ class AccountTest extends RequestTest
         $this->assertTrue((bool)$result);
         $result = $reset->doReset();
         $this->assertTrue((bool)$result);
-        
-        $_SERVER = $tmp;
     }
 
     /**
@@ -173,27 +177,94 @@ class AccountTest extends RequestTest
     public function testAccount(): void
     {
         $this->canSeeLogin();
+        $this->canSeePublicIndex();
+        
         $this->canSeeLoginFails();
+        $this->canSeePublicIndex();
+        
         $this->canSeeRegistry();
+        $this->canSeePublicIndex();
+        
         $this->canSeeRegistryFails();
+        $this->canSeePublicIndex();
+        
         $this->canSeeRegistryWorks();
-        $this->canSeeRegistryUserAlreadyRegisteredFail();
+        $this->canSeePublicIndex();
+        
         $this->canSeeActivationMail();
+        $this->canSeePublicIndex();
+        
+        $this->canSeeResendWorks();
+        $this->canSeePublicIndex();
+        
+        $this->canSeeActivationMail();
+        $this->canSeePublicIndex();
+        
+        $this->canSeeRegistryUserAlreadyRegisteredFail();
+        $this->canSeePublicIndex();
+        
         $this->canSeeActivationFails();
+        $this->canSeePublicIndex();
+        
         $this->canSeeActivationWorks();
+        $this->canSeePublicIndex();
+        
         $this->canSeeActivationUserAlreayActiveFail();
+        $this->canSeePublicIndex();
+        
         $this->canSeeLoginWorks(self::PASSWORD_FIRST);
+        $this->canSeeProtectedIndex();
+        
         $this->canSeeLogoutWorks();
+        $this->canSeePublicIndex();
+        
         $this->canSeeResetPassword();
+        $this->canSeePublicIndex();
+        
         $this->canSeeResetPasswordFails();
+        $this->canSeePublicIndex();
+        
         $this->canSeeResetPasswordWorks();
+        $this->canSeePublicIndex();
+        
         $this->canSeeNewPasswordFails();
+        $this->canSeePublicIndex();
+        
         $this->canSeeNewPassword();
+        $this->canSeePublicIndex();
+        
         $this->canSeeNewPasswordWorks();
+        $this->canSeePublicIndex();
+        
         $this->canSeeLoginWorks();
+        $this->canSeeProtectedIndex();
+        
         $this->canSeeLogoutWorks();
+        $this->canSeePublicIndex();
     }
     
+    /**
+     * Method canSeePublicIndex
+     *
+     * @return void
+     */
+    protected function canSeePublicIndex(): void
+    {
+        $contents = $this->get('q=index');
+        $this->assertStringContains('Public Index Page', $contents);
+    }
+    
+    /**
+     * Method canSeeProtectedIndex
+     *
+     * @return void
+     */
+    protected function canSeeProtectedIndex(): void
+    {
+        $contents = $this->get('q=index');
+        $this->assertStringContains('Restricted Index Page', $contents);
+    }
+        
     /**
      * Method canSeeLogin
      *
@@ -389,8 +460,22 @@ class AccountTest extends RequestTest
             ]
         );
         $this->assertStringContains('Activate your account', $contents);
-        $this->assertStringContains('activation email', $contents);
+        $this->assertStringContains('We sent an activation email', $contents);
     }
+    
+    /**
+     * Method canSeeResendWorks
+     *
+     * @return void
+     */
+    protected function canSeeResendWorks(): void
+    {
+        $this->deleteMails();
+        $contents = $this->get('q=resend');
+        $this->assertStringContains('Activate your account', $contents);
+        $this->assertStringContains('We re-sent an activation email', $contents);
+    }
+    
     
     /**
      * Method canSeeRegistryUserAlreadyRegisteredFail

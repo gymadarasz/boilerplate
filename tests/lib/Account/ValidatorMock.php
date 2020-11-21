@@ -4,43 +4,41 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock
+ * @package   Madsoft\Library\Test\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Mock;
+namespace Madsoft\Library\Test\Account;
+
+use Madsoft\Library\Account\Validator;
 
 /**
- * NotInjectable
+ * ValidatorMock
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock
+ * @package   Madsoft\Library\Test\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class NotInjectable
+class ValidatorMock extends Validator
 {
     /**
-     * Variable $param
+     * Method getErrors
      *
-     * @var int
+     * @param mixed[] $fields fields
      *
-     * @suppress PhanWriteOnlyProtectedProperty
+     * @return string[][]
      */
-    protected int $param;
-
-    /**
-     * Method __construct
-     *
-     * @param int $param param
-     */
-    public function __construct(int $param = 100)
+    public function getErrors(array $fields): array
     {
-        $this->param = $param;
+        if ($fields) {
+            return [['an error']];
+        }
+        return [['no error']];
     }
 }

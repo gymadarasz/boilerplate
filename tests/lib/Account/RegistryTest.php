@@ -57,7 +57,7 @@ class RegistryTest extends Test
      */
     public function testDoRegistryDbFails(): void
     {
-        $tmp = $_GET;
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['email'] = 'an-email';
         $_GET['password'] = 'a-password';
         $params = new Params();
@@ -105,8 +105,6 @@ class RegistryTest extends Test
         );
         $result = $registy->doRegistry();
         $this->assertStringContains('User is not saved', $result);
-        
-        $_GET = $tmp;
     }
     
     /**
@@ -121,7 +119,7 @@ class RegistryTest extends Test
      */
     public function testDoRegistryEmailFails(): void
     {
-        $tmp = $_GET;
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['email'] = 'an-email';
         $_GET['password'] = 'a-password';
         $params = new Params();
@@ -170,7 +168,5 @@ class RegistryTest extends Test
         );
         $result = $registy->doRegistry();
         $this->assertStringContains('Activation email is not sent', $result);
-        
-        $_GET = $tmp;
     }
 }

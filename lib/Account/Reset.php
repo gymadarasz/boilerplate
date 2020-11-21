@@ -122,7 +122,7 @@ class Reset extends Account
             [
                 'messages' =>
                 [
-                    'sucesses' => ['Pasword reset reqest email sent'],
+                    'sucesses' => ['Paswword reset request email sent'],
                 ]
             ]
         );

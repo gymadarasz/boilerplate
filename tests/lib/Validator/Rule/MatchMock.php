@@ -4,39 +4,39 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Test\Mock\Validator\Rule;
+namespace Madsoft\Library\Test\Validator\Rule;
 
-use Madsoft\Library\Validator\Rule\PasswordVerify;
+use Madsoft\Library\Validator\Rule\Match;
 
 /**
- * PasswordVerifyMock
+ * MatchMock
  *
  * @category  PHP
- * @package   Madsoft\Library\Test\Mock\Validator\Rule
+ * @package   Madsoft\Library\Test\Validator\Rule
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class PasswordVerifyMock extends PasswordVerify
+class MatchMock extends Match
 {
     /**
-     * Method setPassword
+     * Method setEqualTo
      *
-     * @param string $password password
+     * @param mixed $equalTo equalTo
      *
      * @return self
      */
-    public function setPassword(string $password): self
+    public function setEqualTo($equalTo): self
     {
-        $this->password = $password;
+        $this->equalTo = $equalTo;
         return $this;
     }
 }
