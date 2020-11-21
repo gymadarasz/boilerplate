@@ -4,8 +4,13 @@ namespace Madsoft\Test;
 
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Tester;
+use RuntimeException;
 
 include __DIR__ . '/vendor/autoload.php';
+
+if (php_sapi_name() !== 'cli') {
+    throw new RuntimeException('Test can run only from command line.');
+}
 
 $tester = (new Invoker())->getInstance(Tester::class);
 

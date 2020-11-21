@@ -126,9 +126,9 @@ class Request
             $this->logger->exception($exception);
             $response = $this->invoker->invoke($this->error);
         }
-        if (is_array($response)) {
-            return $this->json->encode($response);
-        }
+//        if (is_array($response)) {
+//            return $this->json->encode($response);
+//        }
         return $response;
     }
 
