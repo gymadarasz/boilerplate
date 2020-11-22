@@ -19,6 +19,7 @@ use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
@@ -89,8 +90,10 @@ class ActivateTest extends Test
         
         $merger = new Merger();
         
+        $responder = new Responder($template, $merger);
+        
         // @phpstan-ignore-next-line
-        $activate = new Activate($template, $merger, $crud, $params, $validator);
+        $activate = new Activate($responder, $crud, $params, $validator);
         $result = $activate->doActivate();
         $this->assertStringContains('User activation failed', $result);
     }

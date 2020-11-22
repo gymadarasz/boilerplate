@@ -14,9 +14,8 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
-use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
-use Madsoft\Library\Template;
+use Madsoft\Library\Responder;
 
 /**
  * Change
@@ -30,6 +29,7 @@ use Madsoft\Library\Template;
  */
 class Change extends Account
 {
+    protected Responder $responder;
     protected Crud $crud;
     protected Params $params;
     protected Validator $validator;
@@ -37,20 +37,18 @@ class Change extends Account
     /**
      * Method __construct
      *
-     * @param Template  $template  template
-     * @param Merger    $merger    merger
+     * @param Responder $responder responder
      * @param Crud      $crud      crud
      * @param Params    $params    params
      * @param Validator $validator validator
      */
     public function __construct(
-        Template $template,
-        Merger $merger,
+        Responder $responder,
         Crud $crud,
         Params $params,
         Validator $validator
     ) {
-        parent::__construct($template, $merger);
+        $this->responder = $responder;
         $this->crud = $crud;
         $this->params = $params;
         $this->validator = $validator;
@@ -65,7 +63,7 @@ class Change extends Account
     {
         $errors = $this->validator->validateChangePassword($this->params);
         if ($errors) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'change.phtml',
                 'Password change failed',
                 $errors,
@@ -86,7 +84,7 @@ class Change extends Account
             ]
         )
         ) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'change.phtml',
                 'Password is not saved',
                 [],
@@ -96,6 +94,9 @@ class Change extends Account
             );
         }
         
-        return $this->getSuccesResponse('login.phtml', 'Password is changed');
+        return $this->responder->getSuccesResponse(
+            'login.phtml',
+            'Password is changed'
+        );
     }
 }

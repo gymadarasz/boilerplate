@@ -13,6 +13,8 @@
 
 namespace Madsoft\Talkbot;
 
+use Madsoft\Library\App;
+
 /**
  * Talkbot
  *
@@ -23,13 +25,25 @@ namespace Madsoft\Talkbot;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Talkbot
+class Talkbot extends App
 {
+    const ROUTES = [
+        'protected' => [
+            'GET' => [
+                'my-chats' => [Talkbot::class, 'myChats'],
+            ],
+        ],
+    ];
+    
     /**
-     * Method __construct()
+     * Method myChats
+     *
+     * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
-    public function __construct()
+    public function myChats(): string
     {
-        // TODO ...
+        return 'unimplementd';
     }
 }

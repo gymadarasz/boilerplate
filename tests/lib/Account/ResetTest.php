@@ -21,6 +21,7 @@ use Madsoft\Library\Invoker;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
@@ -68,9 +69,9 @@ class ResetTest extends Test
         $validator->shouldReceive('validateReset')->andReturn([]);
         $mailer = $invoker->getInstance(Mailer::class);
         $config = $invoker->getInstance(Config::class);
+        $responder = new Responder($template, $merger);
         $reset = new Reset(
-            $template,
-            $merger,
+            $responder,
             $crud, // @phpstan-ignore-line
             $params,
             $validator, // @phpstan-ignore-line
@@ -109,9 +110,9 @@ class ResetTest extends Test
         $mailer = $this->getMock(Mailer::class);
         $mailer->shouldReceive('send')->andReturnFalse();
         $config = $invoker->getInstance(Config::class);
+        $responder = new Responder($template, $merger);
         $reset = new Reset(
-            $template,
-            $merger,
+            $responder,
             $crud, // @phpstan-ignore-line
             $params,
             $validator, // @phpstan-ignore-line

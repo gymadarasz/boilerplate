@@ -16,10 +16,9 @@ namespace Madsoft\Library\Account;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mailer;
-use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder;
 use Madsoft\Library\Session;
-use Madsoft\Library\Template;
 
 /**
  * Registry
@@ -33,6 +32,7 @@ use Madsoft\Library\Template;
  */
 class Registry extends Account
 {
+    protected Responder $responder;
     protected Session $session;
     protected Crud $crud;
     protected Params $params;
@@ -43,8 +43,7 @@ class Registry extends Account
     /**
      * Method __construct
      *
-     * @param Template  $template  template
-     * @param Merger    $merger    merger
+     * @param Responder $responder responder
      * @param Session   $session   session
      * @param Crud      $crud      crud
      * @param Params    $params    params
@@ -53,8 +52,7 @@ class Registry extends Account
      * @param Config    $config    config
      */
     public function __construct(
-        Template $template,
-        Merger $merger,
+        Responder $responder,
         Session $session,
         Crud $crud,
         Params $params,
@@ -62,7 +60,7 @@ class Registry extends Account
         Mailer $mailer,
         Config $config
     ) {
-        parent::__construct($template, $merger);
+        $this->responder = $responder;
         $this->session = $session;
         $this->crud = $crud;
         $this->params = $params;
@@ -78,7 +76,7 @@ class Registry extends Account
      */
     public function registry(): string
     {
-        return $this->getResponse('registry.phtml');
+        return $this->responder->getResponse('registry.phtml');
     }
     
     
@@ -91,7 +89,7 @@ class Registry extends Account
     {
         $errors = $this->validator->validateRegistry($this->params);
         if ($errors) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'registry.phtml',
                 'Invalid registration data',
                 $errors
@@ -103,7 +101,7 @@ class Registry extends Account
         
         $user = $this->crud->get('user', ['email'], ['email' => $email]);
         if ($user->get('email') === $email) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'registry.phtml',
                 'Email address already registered',
                 $errors
@@ -120,7 +118,7 @@ class Registry extends Account
             ]
         )
         ) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'registry.phtml',
                 'User is not saved'
             );
@@ -128,7 +126,7 @@ class Registry extends Account
         $this->session->set('resend', ['email' => $email, 'token' => $token]);
         
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'activate.phtml',
                 'Activation email is not sent',
                 [],
@@ -136,7 +134,7 @@ class Registry extends Account
             );
         }
         
-        return $this->getSuccesResponse(
+        return $this->responder->getSuccesResponse(
             'activate.phtml',
             'We sent an activation email to your email account, '
                 . 'please follow the instructions.'
@@ -154,13 +152,13 @@ class Registry extends Account
         $email = $resend['email'];
         $token = $resend['token'];
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'activate.phtml',
                 'Activation email is not sent'
             );
         }
         
-        return $this->getSuccesResponse(
+        return $this->responder->getSuccesResponse(
             'activate.phtml',
             'We re-sent an activation email to your email account, '
                 . 'please follow the instructions.'
@@ -177,8 +175,8 @@ class Registry extends Account
      */
     protected function sendActivationEmail(string $email, string $token): bool
     {
-        $message = $this->template->process(
-            $this::TPL_PATH . 'emails/activation.phtml',
+        $message = $this->responder->getResponse(
+            'emails/activation.phtml',
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,

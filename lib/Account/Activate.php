@@ -14,9 +14,8 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
-use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
-use Madsoft\Library\Template;
+use Madsoft\Library\Responder;
 
 /**
  * Activate
@@ -30,6 +29,7 @@ use Madsoft\Library\Template;
  */
 class Activate extends Account
 {
+    protected Responder $responder;
     protected Crud $crud;
     protected Params $params;
     protected Validator $validator;
@@ -37,20 +37,18 @@ class Activate extends Account
     /**
      * Method __construct
      *
-     * @param Template  $template  template
-     * @param Merger    $merger    merger
+     * @param Responder $responder responder
      * @param Crud      $crud      crud
      * @param Params    $params    params
      * @param Validator $validator validator
      */
     public function __construct(
-        Template $template,
-        Merger $merger,
+        Responder $responder,
         Crud $crud,
         Params $params,
         Validator $validator
     ) {
-        parent::__construct($template, $merger);
+        $this->responder = $responder;
         $this->crud = $crud;
         $this->params = $params;
         $this->validator = $validator;
@@ -65,7 +63,7 @@ class Activate extends Account
     {
         $errors = $this->validator->validateActivate($this->params);
         if ($errors) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'activated.phtml',
                 'Account activation failed',
                 $errors
@@ -76,7 +74,7 @@ class Activate extends Account
         
         $user = $this->crud->get('user', ['id', 'active'], ['token' => $token]);
         if (!$user->get('id')) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'activated.phtml',
                 'Invalid token',
                 []
@@ -84,7 +82,7 @@ class Activate extends Account
         }
         
         if ($user->get('active')) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'activated.phtml',
                 'User is active already',
                 []
@@ -92,14 +90,14 @@ class Activate extends Account
         }
         
         if (!$this->crud->set('user', ['active' => '1'], ['token' => $token])) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'activated.phtml',
                 'User activation failed',
                 []
             );
         }
         
-        return $this->getSuccesResponse(
+        return $this->responder->getSuccesResponse(
             'activated.phtml',
             'Account is now activated'
         );

@@ -13,8 +13,7 @@
 
 namespace Madsoft\Library\Account;
 
-use Madsoft\Library\Merger;
-use Madsoft\Library\Template;
+use Madsoft\Library\Responder;
 use Madsoft\Library\User;
 
 /**
@@ -29,21 +28,20 @@ use Madsoft\Library\User;
  */
 class Logout extends Account
 {
+    protected Responder $responder;
     protected User $user;
     
     /**
      * Method __construct
      *
-     * @param Template $template template
-     * @param Merger   $merger   merger
-     * @param User     $user     user
+     * @param Responder $responder responder
+     * @param User      $user      user
      */
     public function __construct(
-        Template $template,
-        Merger $merger,
+        Responder $responder,
         User $user
     ) {
-        parent::__construct($template, $merger);
+        $this->responder = $responder;
         $this->user = $user;
     }
     
@@ -56,6 +54,6 @@ class Logout extends Account
     {
         $this->user->logout();
         
-        return $this->getSuccesResponse('login.phtml', 'Logout success');
+        return $this->responder->getSuccesResponse('login.phtml', 'Logout success');
     }
 }

@@ -19,6 +19,7 @@ use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
@@ -73,8 +74,10 @@ class ChangeTest extends Test
         $validator = $this->getMock(Validator::class);
         $validator->shouldReceive('validateChangePassword')->andReturn([]);
         
+        $responder = new Responder($template, $merger);
+        
         // @phpstan-ignore-next-line
-        $change = new Change($template, $merger, $crud, $params, $validator);
+        $change = new Change($responder, $crud, $params, $validator);
         $result = $change->doChangePassword();
         $this->assertStringContains('Password is not saved', $result);
     }

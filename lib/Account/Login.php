@@ -15,9 +15,8 @@ namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
 use Madsoft\Library\Logger;
-use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
-use Madsoft\Library\Template;
+use Madsoft\Library\Responder;
 use Madsoft\Library\User;
 
 /**
@@ -32,6 +31,7 @@ use Madsoft\Library\User;
  */
 class Login extends Account
 {
+    protected Responder $responder;
     protected Crud $crud;
     protected Logger $logger;
     protected User $user;
@@ -41,8 +41,7 @@ class Login extends Account
     /**
      * Method __construct
      *
-     * @param Template  $template  template
-     * @param Merger    $merger    merger
+     * @param Responder $responder responder
      * @param Crud      $crud      crud
      * @param Logger    $logger    logger
      * @param User      $user      user
@@ -50,15 +49,14 @@ class Login extends Account
      * @param Validator $validator validator
      */
     public function __construct(
-        Template $template,
-        Merger $merger,
+        Responder $responder,
         Crud $crud,
         Logger $logger,
         User $user,
         Params $params,
         Validator $validator
     ) {
-        parent::__construct($template, $merger);
+        $this->responder = $responder;
         $this->crud = $crud;
         $this->logger = $logger;
         $this->user = $user;
@@ -73,7 +71,7 @@ class Login extends Account
      */
     public function login(): string
     {
-        return $this->getResponse('login.phtml');
+        return $this->responder->getResponse('login.phtml');
     }
     
     /**
@@ -109,7 +107,7 @@ class Login extends Account
         
         $this->user->login((int)$user->get('id'));
         
-        return $this->getSuccesResponse('index.phtml', 'Login success');
+        return $this->responder->getSuccesResponse('index.phtml', 'Login success');
     }
     
     /**
@@ -130,6 +128,6 @@ class Login extends Account
         $this->logger->error(
             "Login error, reason:$reasonstr" . ($email ? ", email: '$email'" : '')
         );
-        return $this->getErrorResponse('login.phtml', 'Login failed');
+        return $this->responder->getErrorResponse('login.phtml', 'Login failed');
     }
 }

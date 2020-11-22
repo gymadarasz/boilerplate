@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library;
 
-use Madsoft\Library\Account\Account;
+use RuntimeException;
 
 /**
  * App
@@ -27,22 +27,110 @@ use Madsoft\Library\Account\Account;
  */
 class App
 {
+    const ROUTE_CACHE_FILE = __DIR__ . '/../route.cache.php';
+    
+    protected Invoker $invoker;
+    
+    /**
+     * Method __construct
+     *
+     * @param Invoker $invoker invoker
+     */
+    public function __construct(Invoker $invoker)
+    {
+        $this->invoker = $invoker;
+    }
+    
     /**
      * Method getOutput
      *
-     * @param Invoker $invoker invoker
+     * @param mixed[] $routeExts routeExts
      *
      * @return string
      */
-    public function getOutput(Invoker $invoker): string
+    public function getOutput(array $routeExts): string
     {
-        $output = $invoker
-            //->getInstance(Invoker::class)
+        $output = $this->invoker
             ->getInstance(Request::class)
-            ->setRoutes(Account::ROUTES)
+            ->setRoutes($this->getRoutes($routeExts))
             ->setError([Error::class, 'error'])
             ->process();
-        $invoker->free();
+        $this->invoker->free();
         return $output;
+    }
+    
+    /**
+     * Method getRoutes
+     *
+     * @param mixed[] $routeExts routeExts
+     *
+     * @return mixed[]
+     */
+    protected function getRoutes(array $routeExts): array
+    {
+        return $this->loadRouteCache($routeExts);
+    }
+    
+    /**
+     * Method loadRouteCache
+     *
+     * @param mixed[] $routeExts routeExts
+     *
+     * @return mixed[]
+     */
+    protected function loadRouteCache(array $routeExts): array
+    {
+        $routes = [];
+        if (!file_exists($this::ROUTE_CACHE_FILE)) {
+            $this->createRouteCache($routeExts);
+        }
+        if (!file_exists($this::ROUTE_CACHE_FILE)) {
+            throw new RuntimeException(
+                'Route cache error: ' . $this::ROUTE_CACHE_FILE
+            );
+        }
+        include $this::ROUTE_CACHE_FILE;
+        return $routes;
+    }
+    
+    /**
+     * Method createRouteCache
+     *
+     * @param mixed[] $routeExts routeExts
+     *
+     * @return mixed[]
+     */
+    protected function createRouteCache(array $routeExts): array
+    {
+        $merger = $this->invoker->getInstance(Merger::class);
+        $routes = [];
+        foreach ($routeExts as $routeExt) {
+            $routes = $merger->merge($routes, $routeExt);
+        }
+        $this->saveRouteCache($routes);
+        return $routes;
+    }
+    
+    /**
+     * Method saveRouteCache
+     *
+     * @param mixed[] $routes routes
+     *
+     * @return int
+     */
+    protected function saveRouteCache(array $routes): int
+    {
+        $export = var_export($routes, true);
+        $result = file_put_contents(
+            $this::ROUTE_CACHE_FILE,
+            '<?php'
+                . ' $routes=' . $export . ';'
+        );
+        if ($result === false) {
+            throw new RuntimeException(
+                'Unable to write: ' . $this::ROUTE_CACHE_FILE
+            );
+        }
+        return $result;
     }
 }

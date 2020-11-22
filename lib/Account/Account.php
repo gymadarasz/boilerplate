@@ -14,8 +14,6 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Index;
-use Madsoft\Library\Merger;
-use Madsoft\Library\Template;
 
 /**
  * Account
@@ -30,7 +28,6 @@ use Madsoft\Library\Template;
 abstract class Account
 {
     const LOGIN_DELAY = 0; // TODO: set to 3;
-    const TPL_PATH = __DIR__ . '/../tpls/';
     const ROUTES = [
         'public' => [
             'GET' => [
@@ -59,23 +56,6 @@ abstract class Account
         ],
     ];
     
-    protected Template $template;
-    protected Merger $merger;
-
-    /**
-     * Method __construct
-     *
-     * @param Template $template template
-     * @param Merger   $merger   merger
-     */
-    public function __construct(
-        Template $template,
-        Merger $merger
-    ) {
-        $this->template = $template;
-        $this->merger = $merger;
-    }
-    
     /**
      * Method generateToken
      *
@@ -98,77 +78,5 @@ abstract class Account
     protected function encrypt(string $password): string
     {
         return (string)password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-    }
-    
-    /**
-     * Method getSuccesResponse
-     *
-     * @param string  $tplfile tplfile
-     * @param string  $message message
-     * @param mixed[] $data    data
-     *
-     * @return string
-     */
-    protected function getSuccesResponse(
-        string $tplfile,
-        string $message = 'Operation success',
-        array $data = []
-    ): string {
-        return $this->template->process(
-            $this::TPL_PATH . $tplfile,
-            $this->merger->merge(
-                $data,
-                [
-                    'messages' =>
-                    [
-                        'sucesses' => [$message],
-                    ]
-                ]
-            )
-        );
-    }
-    
-    /**
-     * Method getErrorResponse
-     *
-     * @param string     $tplfile tplfile
-     * @param string     $error   error
-     * @param string[][] $errors  errors
-     * @param mixed[]    $data    data
-     *
-     * @return string
-     */
-    protected function getErrorResponse(
-        string $tplfile,
-        string $error = 'Operation failed',
-        array $errors = [],
-        array $data = []
-    ): string {
-        return $this->template->process(
-            $this::TPL_PATH . $tplfile,
-            $this->merger->merge(
-                $data,
-                [
-                    'messages' =>
-                    [
-                        'errors' => [$error],
-                    ],
-                    'errors' => $errors,
-                ]
-            )
-        );
-    }
-    
-    /**
-     * Method getResponse
-     *
-     * @param string  $tplfile tplfile
-     * @param mixed[] $data    data
-     *
-     * @return string
-     */
-    protected function getResponse(string $tplfile, array $data = []): string
-    {
-        return $this->template->process($this::TPL_PATH . $tplfile, $data);
     }
 }

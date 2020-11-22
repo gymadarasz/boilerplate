@@ -16,9 +16,8 @@ namespace Madsoft\Library\Account;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mailer;
-use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
-use Madsoft\Library\Template;
+use Madsoft\Library\Responder;
 
 /**
  * Reset
@@ -32,9 +31,9 @@ use Madsoft\Library\Template;
  */
 class Reset extends Account
 {
+    protected Responder $responder;
     protected Crud $crud;
     protected Params $params;
-    protected Template $template;
     protected Validator $validator;
     protected Mailer $mailer;
     protected Config $config;
@@ -42,8 +41,7 @@ class Reset extends Account
     /**
      * Method __construct
      *
-     * @param Template  $template  template
-     * @param Merger    $merger    merger
+     * @param Responder $responder responder
      * @param Crud      $crud      crud
      * @param Params    $params    params
      * @param Validator $validator validator
@@ -51,15 +49,14 @@ class Reset extends Account
      * @param Config    $config    config
      */
     public function __construct(
-        Template $template,
-        Merger $merger,
+        Responder $responder,
         Crud $crud,
         Params $params,
         Validator $validator,
         Mailer $mailer,
         Config $config
     ) {
-        parent::__construct($template, $merger);
+        $this->responder = $responder;
         $this->crud = $crud;
         $this->params = $params;
         $this->validator = $validator;
@@ -78,11 +75,17 @@ class Reset extends Account
         if ($token) {
             $user = $this->crud->get('user', ['id'], ['token' => $token]);
             if (!$user->get('id')) {
-                return $this->getErrorResponse('reset.phtml', 'Invalid token');
+                return $this->responder->getErrorResponse(
+                    'reset.phtml',
+                    'Invalid token'
+                );
             }
-            return $this->getResponse('change.phtml', ['token' => $token]);
+            return $this->responder->getResponse(
+                'change.phtml',
+                ['token' => $token]
+            );
         }
-        return $this->getResponse('reset.phtml');
+        return $this->responder->getResponse('reset.phtml');
     }
     
     /**
@@ -94,7 +97,7 @@ class Reset extends Account
     {
         $errors = $this->validator->validateReset($this->params);
         if ($errors) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'reset.phtml',
                 'Reset password failed',
                 $errors
@@ -104,7 +107,7 @@ class Reset extends Account
         $email = (string)$this->params->get('email');
         $user = $this->crud->get('user', ['email'], ['email' => $email]);
         if ($user->get('email') !== $email) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'reset.phtml',
                 'Email address not found'
             );
@@ -112,20 +115,20 @@ class Reset extends Account
         
         $token = $this->generateToken();
         if (!$this->crud->set('user', ['token' => $token], ['email' => $email])) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'reset.phtml',
                 'Token is not updated'
             );
         }
         
         if (!$this->sendResetEmail($email, $token)) {
-            return $this->getErrorResponse(
+            return $this->responder->getErrorResponse(
                 'reset.phtml',
                 'Email sending failed'
             );
         }
         
-        return $this->getSuccesResponse(
+        return $this->responder->getSuccesResponse(
             'reset.phtml',
             'Password reset request email sent'
         );
@@ -141,8 +144,8 @@ class Reset extends Account
      */
     protected function sendResetEmail(string $email, string $token): bool
     {
-        $message = $this->template->process(
-            $this::TPL_PATH . 'emails/reset.phtml',
+        $message = $this->responder->getResponse(
+            'emails/reset.phtml',
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,

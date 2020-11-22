@@ -49,7 +49,7 @@ class Request
     protected User $user;
     protected Server $server;
     protected Params $params;
-    protected Json $json;
+    //    protected Json $json;
     protected Csrf $csrf;
 
     /**
@@ -60,7 +60,7 @@ class Request
      * @param User    $user    user
      * @param Server  $server  server
      * @param Params  $params  params
-     * @param Json    $json    json
+     *                         @ param Json    $json    json
      * @param Csrf    $csrf    csrf
      */
     public function __construct(
@@ -69,7 +69,7 @@ class Request
         User $user,
         Server $server,
         Params $params,
-        Json $json,
+        //        Json $json,
         Csrf $csrf
     ) {
         $this->invoker = $invoker;
@@ -77,7 +77,7 @@ class Request
         $this->user = $user;
         $this->server = $server;
         $this->params = $params;
-        $this->json = $json;
+        //        $this->json = $json;
         $this->csrf = $csrf;
     }
     
@@ -126,9 +126,9 @@ class Request
             $this->logger->exception($exception);
             $response = $this->invoker->invoke($this->error);
         }
-//        if (is_array($response)) {
-//            return $this->json->encode($response);
-//        }
+        //        if (is_array($response)) {
+        //            return $this->json->encode($response);
+        //        }
         return $response;
     }
 

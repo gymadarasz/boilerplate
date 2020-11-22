@@ -13,6 +13,8 @@
 
 namespace Madsoft\Talkbot\Test;
 
+use Madsoft\Library\Account\Account;
+use Madsoft\Library\Invoker;
 use Madsoft\Library\Test;
 use Madsoft\Talkbot\Talkbot;
 
@@ -33,13 +35,16 @@ class TalkbotTest extends Test
     /**
      * Method testTalkbot
      *
+     * @param Invoker $invoker invoker
+     *
      * @return void
      *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function testTalkbot(): void
+    public function testTalkbot(Invoker $invoker): void
     {
-        $talkbot = new Talkbot();
+        $talkbot = new Talkbot($invoker);
+        $talkbot->getOutput([Account::ROUTES, Talkbot::ROUTES]);
         $this->assertTrue((bool)$talkbot);
     }
 }

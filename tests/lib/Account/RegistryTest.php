@@ -21,6 +21,7 @@ use Madsoft\Library\Csrf;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
@@ -93,9 +94,10 @@ class RegistryTest extends Test
         
         $config = new Config($template);
         
+        $responder = new Responder($template, $merger);
+        
         $registy = new Registry(
-            $template,
-            $merger,
+            $responder,
             $session,
             $crud, // @phpstan-ignore-line
             $params,
@@ -157,9 +159,10 @@ class RegistryTest extends Test
         
         $config = new Config($template);
         
+        $responder = new Responder($template, $merger);
+        
         $registy = new Registry(
-            $template,
-            $merger,
+            $responder,
             $session,
             $crud, // @phpstan-ignore-line
             $params,
