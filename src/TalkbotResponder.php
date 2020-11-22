@@ -13,10 +13,11 @@
 
 namespace Madsoft\Talkbot;
 
-use Madsoft\Library\App;
+use Madsoft\Library\Merger;
+use Madsoft\Library\Responder;
 
 /**
- * Talkbot
+ * TalkbotResponder
  *
  * @category  PHP
  * @package   Madsoft\Talkbot
@@ -25,17 +26,18 @@ use Madsoft\Library\App;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Talkbot extends App
+class TalkbotResponder extends Responder
 {
-    const ROUTES = [
-        'protected' => [
-            'GET' => [
-                'my-scripts/list' => [MyScripts::class, 'viewList'],
-                'my-scripts/create' => [MyScripts::class, 'viewCreate'],
-            ],
-            'POST' => [
-                'my-scripts/create' => [MyScripts::class, 'doCreate'],
-            ],
-        ],
-    ];
+    /**
+     * Method __construct
+     *
+     * @param TalkbotTemplate $template template
+     * @param Merger          $merger   merger
+     */
+    public function __construct(
+        TalkbotTemplate $template,
+        Merger $merger
+    ) {
+        parent::__construct($template, $merger);
+    }
 }

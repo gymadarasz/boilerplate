@@ -1,6 +1,6 @@
 <?php $this->restrict(); ?>
 <h1>Account activation</h1>
-<?php include 'messages.phtml' ?>
+<?php include $this->getTemplateFile('messages.phtml') ?>
 
 <?php if(isset($errors['token'])): ?>
 <p>Token error: <?=implode(', ', $errors['token'])?></p>

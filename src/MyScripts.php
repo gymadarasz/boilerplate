@@ -1,0 +1,179 @@
+<?php declare(strict_types = 1);
+
+/**
+ * PHP version 7.4
+ *
+ * @category  PHP
+ * @package   Madsoft\Talkbot
+ * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
+ * @copyright 2020 Gyula Madarasz
+ * @license   Copyright (c) All rights reserved.
+ * @link      this
+ */
+
+namespace Madsoft\Talkbot;
+
+use Madsoft\Library\Crud;
+use Madsoft\Library\Mysql;
+use Madsoft\Library\Params;
+use Madsoft\Library\Row;
+use Madsoft\Library\Session;
+use Madsoft\Library\Validator\Checker;
+use Madsoft\Library\Validator\Rule\Mandatory;
+
+/**
+ * MyScripts
+ *
+ * @category  PHP
+ * @package   Madsoft\Talkbot
+ * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
+ * @copyright 2020 Gyula Madarasz
+ * @license   Copyright (c) All rights reserved.
+ * @link      this
+ */
+class MyScripts
+{
+    protected Mysql $mysql;
+    protected Crud $crud;
+    protected Params $params;
+    protected Checker $checker;
+    protected Session $session;
+    protected TalkbotResponder $responder;
+    
+    /**
+     * Method __construct
+     *
+     * @param Mysql            $mysql     mysql
+     * @param Crud             $crud      crud
+     * @param Params           $params    params
+     * @param Checker          $checker   checker
+     * @param Session          $session   session
+     * @param TalkbotResponder $responder responder
+     */
+    public function __construct(
+        Mysql $mysql,
+        Crud $crud,
+        Params $params,
+        Checker $checker,
+        Session $session,
+        TalkbotResponder $responder
+    ) {
+        $this->mysql = $mysql;
+        $this->crud = $crud;
+        $this->params = $params;
+        $this->checker = $checker;
+        $this->session = $session;
+        $this->responder = $responder;
+    }
+    
+    /**
+     * Method viewList
+     *
+     * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function viewList(): string
+    {
+        return $this->responder->getResponse(
+            'my-scripts/list.phtml',
+            ['my_scripts' => $this->getMyScripts($this->session->get('uid'))]
+        );
+    }
+    
+    /**
+     * Method getMyScripts
+     *
+     * @param int $uid uid
+     *
+     * @return Row[]
+     */
+    protected function getMyScripts(int $uid): array
+    {
+        return $this->mysql->select(
+            "SELECT * FROM script "
+                . "JOIN ownership "
+                . "ON ownership.row_id = script.id "
+                . "AND ownership.table_name = 'script' "
+                . "AND user_id = $uid"
+        );
+    }
+    
+    /**
+     * Method viewCreate
+     *
+     * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function viewCreate(): string
+    {
+        return $this->responder->getResponse(
+            'my-scripts/create.phtml',
+            ['name' => '']
+        );
+    }
+    
+    /**
+     * Method doCreate
+     *
+     * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function doCreate(): string
+    {
+        $name = $this->params->get('name', '');
+        $errors = $this->checker->getErrors(
+            [
+                'name' => [
+                    'value' => $name,
+                    'rules' => [Mandatory::class => null]
+                ]
+            ]
+        );
+        if ($errors) {
+            return $this->responder->getErrorResponse(
+                'my-scripts/create.html',
+                'Invalid parameters',
+                $errors
+            );
+        }
+        
+        $this->mysql->connect();
+        
+        if (!$this->mysql->getMysqli()->autocommit(false)) {
+            return $this->responder->getErrorResponse('create.phtml');
+        }
+        
+        $sid = $this->crud->add('script', ['name' => $this->params->get('name')]);
+        if (!$sid) {
+            $this->mysql->getMysqli()->rollback();
+            return $this->responder->getErrorResponse('my-scripts/create.phtml');
+        }
+        
+        $uid = $this->session->get('uid');
+        $oid = $this->crud->add(
+            'ownership',
+            [
+            'table_name' => 'script',
+            'row_id' => (string)$sid,
+            'user_id' => (string)$uid,
+            ]
+        );
+        if (!$oid) {
+            $this->mysql->getMysqli()->rollback();
+            return $this->responder->getErrorResponse('my-scripts/create.phtml');
+        }
+        
+        if (!$this->mysql->getMysqli()->commit()) {
+            return $this->responder->getErrorResponse('my-scripts/create.phtml');
+        }
+        
+        return $this->responder->getSuccesResponse(
+            'my-scripts/list.phtml',
+            'Script "' . $name . '" is created',
+            ['my_scripts' => $this->getMyScripts($this->session->get('uid'))]
+        );
+    }
+}

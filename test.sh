@@ -21,7 +21,7 @@ show_next() {
 trap error_exit 0 
 
 show_next "clean up.."
-# TODO cleanup here...
+echo "" > route.cache.php
 
 show_next "php-cs-fixer"
 vendor/bin/php-cs-fixer fix lib

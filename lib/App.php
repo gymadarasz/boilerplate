@@ -80,7 +80,6 @@ class App
      */
     protected function loadRouteCache(array $routeExts): array
     {
-        $routes = [];
         if (!file_exists($this::ROUTE_CACHE_FILE)) {
             $this->createRouteCache($routeExts);
         }
@@ -89,10 +88,26 @@ class App
                 'Route cache error: ' . $this::ROUTE_CACHE_FILE
             );
         }
+        $routes = $this->includeRoutes();
+        if (!$routes) {
+            $this->createRouteCache($routeExts);
+        }
+        return $this->includeRoutes();
+    }
+    
+    /**
+     * Method includeRoutes
+     *
+     * @return mixed[]
+     */
+    protected function includeRoutes(): array
+    {
+        $routes = [];
         include $this::ROUTE_CACHE_FILE;
         return $routes;
     }
-    
+
+
     /**
      * Method createRouteCache
      *
@@ -131,6 +146,7 @@ class App
                 'Unable to write: ' . $this::ROUTE_CACHE_FILE
             );
         }
+        clearstatcache();
         return $result;
     }
 }

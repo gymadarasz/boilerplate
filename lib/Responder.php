@@ -25,8 +25,6 @@ namespace Madsoft\Library;
  */
 class Responder
 {
-    const TPL_PATH = __DIR__ . '/tpls/';
-    
     protected Template $template;
     protected Merger $merger;
 
@@ -59,7 +57,7 @@ class Responder
         array $data = []
     ): string {
         return $this->template->process(
-            $this::TPL_PATH . $tplfile,
+            $this->template->getTemplateFile($tplfile),
             $this->merger->merge(
                 $data,
                 [
@@ -89,7 +87,7 @@ class Responder
         array $data = []
     ): string {
         return $this->template->process(
-            $this::TPL_PATH . $tplfile,
+            $this->template->getTemplateFile($tplfile),
             $this->merger->merge(
                 $data,
                 [
@@ -113,6 +111,9 @@ class Responder
      */
     public function getResponse(string $tplfile, array $data = []): string
     {
-        return $this->template->process($this::TPL_PATH . $tplfile, $data);
+        return $this->template->process(
+            $this->template->getTemplateFile($tplfile),
+            $data
+        );
     }
 }

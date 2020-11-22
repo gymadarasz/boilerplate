@@ -1,6 +1,6 @@
 <?php $this->restrict(); ?>
 <h1>Password reset</h1>
-<?php include 'messages.phtml' ?>
+<?php include $this->getTemplateFile('messages.phtml') ?>
 <form method="POST">
     <?=$csrf?>
     

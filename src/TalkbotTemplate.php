@@ -13,10 +13,10 @@
 
 namespace Madsoft\Talkbot;
 
-use Madsoft\Library\App;
+use Madsoft\Library\Template;
 
 /**
- * Talkbot
+ * TalkbotTemplate
  *
  * @category  PHP
  * @package   Madsoft\Talkbot
@@ -25,17 +25,7 @@ use Madsoft\Library\App;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Talkbot extends App
+class TalkbotTemplate extends Template
 {
-    const ROUTES = [
-        'protected' => [
-            'GET' => [
-                'my-scripts/list' => [MyScripts::class, 'viewList'],
-                'my-scripts/create' => [MyScripts::class, 'viewCreate'],
-            ],
-            'POST' => [
-                'my-scripts/create' => [MyScripts::class, 'doCreate'],
-            ],
-        ],
-    ];
+    const TPL_PATH_EXT = __DIR__ . '/tpls/';
 }

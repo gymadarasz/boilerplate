@@ -36,6 +36,16 @@ class Mysql
     
     protected mysqli $mysqli;
     protected bool $connected = false;
+    
+    /**
+     * Method getMysqli
+     *
+     * @return mysqli
+     */
+    public function getMysqli(): mysqli
+    {
+        return $this->mysqli;
+    }
 
     /**
      * Method connect
@@ -101,7 +111,7 @@ class Mysql
      *
      * @param string $query query
      *
-     * @return string[][]
+     * @return Row[]
      * @throws RuntimeException
      */
     public function select(string $query): array
@@ -111,7 +121,7 @@ class Mysql
         if ($result instanceof mysqli_result) {
             $rows = [];
             while ($row = $result->fetch_assoc()) {
-                $rows[] = $row;
+                $rows[] = (new Row())->setFields($row);
             }
             return $rows;
         }

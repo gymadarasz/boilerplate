@@ -27,6 +27,9 @@ use RuntimeException;
  */
 class Template
 {
+    const TPL_PATH = __DIR__ . '/tpls/';
+    const TPL_PATH_EXT = __DIR__ . '/tpls/';
+    
     //    public string $tplDir = __DIR__ . '/tpls/';
             
     const RESERVED_VARS = [
@@ -110,5 +113,28 @@ class Template
      */
     public function restrict(): void
     {
+    }
+    
+    /**
+     * Method getTemplateFile
+     *
+     * @param string $tplfile tplfile
+     *
+     * @return string
+     * @throws RuntimeException
+     */
+    public function getTemplateFile(string $tplfile): string
+    {
+        $fullpath = $this::TPL_PATH_EXT . $tplfile;
+        if (!file_exists($fullpath)) {
+            $fullpath = $this::TPL_PATH . $tplfile;
+        }
+        if (!file_exists($fullpath)) {
+            throw new RuntimeException(
+                'Template file not found: ' . $this::TPL_PATH_EXT . $tplfile .
+                ' nor: ' . $fullpath
+            );
+        }
+        return $fullpath;
     }
 }

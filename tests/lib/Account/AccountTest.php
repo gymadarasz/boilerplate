@@ -167,7 +167,7 @@ class AccountTest extends Test
         $this->canSeeActivationWorks();
         $this->canSeePublicIndex();
         
-        $this->canSeeActivationUserAlreayActiveFail();
+        $this->canSeeActivationUserAlreadyActiveFail();
         $this->canSeePublicIndex();
         
         $this->canSeeLoginWorks(self::PASSWORD_FIRST);
@@ -515,7 +515,7 @@ class AccountTest extends Test
      *
      * @return void
      */
-    protected function canSeeActivationUserAlreayActiveFail(): void
+    protected function canSeeActivationUserAlreadyActiveFail(): void
     {
         $user = $this->crud->get('user', ['token'], ['email' => self::EMAIL]);
         $contents = $this->get('q=activate&token=' . $user->get('token'));
@@ -525,18 +525,18 @@ class AccountTest extends Test
     /**
      * Method canSeeLoginWorks
      *
-     * @param string $password password
+     * @param string|null $password password
      *
      * @return void
      */
-    protected function canSeeLoginWorks(string $password = self::PASSWORD): void
+    protected function canSeeLoginWorks(?string $password = null): void
     {
         $contents = $this->post(
             'q=login',
             [
                 'csrf' => $this->session->get('csrf'),
-                'email' => self::EMAIL,
-                'password' => $password,
+                'email' => $this::EMAIL,
+                'password' => null === $password ? $this::PASSWORD : $password,
             ]
         );
         $this->assertStringContains('Login success', $contents);

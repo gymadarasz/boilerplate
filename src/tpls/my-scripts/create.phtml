@@ -1,0 +1,9 @@
+<?php $this->restrict(); ?>
+<h1>My Scripts / Create</h1>
+<?php include $this->getTemplateFile('messages.phtml') ?>
+
+<form method="POST" action="?q=my-scripts/create">
+    <?=$csrf?>
+    <input name="name" value="<?=$name?>" placeholder="Name">
+    <input type="submit" value="Create">
+</form>
