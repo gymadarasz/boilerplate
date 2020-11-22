@@ -16,7 +16,6 @@ namespace Madsoft\Talkbot;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mysql;
 use Madsoft\Library\Params;
-use Madsoft\Library\Row;
 use Madsoft\Library\Session;
 use Madsoft\Library\Validator\Checker;
 use Madsoft\Library\Validator\Rule\Mandatory;
@@ -77,25 +76,7 @@ class MyScripts
     {
         return $this->responder->getResponse(
             'my-scripts/list.phtml',
-            ['my_scripts' => $this->getMyScripts($this->session->get('uid'))]
-        );
-    }
-    
-    /**
-     * Method getMyScripts
-     *
-     * @param int $uid uid
-     *
-     * @return Row[]
-     */
-    protected function getMyScripts(int $uid): array
-    {
-        return $this->mysql->select(
-            "SELECT * FROM script "
-                . "JOIN ownership "
-                . "ON ownership.row_id = script.id "
-                . "AND ownership.table_name = 'script' "
-                . "AND user_id = $uid"
+            ['my_scripts' => $this->crud->get('script', ['name'], [], 0)]
         );
     }
     
@@ -156,9 +137,9 @@ class MyScripts
         $oid = $this->crud->add(
             'ownership',
             [
-            'table_name' => 'script',
-            'row_id' => (string)$sid,
-            'user_id' => (string)$uid,
+                'table_name' => 'script',
+                'row_id' => (string)$sid,
+                'user_id' => (string)$uid,
             ]
         );
         if (!$oid) {
@@ -170,10 +151,11 @@ class MyScripts
             return $this->responder->getErrorResponse('my-scripts/create.phtml');
         }
         
+        $myScripts = $this->crud->get('script', ['name'], [], 0);
         return $this->responder->getSuccesResponse(
             'my-scripts/list.phtml',
             'Script "' . $name . '" is created',
-            ['my_scripts' => $this->getMyScripts($this->session->get('uid'))]
+            ['my_scripts' => $myScripts]
         );
     }
 }

@@ -31,17 +31,20 @@ class Crud
     
     protected Safer $safer;
     protected Mysql $mysql;
-    
+    protected Session $session;
+
     /**
      * Method __construct
      *
-     * @param Safer $safer safer
-     * @param Mysql $mysql mysql
+     * @param Safer   $safer   safer
+     * @param Mysql   $mysql   mysql
+     * @param Session $session session
      */
-    public function __construct(Safer $safer, Mysql $mysql)
+    public function __construct(Safer $safer, Mysql $mysql, Session $session)
     {
         $this->safer = $safer;
         $this->mysql = $mysql;
+        $this->session = $session;
     }
     
     /**
@@ -50,24 +53,51 @@ class Crud
      * @param string   $tableUnsafe  tableUnsafe
      * @param string[] $fieldsUnsafe fieldsUnsafe
      * @param string[] $filterUnsafe filterUnsafe
+     * @param int      $limit        limit
+     * @param int      $offset       offset
+     * @param int      $uid          uid
      *
-     * @return Row
+     * @return mixed
      */
     public function get(
         string $tableUnsafe,
-        array $fieldsUnsafe = ['*'],
-        array $filterUnsafe = []
-    ): Row {
+        array $fieldsUnsafe,
+        array $filterUnsafe = [],
+        int $limit = 1,
+        int $offset = 0,
+        int $uid = 0
+    ) {
         $table = $this->mysql->escape($tableUnsafe);
+        $mysql = $this->mysql;
         $fields = implode(
-            '`, `',
-            $this->safer->freez([$this->mysql, 'escape'], $fieldsUnsafe)
+            ', ',
+            $this->safer->freez(
+                static function ($value) use ($mysql, $table) {
+                    return "`$table`.`" . $mysql->escape($value) . "`";
+                },
+                $fieldsUnsafe
+            )
         );
-        $query = "SELECT `$fields` FROM `$table`";
-        $query .= $this->getWhere($filterUnsafe, 'OR');
-        $query .= " LIMIT 1";
+        $query = "SELECT $fields FROM `$table`";
         
-        return $this->mysql->selectOne($query);
+        if ($uid > -1) {
+            if (!$uid) {
+                $uid = (int)$this->session->get('uid');
+            }
+            $query .= " JOIN `ownership` "
+                . "ON `ownership`.`row_id` = `$table`.`id` "
+                . "AND `ownership`.`table_name` = '$table' "
+                . "AND `ownership`.`user_id` = $uid";
+        }
+        
+        $query .= $this->getWhere($filterUnsafe, 'OR');
+        if ($limit >= 1) {
+            $query .= " LIMIT $offset, $limit";
+        }
+        if ($limit === 1) {
+            return $this->mysql->selectOne($query);
+        }
+        return $this->mysql->select($query);
     }
     
     /**

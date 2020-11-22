@@ -47,18 +47,24 @@ class TalkbotTest extends Test
         $this->invoker = $invoker;
         $this->session = $session;
     }
+    
     /**
      * Method testTalkbot
      *
      * @return void
      *
+     * @suppressWarnings(PHPMD.Superglobals)
+     *
      * @suppress PhanUnreferencedPublicMethod
      */
     public function testTalkbot(): void
     {
+        $this->pushGlobals();
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $talkbot = new Talkbot($this->invoker);
         $talkbot->getOutput([Account::ROUTES, Talkbot::ROUTES]);
         $this->assertTrue((bool)$talkbot);
+        $this->popGlobals();
     }
     
     /**
@@ -71,10 +77,17 @@ class TalkbotTest extends Test
     public function testMyScripts(): void
     {
         $this->session->set('uid', 1);
-        
         $this->canSeeCreate();
         $this->canSeeCreateWorks();
+        
+        $this->session->set('uid', 2);
+        $this->canSeeUser2Create();
+        $this->canSeeUser2CreateWorks();
+        $this->canSeeUser2ListWorks();
+        
+        $this->session->set('uid', 1);
         $this->canSeeListWorks();
+        
         
         $this->session->set('uid', 0);
     }
@@ -121,5 +134,51 @@ class TalkbotTest extends Test
         $result = $this->get('q=my-scripts/list');
         $this->assertStringContains('My Scripts', $result);
         $this->assertStringContains('testscript', $result);
+        $this->assertStringNotContains('test2script', $result);
+    }
+    
+    /**
+     * Method canSeeUser2Create
+     *
+     * @return void
+     */
+    protected function canSeeUser2Create(): void
+    {
+        $result = $this->get('q=my-scripts/create');
+        $this->assertStringContains('My Scripts / Create', $result);
+    }
+    
+    /**
+     * Method canSeeUser2CreateWorks
+     *
+     * @return void
+     */
+    protected function canSeeUser2CreateWorks(): void
+    {
+        $result = $this->post(
+            'q=my-scripts/create',
+            [
+                'csrf' => $this->session->get('csrf'),
+                'name' => 'test2script',
+            ]
+        );
+        
+        $this->assertStringContains(
+            htmlentities('Script "test2script" is created'),
+            $result
+        );
+    }
+    
+    /**
+     * Method canSeeUser2ListWorks
+     *
+     * @return void
+     */
+    protected function canSeeUser2ListWorks(): void
+    {
+        $result = $this->get('q=my-scripts/list');
+        $this->assertStringContains('My Scripts', $result);
+        $this->assertStringContains('test2script', $result);
+        $this->assertStringNotContains('testscript', $result);
     }
 }

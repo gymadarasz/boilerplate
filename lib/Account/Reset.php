@@ -76,7 +76,7 @@ class Reset extends Account
     {
         $token = $this->params->get('token', '');
         if ($token) {
-            $user = $this->crud->get('user', ['id'], ['token' => $token]);
+            $user = $this->crud->get('user', ['id'], ['token' => $token], 1, 0, -1);
             if (!$user->get('id')) {
                 return $this->responder->getErrorResponse(
                     'reset.phtml',
@@ -110,7 +110,7 @@ class Reset extends Account
         }
         
         $email = (string)$this->params->get('email');
-        $user = $this->crud->get('user', ['email'], ['email' => $email]);
+        $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
         if ($user->get('email') !== $email) {
             return $this->responder->getErrorResponse(
                 'reset.phtml',

@@ -354,4 +354,26 @@ abstract class Test
             $result
         );
     }
+    
+    /**
+     * Method assertStringNotContains
+     *
+     * @param string $expected expected
+     * @param string $result   result
+     * @param string $message  message
+     *
+     * @return void
+     */
+    public function assertStringNotContains(
+        string $expected,
+        string $result,
+        string $message = 'Assert string not contains failed.'
+    ): void {
+        $this->assertTrue(
+            false === strpos($result, $expected),
+            $message,
+            $expected,
+            $result
+        );
+    }
 }

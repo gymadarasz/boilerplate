@@ -95,7 +95,10 @@ class Login extends Account
         $user = $this->crud->get(
             'user',
             ['id', 'email', 'hash'],
-            ['email' => $email]
+            ['email' => $email],
+            1,
+            0,
+            -1
         );
         
         

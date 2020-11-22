@@ -91,8 +91,9 @@ class App
         $routes = $this->includeRoutes();
         if (!$routes) {
             $this->createRouteCache($routeExts);
+            $routes = $this->includeRoutes();
         }
-        return $this->includeRoutes();
+        return $routes;
     }
     
     /**

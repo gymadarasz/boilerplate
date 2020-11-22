@@ -72,7 +72,14 @@ class Activate extends Account
         
         $token = $this->params->get('token');
         
-        $user = $this->crud->get('user', ['id', 'active'], ['token' => $token]);
+        $user = $this->crud->get(
+            'user',
+            ['id', 'active'],
+            ['token' => $token],
+            1,
+            0,
+            -1
+        );
         if (!$user->get('id')) {
             return $this->responder->getErrorResponse(
                 'activated.phtml',

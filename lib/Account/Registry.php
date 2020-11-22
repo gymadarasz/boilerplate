@@ -108,7 +108,7 @@ class Registry extends Account
         $email = $this->params->get('email');
         $token = $tokengen->generate();
         
-        $user = $this->crud->get('user', ['email'], ['email' => $email]);
+        $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
         if ($user->get('email') === $email) {
             return $this->responder->getErrorResponse(
                 'registry.phtml',
