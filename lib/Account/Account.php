@@ -55,28 +55,4 @@ abstract class Account
             ],
         ],
     ];
-    
-    /**
-     * Method generateToken
-     *
-     * @return string
-     */
-    protected function generateToken(): string
-    {
-        return urlencode(
-            base64_encode($this->encrypt(md5((string)rand(1, 1000000))))
-        );
-    }
-    
-    /**
-     * Method encrypt
-     *
-     * @param string $password password
-     *
-     * @return string
-     */
-    protected function encrypt(string $password): string
-    {
-        return (string)password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-    }
 }

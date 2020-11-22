@@ -49,6 +49,8 @@ class Logout extends Account
      * Method doLogout
      *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function doLogout(): string
     {

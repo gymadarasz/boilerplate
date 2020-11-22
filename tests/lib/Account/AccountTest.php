@@ -16,14 +16,9 @@ namespace Madsoft\Library\Test\Account;
 use DiDom\Document;
 use DOMElement;
 use Madsoft\Library\Account\Account;
-use Madsoft\Library\Account\Login;
-use Madsoft\Library\Account\Logout;
-use Madsoft\Library\Account\Registry;
-use Madsoft\Library\Account\Reset;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Folders;
-use Madsoft\Library\Invoker;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Test;
@@ -128,43 +123,6 @@ class AccountTest extends Test
         $this->assertNotEquals(null, Account::ROUTES['public']['POST']['reset']);
         $this->assertNotEquals(null, Account::ROUTES['public']['POST']['change']);
         $this->assertNotEquals(null, Account::ROUTES['protected']['GET']['logout']);
-    }
-    
-    /**
-     * Method testMethods
-     *
-     * @return void
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     *
-     * @suppress PhanUnreferencedPublicMethod
-     */
-    public function testMethods(): void
-    {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        
-        $invoker = new Invoker();
-        $login = $invoker->getInstance(Login::class);
-        $result = $login->login();
-        $this->assertTrue((bool)$result);
-        $result = $login->doLogin();
-        $this->assertTrue((bool)$result);
-        
-        $logout = $invoker->getInstance(Logout::class);
-        $result = $logout->doLogout();
-        $this->assertTrue((bool)$result);
-        
-        $registry = $invoker->getInstance(Registry::class);
-        $result = $registry->registry();
-        $this->assertTrue((bool)$result);
-        $result = $registry->doResend();
-        $this->assertTrue((bool)$result);
-        
-        $reset = $invoker->getInstance(Reset::class);
-        $result = $reset->reset();
-        $this->assertTrue((bool)$result);
-        $result = $reset->doReset();
-        $this->assertTrue((bool)$result);
     }
 
     /**

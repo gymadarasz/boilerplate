@@ -68,6 +68,8 @@ class Login extends Account
      * Method login
      *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function login(): string
     {
@@ -78,6 +80,8 @@ class Login extends Account
      * Method doLogin
      *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function doLogin(): string
     {

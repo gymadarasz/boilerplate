@@ -18,6 +18,7 @@ use Madsoft\Library\Crud;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Params;
 use Madsoft\Library\Responder;
+use Madsoft\Library\Token;
 
 /**
  * Reset
@@ -68,6 +69,8 @@ class Reset extends Account
      * Method reset
      *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function reset(): string
     {
@@ -91,9 +94,11 @@ class Reset extends Account
     /**
      * Method doReset
      *
+     * @param Token $tokengen tokengen
+     *
      * @return string
      */
-    public function doReset(): string
+    public function doReset(Token $tokengen): string
     {
         $errors = $this->validator->validateReset($this->params);
         if ($errors) {
@@ -113,7 +118,7 @@ class Reset extends Account
             );
         }
         
-        $token = $this->generateToken();
+        $token = $tokengen->generate();
         if (!$this->crud->set('user', ['token' => $token], ['email' => $email])) {
             return $this->responder->getErrorResponse(
                 'reset.phtml',

@@ -18,6 +18,7 @@ use Madsoft\Library\Account\Validator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
@@ -27,6 +28,7 @@ use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
+use Madsoft\Library\Token;
 use RuntimeException;
 
 /**
@@ -105,7 +107,9 @@ class RegistryTest extends Test
             $mailer, // @phpstan-ignore-line
             $config // @phpstan-ignore-line
         );
-        $result = $registy->doRegistry();
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $result = $registy->doRegistry($token, $encrypter);
         $this->assertStringContains('User is not saved', $result);
     }
     
@@ -170,7 +174,9 @@ class RegistryTest extends Test
             $mailer, // @phpstan-ignore-line
             $config
         );
-        $result = $registy->doRegistry();
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $result = $registy->doRegistry($token, $encrypter);
         $this->assertStringContains('Activation email is not sent', $result);
     }
 }

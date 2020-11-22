@@ -15,10 +15,12 @@ namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Params;
 use Madsoft\Library\Responder;
 use Madsoft\Library\Session;
+use Madsoft\Library\Token;
 
 /**
  * Registry
@@ -73,6 +75,8 @@ class Registry extends Account
      * Method registry
      *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function registry(): string
     {
@@ -83,9 +87,14 @@ class Registry extends Account
     /**
      * Method doRegistry
      *
+     * @param Token     $tokengen  tokengen
+     * @param Encrypter $encrypter encrypter
+     *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
-    public function doRegistry(): string
+    public function doRegistry(Token $tokengen, Encrypter $encrypter): string
     {
         $errors = $this->validator->validateRegistry($this->params);
         if ($errors) {
@@ -97,7 +106,7 @@ class Registry extends Account
         }
         
         $email = $this->params->get('email');
-        $token = $this->generateToken();
+        $token = $tokengen->generate();
         
         $user = $this->crud->get('user', ['email'], ['email' => $email]);
         if ($user->get('email') === $email) {
@@ -112,7 +121,7 @@ class Registry extends Account
             'user',
             [
                 'email' => $email,
-                'hash' => $this->encrypt($this->params->get('password')),
+                'hash' => $encrypter->encrypt($this->params->get('password')),
                 'token' => $token,
                 'active' => '0',
             ]
@@ -145,6 +154,8 @@ class Registry extends Account
      * Method doResend
      *
      * @return string
+     *
+     * @suppress PhanUnreferencedPublicMethod
      */
     public function doResend(): string
     {

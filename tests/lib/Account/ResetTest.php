@@ -17,6 +17,7 @@ use Madsoft\Library\Account\Reset;
 use Madsoft\Library\Account\Validator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
@@ -25,6 +26,7 @@ use Madsoft\Library\Responder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
+use Madsoft\Library\Token;
 
 /**
  * ResetTest
@@ -39,6 +41,7 @@ use Madsoft\Library\Test;
  * @suppress PhanUnreferencedClass
  *
  * @SuppressWarnings(PHPMD.Superglobals)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ResetTest extends Test
 {
@@ -78,7 +81,9 @@ class ResetTest extends Test
             $mailer,
             $config
         );
-        $result = $reset->doReset();
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $result = $reset->doReset($token);
         $this->assertStringContains('Token is not updated', $result);
     }
     
@@ -119,7 +124,9 @@ class ResetTest extends Test
             $mailer, // @phpstan-ignore-line
             $config
         );
-        $result = $reset->doReset();
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $result = $reset->doReset($token);
         $this->assertStringContains('Email sending failed', $result);
     }
 }

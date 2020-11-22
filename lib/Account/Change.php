@@ -14,6 +14,7 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Params;
 use Madsoft\Library\Responder;
 
@@ -57,9 +58,11 @@ class Change extends Account
     /**
      * Method doChangePassword
      *
+     * @param Encrypter $encrypter encrypter
+     *
      * @return string
      */
-    public function doChangePassword(): string
+    public function doChangePassword(Encrypter $encrypter): string
     {
         $errors = $this->validator->validateChangePassword($this->params);
         if ($errors) {
@@ -76,7 +79,7 @@ class Change extends Account
         if (!$this->crud->set(
             'user',
             [
-                'hash' => $this->encrypt($this->params->get('password')),
+                'hash' => $encrypter->encrypt($this->params->get('password')),
                 'token' => '',
             ],
             [

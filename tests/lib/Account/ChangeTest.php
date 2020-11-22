@@ -17,6 +17,7 @@ use Madsoft\Library\Account\Change;
 use Madsoft\Library\Account\Validator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Params;
 use Madsoft\Library\Responder;
@@ -78,7 +79,8 @@ class ChangeTest extends Test
         
         // @phpstan-ignore-next-line
         $change = new Change($responder, $crud, $params, $validator);
-        $result = $change->doChangePassword();
+        $encrypter = new Encrypter();
+        $result = $change->doChangePassword($encrypter);
         $this->assertStringContains('Password is not saved', $result);
     }
 }
