@@ -33,13 +33,19 @@ class Template
     //    public string $tplDir = __DIR__ . '/tpls/';
             
     const RESERVED_VARS = [
+        'vars',
         'safer',
         'filename',
         'csrf',
         'csrfgen',
     ];
     
-    public string $csrf;
+    /**
+     * Variable $vars
+     *
+     * @var mixed[]
+     */
+    public array $vars;
     
     protected Safer $safer;
     protected Csrf $csrfgen;
@@ -55,6 +61,16 @@ class Template
         $this->safer = $safer;
         $this->csrfgen = $csrf;
     }
+    
+    /**
+     * Method getVars
+     *
+     * @return mixed[]
+     */
+    public function getVars(): array
+    {
+        return $this->vars;
+    }
    
     /**
      * Method process
@@ -67,6 +83,7 @@ class Template
      */
     public function process(string $filename, $data = []): string
     {
+        $this->vars = [];
         foreach ($this->safer->freez('htmlentities', $data) as $key => $value) {
             if (is_numeric($key)) {
                 throw new RuntimeException(
@@ -78,9 +95,9 @@ class Template
                     "Variable name is reserved: '$key'"
                 );
             }
-            $this->$key = $value;
+            $this->vars[$key] = $value;
         }
-        $this->csrf = $this->csrfgen->get();
+        $this->vars['csrf'] = $this->csrfgen->get();
         ob_start();
         $this->include($filename);
         $contents = (string)ob_get_contents();
@@ -100,7 +117,7 @@ class Template
      */
     protected function include(string $filename): void
     {
-        foreach ((array)$this as $key => $value) {
+        foreach ($this->vars as $key => $value) {
             $$key = $value;
         }
         include $filename;

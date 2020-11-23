@@ -30,6 +30,13 @@ class Tester extends Test
 {
     const TESTS_PATH = __DIR__ . '/../tests';
     
+    /**
+     * Variable $cleaners
+     *
+     * @var string[]
+     */
+    protected array $cleaners = [];
+    
     protected Folders $folders;
     protected Invoker $invoker;
     protected Coverage $coverage;
@@ -49,6 +56,35 @@ class Tester extends Test
         $this->folders = $folders;
         $this->invoker = $invoker;
         $this->coverage = $coverage;
+    }
+    
+    /**
+     * Method setCleaners
+     *
+     * @param string[] $cleaners cleaners
+     *
+     * @return self
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function setCleaners(array $cleaners): self
+    {
+        $this->cleaners = $cleaners;
+        return $this;
+    }
+    
+    /**
+     * Method cleanUp
+     *
+     * @return void
+     *
+     * @suppress PhanUnreferencedPublicMethod
+     */
+    public function cleanUp(): void
+    {
+        foreach ($this->cleaners as $cleaner) {
+            $this->invoker->getInstance($cleaner)->cleanUp();
+        }
     }
     
     /**

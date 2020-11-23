@@ -55,7 +55,7 @@ class App
             ->setRoutes($this->getRoutes($routeExts))
             ->setError([Error::class, 'error'])
             ->process();
-        $this->invoker->free();
+        //$this->invoker->free();
         return $output;
     }
     

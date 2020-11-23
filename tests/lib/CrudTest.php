@@ -45,7 +45,7 @@ class CrudTest extends Test
         $exc = null;
         $crud = $invoker->getInstance(CrudMock::class);
         try {
-            $crud->getWherePublic([], 'NOT VALID LOGIC');
+            $crud->getWherePublic('atable', [], 'NOT VALID LOGIC');
             $this->assertTrue(false);
         } catch (RuntimeException $exc) {
             $this->assertTrue(true);

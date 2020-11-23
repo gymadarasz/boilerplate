@@ -28,6 +28,10 @@ use RuntimeException;
 class Crud
 {
     const LOGICS = ['AND', 'OR'];
+    const NO_CONDITION_FILTERS = [
+        'AND' => '1=0',
+        'OR' => '1=1',
+    ];
     
     protected Safer $safer;
     protected Mysql $mysql;
@@ -90,7 +94,7 @@ class Crud
                 . "AND `ownership`.`user_id` = $uid";
         }
         
-        $query .= $this->getWhere($filterUnsafe, 'OR');
+        $query .= $this->getWhere($table, $filterUnsafe, 'OR');
         if ($limit >= 1) {
             $query .= " LIMIT $offset, $limit";
         }
@@ -103,28 +107,50 @@ class Crud
     /**
      * Method getWhere
      *
+     * @param string   $table        table
      * @param string[] $filterUnsafe filterUnsafe
      * @param string   $logic        logic
      *
      * @return string
      * @throws RuntimeException
      */
-    protected function getWhere(array $filterUnsafe, string $logic): string
-    {
+    protected function getWhere(
+        string $table,
+        array $filterUnsafe,
+        string $logic
+    ): string {
         $filter = $this->safer->freez([$this->mysql, 'escape'], $filterUnsafe);
         if (!in_array($logic, self::LOGICS, true)) {
             throw new RuntimeException("Invalid logic: '$logic'");
         }
         $query = '';
         if ($filter) {
-            $conds = [];
-            foreach ($filter as $key => $value) {
-                $conds[] = "`$key` = '$value'";
-            }
-            $where = implode(" $logic ", $conds);
-            $query .= " WHERE $where";
+            $query .= " WHERE " . $this->getConditions($table, $filter, $logic);
         }
         return $query;
+    }
+    
+    /**
+     * Method getConditions
+     *
+     * @param string   $table  table
+     * @param string[] $filter filter
+     * @param string   $logic  logic
+     *
+     * @return string
+     */
+    protected function getConditions(
+        string $table,
+        array $filter,
+        string $logic
+    ): string {
+        $conds = [];
+        foreach ($filter as $key => $value) {
+            $conds[] = "`$table`.`$key` = '$value'";
+        }
+        return $conds ?
+            implode(" $logic ", $conds) :
+            $this::NO_CONDITION_FILTERS[$logic];
     }
     
     /**
@@ -150,15 +176,21 @@ class Crud
      *
      * @param string   $tableUnsafe  tableUnsafe
      * @param string[] $filterUnsafe filterUnsafe
+     * @param int      $limit        limit
      *
      * @return int
      */
-    public function del(string $tableUnsafe, array $filterUnsafe): int
-    {
+    public function del(
+        string $tableUnsafe,
+        array $filterUnsafe,
+        int $limit = 1
+    ): int {
         $table = $this->mysql->escape($tableUnsafe);
         $query = "DELETE FROM `$table`";
-        $query .= $this->getWhere($filterUnsafe, 'AND');
-        $query .= " LIMIT 1";
+        $query .= $this->getWhere($table, $filterUnsafe, 'AND');
+        if ($limit) {
+            $query .= " LIMIT " . $limit;
+        }
         return $this->mysql->delete($query);
     }
     
@@ -183,7 +215,7 @@ class Crud
             $sets[] = "`$key` = '$value'";
         }
         $setstr = implode(', ', $sets);
-        $where = $this->getWhere($filterUnsafe, 'AND');
+        $where = $this->getWhere($table, $filterUnsafe, 'AND');
         $query = "UPDATE $table SET $setstr $where LIMIT 1";
         return $this->mysql->update($query);
     }

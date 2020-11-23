@@ -22,6 +22,7 @@ use Madsoft\Library\Folders;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Test;
+use Madsoft\Library\Test\LibraryTestCleaner;
 use RuntimeException;
 use SplFileInfo;
 
@@ -48,60 +49,29 @@ class AccountTest extends Test
     protected Folders $folders;
     protected Crud $crud;
     protected Config $config;
+    protected LibraryTestCleaner $cleaner;
     
     /**
      * Method __construct
      *
-     * @param Session $session session
-     * @param Folders $folders folders
-     * @param Crud    $crud    crud
-     * @param Config  $config  config
+     * @param Session            $session session
+     * @param Folders            $folders folders
+     * @param Crud               $crud    crud
+     * @param Config             $config  config
+     * @param LibraryTestCleaner $cleaner cleaner
      */
     public function __construct(
         Session $session,
         Folders $folders,
         Crud $crud,
-        Config $config
+        Config $config,
+        LibraryTestCleaner $cleaner
     ) {
         $this->session = $session;
         $this->folders = $folders;
         $this->crud = $crud;
         $this->config = $config;
-    }
-    
-    /**
-     * Method before
-     *
-     * @return void
-     *
-     * @suppress PhanUnreferencedPublicMethod
-     */
-    public function beforeAll(): void
-    {
-        $this->crud->del('user', ['email' => self::EMAIL]);
-        $this->deleteMails();
-    }
-    
-    /**
-     * Method deleteMails
-     *
-     * @return void
-     * @throws RuntimeException
-     */
-    protected function deleteMails(): void
-    {
-        $mails = $this->folders->getFilesRecursive(
-            $this->config->get(Mailer::CONFIG_SECION)->get('save_mail_path')
-        );
-        foreach ($mails as $mail) {
-            if (!$mail->isDir()) {
-                if (!unlink($mail->getPathname())) {
-                    throw new RuntimeException(
-                        'Unable to delete file: ' . $mail->getPathname()
-                    );
-                }
-            }
-        }
+        $this->cleaner = $cleaner;
     }
 
     /**
@@ -428,7 +398,7 @@ class AccountTest extends Test
      */
     protected function canSeeResendWorks(): void
     {
-        $this->deleteMails();
+        $this->cleaner->deleteMails();
         $contents = $this->get('q=resend');
         $this->assertStringContains('Activate your account', $contents);
         $this->assertStringContains('We re-sent an activation email', $contents);

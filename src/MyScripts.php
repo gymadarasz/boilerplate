@@ -120,16 +120,12 @@ class MyScripts
                 $errors
             );
         }
-        
-        $this->mysql->connect();
-        
-        if (!$this->mysql->getMysqli()->autocommit(false)) {
-            return $this->responder->getErrorResponse('create.phtml');
-        }
+
+        $this->mysql->transStart();
         
         $sid = $this->crud->add('script', ['name' => $this->params->get('name')]);
         if (!$sid) {
-            $this->mysql->getMysqli()->rollback();
+            $this->mysql->transRollback();
             return $this->responder->getErrorResponse('my-scripts/create.phtml');
         }
         
@@ -143,13 +139,11 @@ class MyScripts
             ]
         );
         if (!$oid) {
-            $this->mysql->getMysqli()->rollback();
+            $this->mysql->transRollback();
             return $this->responder->getErrorResponse('my-scripts/create.phtml');
         }
         
-        if (!$this->mysql->getMysqli()->commit()) {
-            return $this->responder->getErrorResponse('my-scripts/create.phtml');
-        }
+        $this->mysql->transCommit();
         
         $myScripts = $this->crud->get('script', ['name'], [], 0);
         return $this->responder->getSuccesResponse(

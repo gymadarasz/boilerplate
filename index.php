@@ -4,6 +4,7 @@ namespace Madsoft\Talkbot;
 
 use Madsoft\Library\Account\Account;
 use Madsoft\Library\Invoker;
+use Madsoft\Library\Template;
 
 include __DIR__ . '/vendor/autoload.php';
 

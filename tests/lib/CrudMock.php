@@ -30,13 +30,17 @@ class CrudMock extends Crud
     /**
      * Method getWherePublic
      *
+     * @param string   $table        table
      * @param string[] $filterUnsafe filterUnsafe
      * @param string   $logic        logic
      *
      * @return string
      */
-    public function getWherePublic(array $filterUnsafe, string $logic): string
-    {
-        return parent::getWhere($filterUnsafe, $logic);
+    public function getWherePublic(
+        string $table,
+        array $filterUnsafe,
+        string $logic
+    ): string {
+        return parent::getWhere($table, $filterUnsafe, $logic);
     }
 }

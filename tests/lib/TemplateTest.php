@@ -78,7 +78,7 @@ class TemplateTest extends Test
             ['data1' => 'foo']
         );
         $this->assertEquals('Hello Template foo!', $results);
-        $csrf = $template->csrf;
+        $csrf = $template->getVars()['csrf'];
         $this->assertTrue((bool)$csrf);
         
         $template = new Template(
@@ -90,8 +90,8 @@ class TemplateTest extends Test
             ['data1' => 'bazz']
         );
         $this->assertEquals('Hello Template bazz!', $results);
-        $this->assertNotEquals($csrf, $template->csrf);
-        $csrf = $template->csrf;
+        $this->assertNotEquals($csrf, $template->getVars()['csrf']);
+        $csrf = $template->getVars()['csrf'];
         $this->assertTrue((bool)$csrf);
         
         $template->restrict();

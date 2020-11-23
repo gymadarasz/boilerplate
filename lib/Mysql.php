@@ -36,24 +36,69 @@ class Mysql
     
     protected mysqli $mysqli;
     protected bool $connected = false;
+
+    /**
+     * Method transStart
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    public function transStart(): void
+    {
+        $this->connect();
+        if (!$this->mysqli->autocommit(false)) {
+            throw new RuntimeException('Mysql transaction start failed.');
+        }
+    }
     
     /**
-     * Method getMysqli
+     * Method transCommit
      *
-     * @return mysqli
+     * @return void
+     * @throws RuntimeException
      */
-    public function getMysqli(): mysqli
+    public function transCommit(): void
     {
-        return $this->mysqli;
+        if (!$this->mysqli->commit()) {
+            throw new RuntimeException('Mysql transaction commit failed.');
+        }
+        $this->transStop();
     }
-
+    
+    /**
+     * Method transRollback
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    public function transRollback(): void
+    {
+        if (!$this->mysqli->rollback()) {
+            throw new RuntimeException('Mysql transaction rollback failed.');
+        }
+        $this->transStop();
+    }
+    
+    /**
+     * Method transStop
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    protected function transStop(): void
+    {
+        if (!$this->mysqli->autocommit(true)) {
+            throw new RuntimeException('Mysql transaction stop failed.');
+        }
+    }
+    
     /**
      * Method connect
      *
      * @return void
      * @throws RuntimeException
      */
-    public function connect(): void
+    protected function connect(): void
     {
         if ($this->connected) {
             return;
@@ -138,7 +183,7 @@ class Mysql
      * @return bool
      * @throws RuntimeException
      */
-    public function query(string $query): bool
+    protected function query(string $query): bool
     {
         $this->connect();
         $ret = (bool)$this->mysqli->query($query);
