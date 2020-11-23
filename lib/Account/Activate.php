@@ -104,6 +104,8 @@ class Activate extends Account
             );
         }
         
+        $this->session->unset('resend');
+        
         return $this->responder->getSuccesResponse(
             'activated.phtml',
             'Account is now activated'

@@ -110,4 +110,17 @@ class Session implements Assoc
     {
         return isset($_SESSION[$key]);
     }
+    
+    /**
+     * Method unset
+     *
+     * @param string $key key
+     *
+     * @return self
+     */
+    public function unset(string $key): self
+    {
+        unset($_SESSION[$key]);
+        return $this;
+    }
 }
