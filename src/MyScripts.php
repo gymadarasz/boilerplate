@@ -28,9 +28,24 @@ use Madsoft\Library\Validator\Rule\Mandatory;
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
+ *
+ * @suppress PhanUnreferencedClass
+ * @suppress PhanUnreferencedPublicClassConstant
  */
 class MyScripts
 {
+    const ROUTES = [
+        'protected' => [
+            'GET' => [
+                'my-scripts/list' => [MyScripts::class, 'viewList'],
+                'my-scripts/create' => [MyScripts::class, 'viewCreate'],
+            ],
+            'POST' => [
+                'my-scripts/create' => [MyScripts::class, 'doCreate'],
+            ],
+        ],
+    ];
+    
     protected Mysql $mysql;
     protected Crud $crud;
     protected Params $params;
