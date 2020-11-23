@@ -124,7 +124,8 @@ class Registry extends Account
                 'hash' => $encrypter->encrypt($this->params->get('password')),
                 'token' => $token,
                 'active' => '0',
-            ]
+            ],
+            -1
         )
         ) {
             return $this->responder->getErrorResponse(

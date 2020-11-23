@@ -16,7 +16,6 @@ namespace Madsoft\Talkbot;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mysql;
 use Madsoft\Library\Params;
-use Madsoft\Library\Session;
 use Madsoft\Library\Validator\Checker;
 use Madsoft\Library\Validator\Rule\Mandatory;
 
@@ -36,7 +35,6 @@ class MyScripts
     protected Crud $crud;
     protected Params $params;
     protected Checker $checker;
-    protected Session $session;
     protected TalkbotResponder $responder;
     
     /**
@@ -46,7 +44,6 @@ class MyScripts
      * @param Crud             $crud      crud
      * @param Params           $params    params
      * @param Checker          $checker   checker
-     * @param Session          $session   session
      * @param TalkbotResponder $responder responder
      */
     public function __construct(
@@ -54,14 +51,12 @@ class MyScripts
         Crud $crud,
         Params $params,
         Checker $checker,
-        Session $session,
         TalkbotResponder $responder
     ) {
         $this->mysql = $mysql;
         $this->crud = $crud;
         $this->params = $params;
         $this->checker = $checker;
-        $this->session = $session;
         $this->responder = $responder;
     }
     
@@ -120,30 +115,12 @@ class MyScripts
                 $errors
             );
         }
-
-        $this->mysql->transStart();
         
         $sid = $this->crud->add('script', ['name' => $this->params->get('name')]);
         if (!$sid) {
             $this->mysql->transRollback();
             return $this->responder->getErrorResponse('my-scripts/create.phtml');
         }
-        
-        $uid = $this->session->get('uid');
-        $oid = $this->crud->add(
-            'ownership',
-            [
-                'table_name' => 'script',
-                'row_id' => (string)$sid,
-                'user_id' => (string)$uid,
-            ]
-        );
-        if (!$oid) {
-            $this->mysql->transRollback();
-            return $this->responder->getErrorResponse('my-scripts/create.phtml');
-        }
-        
-        $this->mysql->transCommit();
         
         $myScripts = $this->crud->get('script', ['name'], [], 0);
         return $this->responder->getSuccesResponse(

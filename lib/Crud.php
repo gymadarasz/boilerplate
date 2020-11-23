@@ -158,10 +158,52 @@ class Crud
      *
      * @param string   $tableUnsafe  tableUnsafe
      * @param string[] $valuesUnsafe valuesUnsafe
+     * @param int      $uid          uid
      *
      * @return int
      */
-    public function add(string $tableUnsafe, array $valuesUnsafe): int
+    public function add(string $tableUnsafe, array $valuesUnsafe, int $uid = 0): int
+    {
+        $this->mysql->transStart();
+        
+        $ret = $this->addInsert($tableUnsafe, $valuesUnsafe);
+        if (!$ret) {
+            $this->mysql->transRollback();
+            return 0;
+        }
+        
+        if ($uid > -1) {
+            if (!$uid) {
+                $uid = (int)$this->session->get('uid');
+            }
+            $oid = $this->addInsert(
+                'ownership',
+                [
+                    'table_name' => 'script',
+                    'row_id' => (string)$ret,
+                    'user_id' => (string)$uid,
+                ]
+            );
+            if (!$oid) {
+                $this->mysql->transRollback();
+                return 0;
+            }
+        }
+        
+        $this->mysql->transCommit();
+        
+        return $ret;
+    }
+    
+    /**
+     * Method addInsert
+     *
+     * @param string   $tableUnsafe  tableUnsafe
+     * @param string[] $valuesUnsafe valuesUnsafe
+     *
+     * @return int
+     */
+    protected function addInsert(string $tableUnsafe, array $valuesUnsafe): int
     {
         $table = $this->mysql->escape($tableUnsafe);
         $fields = $this->safer->freez([$this->mysql, 'escape'], $valuesUnsafe);
