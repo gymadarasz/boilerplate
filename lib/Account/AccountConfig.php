@@ -75,7 +75,11 @@ abstract class AccountConfig
             'GET' => [
                 '' => [Index::class, 'restricted'],
                 'index' => [Index::class, 'restricted'],
-                'logout' => [Logout::class, 'doLogout'],
+                'logout' => 
+                [
+                    AccountLogoutTemplateResponder::class, 
+                    'getLogoutResponse'
+                ],
             ],
         ],
     ];

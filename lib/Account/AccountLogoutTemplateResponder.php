@@ -13,11 +13,14 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Responder\TemplateResponder;
+use Madsoft\Library\Template;
 use Madsoft\Library\User;
 
 /**
- * Logout
+ * AccountLogoutTemplateResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -26,37 +29,38 @@ use Madsoft\Library\User;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Logout extends AccountConfig
+class AccountLogoutTemplateResponder extends TemplateResponder
 {
-    protected TemplateResponder $responder;
     protected User $user;
     
     /**
-     * Method __construct
-     *
-     * @param TemplateResponder $responder responder
-     * @param User              $user      user
+     * 
+     * @param Messages $messages
+     * @param Merger $merger
+     * @param User $user
      */
     public function __construct(
-        TemplateResponder $responder,
+            Messages $messages,
+            Merger $merger,
+            Template $template,
         User $user
     ) {
-        $this->responder = $responder;
+        parent::__construct($messages, $merger, $template);
         $this->user = $user;
     }
     
     /**
-     * Method doLogout
+     * Method getLogoutResponse
      *
      * @return string
      *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function doLogout(): string
+    public function getLogoutResponse(): string
     {
         $this->user->logout();
         
-        return $this->responder->setTplfile('login.phtml')->getSuccessResponse(
+        return $this->setTplfile('login.phtml')->getSuccessResponse(
             'Logout success'
         );
     }
