@@ -31,9 +31,17 @@ abstract class AccountConfig
     const ROUTES = [
         'public' => [
             'GET' => [
-                '' => [Login::class, 'login'],
+                '' =>
+                [
+                    AccountLoginTemplateResponder::class,
+                    'getLoginFormResponse'
+                ],
                 'index' => [Index::class, 'index'],
-                'login' => [Login::class, 'login'],
+                'login' =>
+                [
+                    AccountLoginTemplateResponder::class,
+                    'getLoginFormResponse'
+                ],
                 'registry' => [Registry::class, 'registry'],
                 'resend' => [Registry::class, 'doResend'],
                 'activate' =>
@@ -44,8 +52,16 @@ abstract class AccountConfig
                 'reset' => [Reset::class, 'reset'],
             ],
             'POST' => [
-                '' => [Login::class, 'doLogin'],
-                'login' => [Login::class, 'doLogin'],
+                '' =>
+                [
+                    AccountLoginTemplateResponder::class,
+                    'getLoginResponse'
+                ],
+                'login' =>
+                [
+                    AccountLoginTemplateResponder::class,
+                    'getLoginResponse'
+                ],
                 'registry' => [Registry::class, 'doRegistry'],
                 'reset' => [Reset::class, 'doReset'],
                 'change' =>

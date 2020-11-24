@@ -104,6 +104,7 @@ class ArrayResponder extends AbstractResponder
      */
     public function hasResponseMessageType(array $response, string $type): bool
     {
+        $this->messages->validateMessageType($type);
         return isset($response['messages']) && isset($response['messages'][$type]);
     }
 }

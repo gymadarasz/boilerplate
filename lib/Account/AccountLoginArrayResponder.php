@@ -15,12 +15,14 @@ namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
 use Madsoft\Library\Logger;
+use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
+use Madsoft\Library\Responder\ArrayResponder;
 use Madsoft\Library\User;
 
 /**
- * Login
+ * AccountLoginArrayResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -29,9 +31,8 @@ use Madsoft\Library\User;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Login extends AccountConfig
+class AccountLoginArrayResponder extends ArrayResponder
 {
-    protected TemplateResponder $responder;
     protected Crud $crud;
     protected Logger $logger;
     protected User $user;
@@ -41,49 +42,37 @@ class Login extends AccountConfig
     /**
      * Method __construct
      *
-     * @param TemplateResponder $responder responder
-     * @param Crud              $crud      crud
-     * @param Logger            $logger    logger
-     * @param User              $user      user
-     * @param Params            $params    params
-     * @param AccountValidator  $validator validator
+     * @param Messages         $messages  messages
+     * @param Merger           $merger    merger
+     * @param Crud             $crud      crud
+     * @param Logger           $logger    logger
+     * @param User             $user      user
+     * @param Params           $params    params
+     * @param AccountValidator $validator validator
      */
     public function __construct(
-        TemplateResponder $responder,
+        Messages $messages,
+        Merger $merger,
         Crud $crud,
         Logger $logger,
         User $user,
         Params $params,
         AccountValidator $validator
     ) {
-        $this->responder = $responder;
+        parent::__construct($messages, $merger);
         $this->crud = $crud;
         $this->logger = $logger;
         $this->user = $user;
         $this->params = $params;
         $this->validator = $validator;
     }
-    
+
     /**
-     * Method login
+     * Method getLoginResponse
      *
-     * @return string
-     *
-     * @suppress PhanUnreferencedPublicMethod
+     * @return mixed[]
      */
-    public function login(): string
-    {
-        return $this->responder->setTplfile('login.phtml')->getResponse();
-    }
-    
-    /**
-     * Method doLogin
-     *
-     * @return string
-     *
-     * @suppress PhanUnreferencedPublicMethod
-     */
-    public function doLogin(): string
+    public function getLoginResponse(): array
     {
         $email = $this->params->get('email', '');
         
@@ -106,28 +95,26 @@ class Login extends AccountConfig
             $user,
             $this->params->get('password', '')
         );
-        
-        
         if ($errors) {
             return $this->loginError($errors, $email);
         }
         
         $this->user->login((int)$user->get('id'));
         
-        return $this->responder->setTplfile('index.phtml')->getSuccessResponse(
+        return $this->getSuccessResponse(
             'Login success'
         );
     }
-    
+
     /**
      * Method loginError
      *
      * @param string[][]  $reasons reasons
      * @param string|null $email   email
      *
-     * @return string
+     * @return mixed[]
      */
-    protected function loginError(array $reasons, ?string $email = null): string
+    protected function loginError(array $reasons, ?string $email = null): array
     {
         $reasonstr = '';
         foreach ($reasons as $field => $errors) {
@@ -137,7 +124,7 @@ class Login extends AccountConfig
         $this->logger->error(
             "Login error, reason:$reasonstr" . ($email ? ", email: '$email'" : '')
         );
-        return $this->responder->setTplfile('login.phtml')->getErrorResponse(
+        return $this->getErrorResponse(
             'Login failed'
         );
     }

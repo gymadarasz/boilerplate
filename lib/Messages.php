@@ -46,9 +46,7 @@ class Messages
      */
     public function add(string $type, string $message): self
     {
-        if (!in_array($type, $this::MESSAGE_TYPES, true)) {
-            throw new RuntimeException("Illegal message type: '$type'");
-        }
+        $this->validateMessageType($type);
         if (!isset($this->messages[$type])) {
             $this->messages[$type] = [];
         }
@@ -56,6 +54,21 @@ class Messages
             $this->messages[$type][] = $message;
         }
         return $this;
+    }
+    
+    /**
+     * Method validateMessageType
+     *
+     * @param string $type type
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    public function validateMessageType(string $type): void
+    {
+        if (!in_array($type, $this::MESSAGE_TYPES, true)) {
+            throw new RuntimeException("Invalid message type: '$type'");
+        }
     }
 
     /**
