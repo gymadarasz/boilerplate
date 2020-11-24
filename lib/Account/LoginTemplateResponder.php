@@ -13,10 +13,11 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Params;
 use Madsoft\Library\Responder\TemplateResponder;
 
 /**
- * Login
+ * LoginTemplateResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -25,7 +26,7 @@ use Madsoft\Library\Responder\TemplateResponder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountLoginTemplateResponder extends TemplateResponder
+class LoginTemplateResponder extends TemplateResponder
 {
     /**
      * Method getLoginFormResponse
@@ -42,16 +43,18 @@ class AccountLoginTemplateResponder extends TemplateResponder
     /**
      * Method getLoginResponse
      *
-     * @param AccountLoginArrayResponder $arrayResponder arrayResponder
+     * @param LoginArrayResponder $arrayResponder arrayResponder
+     * @param Params              $params         params
      *
      * @return string
      *
      * @suppress PhanUnreferencedPublicMethod
      */
     public function getLoginResponse(
-        AccountLoginArrayResponder $arrayResponder
+        LoginArrayResponder $arrayResponder,
+        Params $params
     ): string {
-        $arrayResponse = $arrayResponder->getLoginResponse();
+        $arrayResponse = $arrayResponder->getLoginResponse($params);
         if ($arrayResponder->hasResponseMessageType($arrayResponse, 'error')) {
             return $this->setTplfile('login.phtml')->getResponse($arrayResponse);
         }

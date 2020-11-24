@@ -13,7 +13,8 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\Registry;
+use Madsoft\Library\Account\RegistryArrayResponder;
+use Madsoft\Library\Account\RegistryTemplateResponder;
 use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
@@ -23,7 +24,6 @@ use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
@@ -99,20 +99,25 @@ class RegistryTest extends Test
         
         $messages = new Messages();
         
-        $responder = new TemplateResponder($messages, $merger, $template);
-        
-        $registy = new Registry(
-            $responder,
-            $session,
+        $registy = new RegistryTemplateResponder(
+            $messages,
+            $merger,
+            $template
+        );
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $arrayResponder = new RegistryArrayResponder(
+            $messages,
+            $merger,
+            $template,
+            $token,
+            $encrypter,
             $crud, // @phpstan-ignore-line
-            $params,
             $validator, // @phpstan-ignore-line
             $mailer, // @phpstan-ignore-line
             $config // @phpstan-ignore-line
         );
-        $encrypter = new Encrypter();
-        $token = new Token($encrypter);
-        $result = $registy->doRegistry($token, $encrypter);
+        $result = $registy->getRegistryResponse($arrayResponder, $params, $session);
         $this->assertStringContains('User is not saved', $result);
     }
     
@@ -168,20 +173,25 @@ class RegistryTest extends Test
         
         $messages = new Messages();
         
-        $responder = new TemplateResponder($messages, $merger, $template);
-        
-        $registy = new Registry(
-            $responder,
-            $session,
-            $crud, // @phpstan-ignore-line
-            $params,
-            $validator, // @phpstan-ignore-line
-            $mailer, // @phpstan-ignore-line
-            $config
+        $registy = new RegistryTemplateResponder(
+            $messages,
+            $merger,
+            $template
         );
         $encrypter = new Encrypter();
         $token = new Token($encrypter);
-        $result = $registy->doRegistry($token, $encrypter);
+        $arrayResponder = new RegistryArrayResponder(
+            $messages,
+            $merger,
+            $template,
+            $token,
+            $encrypter,
+            $crud, // @phpstan-ignore-line
+            $validator, // @phpstan-ignore-line
+            $mailer, // @phpstan-ignore-line
+            $config // @phpstan-ignore-line
+        );
+        $result = $registy->getRegistryResponse($arrayResponder, $params, $session);
         $this->assertStringContains('Activation email is not sent', $result);
     }
 }

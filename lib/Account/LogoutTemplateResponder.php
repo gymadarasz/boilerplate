@@ -20,7 +20,7 @@ use Madsoft\Library\Template;
 use Madsoft\Library\User;
 
 /**
- * AccountLogoutTemplateResponder
+ * LogoutTemplateResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -29,20 +29,22 @@ use Madsoft\Library\User;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountLogoutTemplateResponder extends TemplateResponder
+class LogoutTemplateResponder extends TemplateResponder
 {
     protected User $user;
     
     /**
-     * 
-     * @param Messages $messages
-     * @param Merger $merger
-     * @param User $user
+     * Method __construct
+     *
+     * @param Messages $messages messages
+     * @param Merger   $merger   merger
+     * @param Template $template template
+     * @param User     $user     user
      */
     public function __construct(
-            Messages $messages,
-            Merger $merger,
-            Template $template,
+        Messages $messages,
+        Merger $merger,
+        Template $template,
         User $user
     ) {
         parent::__construct($messages, $merger, $template);

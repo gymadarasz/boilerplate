@@ -13,15 +13,18 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Assoc;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mailer;
-use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
+use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
+use Madsoft\Library\Responder\ArrayResponder;
+use Madsoft\Library\Template;
 use Madsoft\Library\Token;
 
 /**
- * Reset
+ * PasswordResetArrayResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -30,11 +33,11 @@ use Madsoft\Library\Token;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Reset extends AccountConfig
+class PasswordResetArrayResponder extends ArrayResponder
 {
-    protected TemplateResponder $responder;
+    protected Template $template;
+    protected Token $token;
     protected Crud $crud;
-    protected Params $params;
     protected AccountValidator $validator;
     protected Mailer $mailer;
     protected Config $config;
@@ -42,92 +45,96 @@ class Reset extends AccountConfig
     /**
      * Method __construct
      *
-     * @param TemplateResponder $responder responder
-     * @param Crud              $crud      crud
-     * @param Params            $params    params
-     * @param AccountValidator  $validator validator
-     * @param Mailer            $mailer    mailer
-     * @param Config            $config    config
+     * @param Messages         $messages  messages
+     * @param Merger           $merger    merger
+     * @param Template         $template  template
+     * @param Token            $token     token
+     * @param Crud             $crud      crud
+     * @param AccountValidator $validator validator
+     * @param Mailer           $mailer    mailer
+     * @param Config           $config    config
      */
     public function __construct(
-        TemplateResponder $responder,
+        Messages $messages,
+        Merger $merger,
+        Template $template,
+        Token $token,
         Crud $crud,
-        Params $params,
         AccountValidator $validator,
         Mailer $mailer,
         Config $config
     ) {
-        $this->responder = $responder;
+        parent::__construct($messages, $merger);
+        $this->template = $template;
+        $this->token = $token;
         $this->crud = $crud;
-        $this->params = $params;
         $this->validator = $validator;
         $this->mailer = $mailer;
         $this->config = $config;
     }
-    
     /**
-     * Method reset
+     * Method getPasswordResetFormResponse
      *
-     * @return string
+     * @param Assoc $params params
      *
-     * @suppress PhanUnreferencedPublicMethod
+     * @return mixed[]
      */
-    public function reset(): string
+    public function getPasswordResetFormResponse(Assoc $params): array
     {
-        $token = $this->params->get('token', '');
+        $token = $params->get('token', '');
         if ($token) {
             $user = $this->crud->get('user', ['id'], ['token' => $token], 1, 0, -1);
             if (!$user->get('id')) {
-                return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
+                return $this->getErrorResponse(
                     'Invalid token'
                 );
             }
-            return $this->responder->setTplfile('change.phtml')->getResponse(
+            return $this->getResponse(
                 ['token' => $token]
             );
         }
-        return $this->responder->setTplfile('reset.phtml')->getResponse();
+        return $this->getResponse();
     }
-    
+
     /**
-     * Method doReset
+     * Method getPasswordResetRequestResponse
      *
-     * @param Token $tokengen tokengen
+     * @param Assoc $params params
      *
-     * @return string
+     * @return mixed[]
      */
-    public function doReset(Token $tokengen): string
+    public function getPasswordResetRequestResponse(Assoc $params): array
     {
-        $errors = $this->validator->validateReset($this->params);
+        $errors = $this->validator->validateReset($params);
         if ($errors) {
-            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
-                'Reset password failed',
+            return $this->getErrorResponse(
+                'Reset password request failed',
                 $errors
             );
         }
         
-        $email = (string)$this->params->get('email');
+        $email = (string)$params->get('email');
         $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
         if ($user->get('email') !== $email) {
-            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Email address not found'
             );
         }
         
-        $token = $tokengen->generate();
+        $token = $this->token->generate();
         if (!$this->crud->set('user', ['token' => $token], ['email' => $email])) {
-            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Token is not updated'
             );
         }
         
         if (!$this->sendResetEmail($email, $token)) {
-            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Email sending failed'
             );
         }
         
-        return $this->responder->setTplfile('reset.phtml')->getSuccessResponse(
+        return $this->getSuccessResponse(
             'Password reset request email sent'
         );
     }
@@ -142,7 +149,8 @@ class Reset extends AccountConfig
      */
     protected function sendResetEmail(string $email, string $token): bool
     {
-        $message = $this->responder->setTplfile('emails/reset.phtml')->getResponse(
+        $message = $this->template->process(
+            'emails/reset.phtml',
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,

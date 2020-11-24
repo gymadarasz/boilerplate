@@ -13,7 +13,8 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\Reset;
+use Madsoft\Library\Account\PasswordResetArrayResponder;
+use Madsoft\Library\Account\PasswordResetTemplateResponder;
 use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
@@ -23,7 +24,6 @@ use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
@@ -74,18 +74,24 @@ class ResetTest extends Test
         $mailer = $invoker->getInstance(Mailer::class);
         $config = $invoker->getInstance(Config::class);
         $messages = new Messages();
-        $responder = new TemplateResponder($messages, $merger, $template);
-        $reset = new Reset(
-            $responder,
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $reset = new PasswordResetTemplateResponder(
+            $messages,
+            $merger,
+            $template,
+        );
+        $arrayResponder = new PasswordResetArrayResponder(
+            $messages,
+            $merger,
+            $template,
+            $token,
             $crud, // @phpstan-ignore-line
-            $params,
             $validator, // @phpstan-ignore-line
             $mailer,
             $config
         );
-        $encrypter = new Encrypter();
-        $token = new Token($encrypter);
-        $result = $reset->doReset($token);
+        $result = $reset->getPasswordResetRequestResponse($arrayResponder, $params);
         $this->assertStringContains('Token is not updated', $result);
     }
     
@@ -118,18 +124,24 @@ class ResetTest extends Test
         $mailer->shouldReceive('send')->andReturnFalse();
         $config = $invoker->getInstance(Config::class);
         $messages = new Messages();
-        $responder = new TemplateResponder($messages, $merger, $template);
-        $reset = new Reset(
-            $responder,
+        $encrypter = new Encrypter();
+        $token = new Token($encrypter);
+        $reset = new PasswordResetTemplateResponder(
+            $messages,
+            $merger,
+            $template,
+        );
+        $arrayResponder = new PasswordResetArrayResponder(
+            $messages,
+            $merger,
+            $template,
+            $token,
             $crud, // @phpstan-ignore-line
-            $params,
             $validator, // @phpstan-ignore-line
             $mailer, // @phpstan-ignore-line
             $config
         );
-        $encrypter = new Encrypter();
-        $token = new Token($encrypter);
-        $result = $reset->doReset($token);
+        $result = $reset->getPasswordResetRequestResponse($arrayResponder, $params);
         $this->assertStringContains('Email sending failed', $result);
     }
 }

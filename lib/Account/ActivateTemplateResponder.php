@@ -13,10 +13,12 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Params;
 use Madsoft\Library\Responder\TemplateResponder;
+use Madsoft\Library\Session;
 
 /**
- * AccountActivateTemplateResponder
+ * ActivateTemplateResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -25,20 +27,24 @@ use Madsoft\Library\Responder\TemplateResponder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountActivateTemplateResponder extends TemplateResponder
+class ActivateTemplateResponder extends TemplateResponder
 {
     /**
      * Method getActivateResponse
      *
-     * @param AccountActivateArrayResponder $arrayResponder activator
+     * @param ActivateArrayResponder $arrayResponder activator
+     * @param Params                 $params         params
+     * @param Session                $session        session
      *
      * @return string
      */
     public function getActivateResponse(
-        AccountActivateArrayResponder $arrayResponder
+        ActivateArrayResponder $arrayResponder,
+        Params $params,
+        Session $session
     ): string {
         return $this->setTplfile('activated.phtml')->getResponse(
-            $arrayResponder->getActivateResponse()
+            $arrayResponder->getActivateResponse($params, $session)
         );
     }
 }

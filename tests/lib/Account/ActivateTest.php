@@ -13,8 +13,8 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\AccountActivateTemplateResponder;
-use Madsoft\Library\Account\AccountActivateArrayResponder;
+use Madsoft\Library\Account\ActivateTemplateResponder;
+use Madsoft\Library\Account\ActivateArrayResponder;
 use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
@@ -94,22 +94,20 @@ class ActivateTest extends Test
         
         $messages = new Messages();
         
-        $arrayResponder = new AccountActivateArrayResponder(
+        $arrayResponder = new ActivateArrayResponder(
             $messages,
             $merger,
-            $session,
             $crud, // @phpstan-ignore-line
-            $params,
             // @phpstan-ignore-next-line
             $validator
         );
         
-        $activate = new AccountActivateTemplateResponder(
+        $activate = new ActivateTemplateResponder(
             $messages,
             $merger,
             $template
         );
-        $result = $activate->getActivateResponse($arrayResponder);
+        $result = $activate->getActivateResponse($arrayResponder, $params, $session);
         $this->assertStringContains('User activation failed', $result);
     }
 }

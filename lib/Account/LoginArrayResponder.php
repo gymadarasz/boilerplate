@@ -13,16 +13,16 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Assoc;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Logger;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
-use Madsoft\Library\Params;
 use Madsoft\Library\Responder\ArrayResponder;
 use Madsoft\Library\User;
 
 /**
- * AccountLoginArrayResponder
+ * LoginArrayResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -31,12 +31,11 @@ use Madsoft\Library\User;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountLoginArrayResponder extends ArrayResponder
+class LoginArrayResponder extends ArrayResponder
 {
     protected Crud $crud;
     protected Logger $logger;
     protected User $user;
-    protected Params $params;
     protected AccountValidator $validator;
     
     /**
@@ -47,7 +46,6 @@ class AccountLoginArrayResponder extends ArrayResponder
      * @param Crud             $crud      crud
      * @param Logger           $logger    logger
      * @param User             $user      user
-     * @param Params           $params    params
      * @param AccountValidator $validator validator
      */
     public function __construct(
@@ -56,27 +54,27 @@ class AccountLoginArrayResponder extends ArrayResponder
         Crud $crud,
         Logger $logger,
         User $user,
-        Params $params,
         AccountValidator $validator
     ) {
         parent::__construct($messages, $merger);
         $this->crud = $crud;
         $this->logger = $logger;
         $this->user = $user;
-        $this->params = $params;
         $this->validator = $validator;
     }
 
     /**
      * Method getLoginResponse
      *
+     * @param Assoc $params params
+     *
      * @return mixed[]
      */
-    public function getLoginResponse(): array
+    public function getLoginResponse(Assoc $params): array
     {
-        $email = $this->params->get('email', '');
+        $email = $params->get('email', '');
         
-        $errors = $this->validator->validateLogin($this->params);
+        $errors = $this->validator->validateLogin($params);
         if ($errors) {
             return $this->loginError($errors, $email);
         }
@@ -93,7 +91,7 @@ class AccountLoginArrayResponder extends ArrayResponder
         
         $errors = $this->validator->validateUser(
             $user,
-            $this->params->get('password', '')
+            $params->get('password', '')
         );
         if ($errors) {
             return $this->loginError($errors, $email);

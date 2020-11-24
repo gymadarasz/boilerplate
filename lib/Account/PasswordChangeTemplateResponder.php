@@ -13,10 +13,11 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Params;
 use Madsoft\Library\Responder\TemplateResponder;
 
 /**
- * Change
+ * PasswordChangeTemplateResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -25,19 +26,21 @@ use Madsoft\Library\Responder\TemplateResponder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountPasswordChangeTemplateResponse extends TemplateResponder
+class PasswordChangeTemplateResponder extends TemplateResponder
 {
     /**
-     * Method getChangePasswordResponse
+     * Method getPasswordChangeResponse
      *
-     * @param AccountPasswordChangeArrayResponder $arrayResponder passwordChanger
+     * @param PasswordChangeArrayResponder $arrayResponder passwordChanger
+     * @param Params                       $params         params
      *
      * @return string
      */
-    public function getChangePasswordResponse(
-        AccountPasswordChangeArrayResponder $arrayResponder
+    public function getPasswordChangeResponse(
+        PasswordChangeArrayResponder $arrayResponder,
+        Params $params
     ): string {
-        $responseArray = $arrayResponder->getChangePasswordResponse();
+        $responseArray = $arrayResponder->getPasswordChangeResponse($params);
         if ($arrayResponder->hasResponseMessageType($responseArray, 'error')) {
             return $this->setTplfile('change.phtml')->getResponse($responseArray);
         }

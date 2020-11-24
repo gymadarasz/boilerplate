@@ -13,15 +13,15 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Assoc;
 use Madsoft\Library\Crud;
-use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
-use Madsoft\Library\Params;
 use Madsoft\Library\Responder\ArrayResponder;
+use Madsoft\Library\Session;
 
 /**
- * AccountPasswordChangeArrayResponder
+ * ActivateArrayResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -30,12 +30,10 @@ use Madsoft\Library\Responder\ArrayResponder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountPasswordChangeArrayResponder extends ArrayResponder
+class ActivateArrayResponder extends ArrayResponder
 {
     protected Crud $crud;
-    protected Params $params;
     protected AccountValidator $validator;
-    protected Encrypter $encrypter;
     
     /**
      * Method __construct
@@ -43,65 +41,69 @@ class AccountPasswordChangeArrayResponder extends ArrayResponder
      * @param Messages         $messages  messages
      * @param Merger           $merger    merger
      * @param Crud             $crud      crud
-     * @param Params           $params    params
      * @param AccountValidator $validator validator
-     * @param Encrypter        $encrypter encrypter
      */
     public function __construct(
         Messages $messages,
         Merger $merger,
         Crud $crud,
-        Params $params,
-        AccountValidator $validator,
-        Encrypter $encrypter
+        AccountValidator $validator
     ) {
         parent::__construct($messages, $merger);
         $this->crud = $crud;
-        $this->params = $params;
         $this->validator = $validator;
-        $this->encrypter = $encrypter;
     }
     
     /**
-     * Method getChangePasswordResponse
+     * Method getActivateResponse
+     *
+     * @param Assoc   $params  params
+     * @param Session $session session
      *
      * @return mixed[]
      */
-    public function getChangePasswordResponse(): array
+    public function getActivateResponse(Assoc $params, Session $session): array
     {
-        $errors = $this->validator->validateChangePassword($this->params);
+        $errors = $this->validator->validateActivate($params);
         if ($errors) {
             return $this->getErrorResponse(
-                'Password change failed',
-                $errors,
-                [
-                    'token' => $this->params->get('token')
-                ]
+                'Account activation failed',
+                $errors
             );
         }
         
-        if (!$this->crud->set(
+        $token = $params->get('token');
+        
+        $user = $this->crud->get(
             'user',
-            [
-                'hash' => $this->encrypter->encrypt($this->params->get('password')),
-                'token' => '',
-            ],
-            [
-                'token' => $this->params->get('token'),
-            ]
-        )
-        ) {
+            ['id', 'active'],
+            ['token' => $token],
+            1,
+            0,
+            -1
+        );
+        if (!$user->get('id')) {
             return $this->getErrorResponse(
-                'Password is not saved',
-                [],
-                [
-                    'token' => $this->params->get('token')
-                ]
+                'Invalid token'
             );
         }
+        
+        if ($user->get('active')) {
+            return $this->getErrorResponse(
+                'User is active already'
+            );
+        }
+        
+        if (!$this->crud->set('user', ['active' => '1'], ['token' => $token])) {
+            return $this->getErrorResponse(
+                'User activation failed'
+            );
+        }
+        
+        $session->unset('resend');
         
         return $this->getSuccessResponse(
-            'Password is changed'
+            'Account is now activated'
         );
     }
 }

@@ -13,17 +13,20 @@
 
 namespace Madsoft\Library\Account;
 
+use Madsoft\Library\Assoc;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Encrypter;
 use Madsoft\Library\Mailer;
-use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
+use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
+use Madsoft\Library\Responder\ArrayResponder;
 use Madsoft\Library\Session;
+use Madsoft\Library\Template;
 use Madsoft\Library\Token;
 
 /**
- * Registry
+ * RegistryArrayResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -32,12 +35,12 @@ use Madsoft\Library\Token;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Registry extends AccountConfig
+class RegistryArrayResponder extends ArrayResponder
 {
-    protected TemplateResponder $responder;
-    protected Session $session;
+    protected Template $template;
+    protected Token $token;
+    protected Encrypter $encrypter;
     protected Crud $crud;
-    protected Params $params;
     protected AccountValidator $validator;
     protected Mailer $mailer;
     protected Config $config;
@@ -45,71 +48,61 @@ class Registry extends AccountConfig
     /**
      * Method __construct
      *
-     * @param TemplateResponder $responder responder
-     * @param Session           $session   session
-     * @param Crud              $crud      crud
-     * @param Params            $params    params
-     * @param AccountValidator  $validator validator
-     * @param Mailer            $mailer    mailer
-     * @param Config            $config    config
+     * @param Messages         $messages  messages
+     * @param Merger           $merger    merger
+     * @param Template         $template  template
+     * @param Token            $token     token
+     * @param Encrypter        $encrypter encrypter
+     * @param Crud             $crud      crud
+     * @param AccountValidator $validator validator
+     * @param Mailer           $mailer    mailer
+     * @param Config           $config    config
      */
     public function __construct(
-        TemplateResponder $responder,
-        Session $session,
+        Messages $messages,
+        Merger $merger,
+        Template $template,
+        Token $token,
+        Encrypter $encrypter,
         Crud $crud,
-        Params $params,
         AccountValidator $validator,
         Mailer $mailer,
         Config $config
     ) {
-        $this->responder = $responder;
-        $this->session = $session;
+        parent::__construct($messages, $merger);
+        $this->template = $template;
+        $this->token = $token;
+        $this->encrypter = $encrypter;
         $this->crud = $crud;
-        $this->params = $params;
         $this->validator = $validator;
         $this->mailer = $mailer;
         $this->config = $config;
     }
-    
+
     /**
-     * Method registry
+     * Method getRegistryResponse
      *
-     * @return string
+     * @param Assoc   $params  params
+     * @param Session $session session
      *
-     * @suppress PhanUnreferencedPublicMethod
+     * @return mixed[]
      */
-    public function registry(): string
+    public function getRegistryResponse(Assoc $params, Session $session): array
     {
-        return $this->responder->setTplfile('registry.phtml')->getResponse();
-    }
-    
-    
-    /**
-     * Method doRegistry
-     *
-     * @param Token     $tokengen  tokengen
-     * @param Encrypter $encrypter encrypter
-     *
-     * @return string
-     *
-     * @suppress PhanUnreferencedPublicMethod
-     */
-    public function doRegistry(Token $tokengen, Encrypter $encrypter): string
-    {
-        $errors = $this->validator->validateRegistry($this->params);
+        $errors = $this->validator->validateRegistry($params);
         if ($errors) {
-            return $this->responder->setTplfile('registry.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Invalid registration data',
                 $errors
             );
         }
         
-        $email = $this->params->get('email');
-        $token = $tokengen->generate();
+        $email = $params->get('email');
+        $token = $this->token->generate();
         
         $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
         if ($user->get('email') === $email) {
-            return $this->responder->setTplfile('registry.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Email address already registered',
                 $errors
             );
@@ -119,52 +112,51 @@ class Registry extends AccountConfig
             'user',
             [
                 'email' => $email,
-                'hash' => $encrypter->encrypt($this->params->get('password')),
+                'hash' => $this->encrypter->encrypt($params->get('password')),
                 'token' => $token,
                 'active' => '0',
             ],
             -1
         )
         ) {
-            return $this->responder->setTplfile('registry.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'User is not saved'
             );
         }
-        $this->session->set('resend', ['email' => $email, 'token' => $token]);
+        $session->set('resend', ['email' => $email, 'token' => $token]);
         
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->responder->setTplfile('activate.phtml')->getErrorResponse(
+            return $this->getWarningResponse(
                 'Activation email is not sent',
-                [],
                 $user->getFields()
             );
         }
         
-        return $this->responder->setTplfile('activate.phtml')->getSuccessResponse(
+        return $this->getSuccessResponse(
             'We sent an activation email to your email account, '
                 . 'please follow the instructions.'
         );
     }
-    
+
     /**
-     * Method doResend
+     * Method getResendResponse
      *
-     * @return string
+     * @param Session $session session
      *
-     * @suppress PhanUnreferencedPublicMethod
+     * @return mixed[]
      */
-    public function doResend(): string
+    public function getResendResponse(Session $session): array
     {
-        $resend = $this->session->get('resend');
+        $resend = $session->get('resend');
         $email = $resend['email'];
         $token = $resend['token'];
         if (!$this->sendActivationEmail($email, $token)) {
-            return $this->responder->setTplfile('activate.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Activation email is not sent'
             );
         }
         
-        return $this->responder->setTplfile('activate.phtml')->getSuccessResponse(
+        return $this->getSuccessResponse(
             'We re-sent an activation email to your email account, '
                 . 'please follow the instructions.'
         );
@@ -180,9 +172,8 @@ class Registry extends AccountConfig
      */
     protected function sendActivationEmail(string $email, string $token): bool
     {
-        $message = $this->responder->setTplfile(
-            'emails/activation.phtml'
-        )->getResponse(
+        $message = $this->template->process(
+            'emails/activation.phtml',
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,

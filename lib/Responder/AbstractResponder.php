@@ -28,6 +28,10 @@ use Madsoft\Library\Messages;
  */
 abstract class AbstractResponder
 {
+    const LBL_SUCCESS = 'Operation success';
+    const LBL_ERROR = 'Operation failed';
+    const LBL_WARNING = 'Operation success but some errors occurred';
+    
     protected Messages $messages;
     protected Merger $merger;
 

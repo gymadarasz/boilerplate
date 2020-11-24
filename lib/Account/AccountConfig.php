@@ -33,41 +33,61 @@ abstract class AccountConfig
             'GET' => [
                 '' =>
                 [
-                    AccountLoginTemplateResponder::class,
+                    LoginTemplateResponder::class,
                     'getLoginFormResponse'
                 ],
                 'index' => [Index::class, 'index'],
                 'login' =>
                 [
-                    AccountLoginTemplateResponder::class,
+                    LoginTemplateResponder::class,
                     'getLoginFormResponse'
                 ],
-                'registry' => [Registry::class, 'registry'],
-                'resend' => [Registry::class, 'doResend'],
+                'registry' =>
+                [
+                    RegistryTemplateResponder::class,
+                    'getRegistryFormResponse'
+                ],
+                'resend' =>
+                [
+                    RegistryTemplateResponder::class,
+                    'getResendResponse'
+                ],
                 'activate' =>
                 [
-                    AccountActivateTemplateResponder::class,
+                    ActivateTemplateResponder::class,
                     'getActivateResponse'
                 ],
-                'reset' => [Reset::class, 'reset'],
+                'reset' =>
+                [
+                    PasswordResetTemplateResponder::class,
+                    'getPasswordResetFormResponse'
+                ],
             ],
             'POST' => [
                 '' =>
                 [
-                    AccountLoginTemplateResponder::class,
+                    LoginTemplateResponder::class,
                     'getLoginResponse'
                 ],
                 'login' =>
                 [
-                    AccountLoginTemplateResponder::class,
+                    LoginTemplateResponder::class,
                     'getLoginResponse'
                 ],
-                'registry' => [Registry::class, 'doRegistry'],
-                'reset' => [Reset::class, 'doReset'],
+                'registry' =>
+                [
+                    RegistryTemplateResponder::class,
+                    'getRegistryResponse'
+                ],
+                'reset' =>
+                [
+                    PasswordResetTemplateResponder::class,
+                    'getPasswordResetRequestResponse'
+                ],
                 'change' =>
                 [
-                    AccountPasswordChangeTemplateResponse::class,
-                    'getChangePasswordResponse'
+                    PasswordChangeTemplateResponder::class,
+                    'getPasswordChangeResponse'
                 ],
             ],
         ],
@@ -75,9 +95,9 @@ abstract class AccountConfig
             'GET' => [
                 '' => [Index::class, 'restricted'],
                 'index' => [Index::class, 'restricted'],
-                'logout' => 
+                'logout' =>
                 [
-                    AccountLogoutTemplateResponder::class, 
+                    LogoutTemplateResponder::class,
                     'getLogoutResponse'
                 ],
             ],

@@ -37,7 +37,7 @@ class ArrayResponder extends AbstractResponder
      * @return mixed[]
      */
     public function getErrorResponse(
-        string $error = 'Operation failed',
+        string $error = AbstractResponder::LBL_ERROR,
         array $errors = [],
         array $data = []
     ): array {
@@ -45,6 +45,21 @@ class ArrayResponder extends AbstractResponder
         return $this->getResponse($data, $errors);
     }
     
+    /**
+     * Method getWarningResponse
+     *
+     * @param string  $message message
+     * @param mixed[] $data    data
+     *
+     * @return mixed[]
+     */
+    public function getWarningResponse(
+        string $message = AbstractResponder::LBL_WARNING,
+        array $data = []
+    ): array {
+        $this->messages->add('success', $message);
+        return $this->getResponse($data);
+    }
     
     /**
      * Method getSuccessResponse
@@ -55,7 +70,7 @@ class ArrayResponder extends AbstractResponder
      * @return mixed[]
      */
     public function getSuccessResponse(
-        string $message = 'Operation success',
+        string $message = AbstractResponder::LBL_SUCCESS,
         array $data = []
     ): array {
         $this->messages->add('success', $message);
@@ -106,5 +121,18 @@ class ArrayResponder extends AbstractResponder
     {
         $this->messages->validateMessageType($type);
         return isset($response['messages']) && isset($response['messages'][$type]);
+    }
+    
+    /**
+     * Method hasResponseKey
+     *
+     * @param mixed[] $response response
+     * @param string  $key      key
+     *
+     * @return bool
+     */
+    public function hasResponseKey(array $response, string $key): bool
+    {
+        return isset($response[$key]);
     }
 }

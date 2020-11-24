@@ -600,7 +600,7 @@ class AccountTest extends Test
             //                'email' => 'nonexist@useremail.com',
             ]
         );
-        $this->assertStringContains('Reset password failed', $contents);
+        $this->assertStringContains('Reset password request failed', $contents);
         
         $contents = $this->post(
             'q=reset',

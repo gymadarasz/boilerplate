@@ -37,7 +37,7 @@ abstract class StringResponder extends AbstractResponder
      * @return string
      */
     public function getErrorResponse(
-        string $error = 'Operation failed',
+        string $error = AbstractResponder::LBL_ERROR,
         array $errors = [],
         array $data = []
     ): string {
@@ -45,6 +45,21 @@ abstract class StringResponder extends AbstractResponder
         return $this->getResponse($data, $errors);
     }
     
+    //    /**
+    //     * Method getWarningResponse
+    //     *
+    //     * @param string  $message message
+    //     * @param mixed[] $data    data
+    //     *
+    //     * @return string
+    //     */
+    //    public function getWarningResponse(
+    //        string $message = AbstractResponder::LBL_WARNING,
+    //        array $data = []
+    //    ): string {
+    //        $this->messages->add('warning', $message);
+    //        return $this->getResponse($data);
+    //    }
     
     /**
      * Method getSuccessResponse
@@ -55,7 +70,7 @@ abstract class StringResponder extends AbstractResponder
      * @return string
      */
     public function getSuccessResponse(
-        string $message = 'Operation success',
+        string $message = AbstractResponder::LBL_SUCCESS,
         array $data = []
     ): string {
         $this->messages->add('success', $message);
