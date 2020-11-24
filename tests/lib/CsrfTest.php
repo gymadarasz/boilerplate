@@ -15,7 +15,7 @@ namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Session;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use RuntimeException;
 
 /**

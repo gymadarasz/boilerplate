@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Json;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * JsonTest

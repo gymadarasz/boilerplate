@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Mysql;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use function count;
 
 /**

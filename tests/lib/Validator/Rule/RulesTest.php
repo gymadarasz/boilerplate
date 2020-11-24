@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library\Test\Validator\Rule;
 
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use Madsoft\Library\Test\Validator\Rule\MatchMock;
 use Madsoft\Library\Test\Validator\Rule\MinLengthMock;
 use Madsoft\Library\Test\Validator\Rule\PasswordMock;

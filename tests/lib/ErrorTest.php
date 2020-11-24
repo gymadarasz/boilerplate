@@ -16,7 +16,7 @@ namespace Madsoft\Library\Test;
 use Madsoft\Library\Error;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Logger;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use function count;
 
 /**

@@ -13,9 +13,9 @@
 
 namespace Madsoft\Library\Test;
 
-use Madsoft\Library\Index;
 use Madsoft\Library\Invoker;
-use Madsoft\Library\Test;
+use Madsoft\Library\Responder\Example\Example;
+use Madsoft\Library\Tester\Test;
 
 /**
  * IndexTest
@@ -38,7 +38,7 @@ class IndexTest extends Test
      */
     public function testIndex(): void
     {
-        $response = $this->get('q=index');
+        $response = $this->get('q=example');
         $this->assertStringContains('Index', $response);
     }
     
@@ -52,8 +52,8 @@ class IndexTest extends Test
     public function testMethods(): void
     {
         $invoker = new Invoker();
-        $index = $invoker->getInstance(Index::class);
-        $result = $index->index();
+        $index = $invoker->getInstance(Example::class);
+        $result = $index->getPublic();
         $this->assertTrue((bool)$result);
     }
 }

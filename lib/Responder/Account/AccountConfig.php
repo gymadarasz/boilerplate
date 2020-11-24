@@ -13,7 +13,6 @@
 
 namespace Madsoft\Library\Responder\Account;
 
-use Madsoft\Library\Index;
 use Madsoft\Library\Responder\Account\Template\ActivateTemplateResponder;
 use Madsoft\Library\Responder\Account\Template\LoginTemplateResponder;
 use Madsoft\Library\Responder\Account\Template\LogoutTemplateResponder;
@@ -33,7 +32,6 @@ use Madsoft\Library\Responder\Account\Template\RegistryTemplateResponder;
  */
 abstract class AccountConfig
 {
-    const LOGIN_DELAY = 0; // TODO: set to 3;
     const ROUTES = [
         'public' => [
             'GET' => [
@@ -42,7 +40,6 @@ abstract class AccountConfig
                     LoginTemplateResponder::class,
                     'getLoginFormResponse'
                 ],
-                'index' => [Index::class, 'index'],
                 'login' =>
                 [
                     LoginTemplateResponder::class,
@@ -99,8 +96,6 @@ abstract class AccountConfig
         ],
         'protected' => [
             'GET' => [
-                '' => [Index::class, 'restricted'],
-                'index' => [Index::class, 'restricted'],
                 'logout' =>
                 [
                     LogoutTemplateResponder::class,

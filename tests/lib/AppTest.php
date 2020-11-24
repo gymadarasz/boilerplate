@@ -16,7 +16,7 @@ namespace Madsoft\Library\Test;
 use Madsoft\Library\App;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Responder\Account\AccountConfig;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * AppTest

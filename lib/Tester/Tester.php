@@ -4,23 +4,27 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Tester
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library;
+namespace Madsoft\Library\Tester;
 
 use Exception;
+use Madsoft\Library\Coverage\Coverage;
+use Madsoft\Library\Folders;
+use Madsoft\Library\Invoker;
+use Madsoft\Library\Logger;
 use RuntimeException;
 
 /**
  * Tester
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Tester
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -28,7 +32,7 @@ use RuntimeException;
  */
 class Tester extends Test
 {
-    const TESTS_PATH = __DIR__ . '/../tests';
+    const TESTS_PATH = __DIR__ . '/../../tests';
     
     /**
      * Variable $cleaners
@@ -241,7 +245,7 @@ class Tester extends Test
      * @suppress PhanUnreferencedPublicMethod
      */
     public function stat(
-        string $coverageOutput = __DIR__ . '/../coverage/coverage.html',
+        string $coverageOutput = __DIR__ . '/../../coverage/coverage.html',
         float $coverageThreshold = 100.0
     ): bool {
         $coverageData = [];

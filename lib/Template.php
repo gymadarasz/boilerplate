@@ -27,10 +27,8 @@ use RuntimeException;
  */
 class Template
 {
-    const TPL_PATH = __DIR__ . '/tpls/';
-    const TPL_PATH_EXT = __DIR__ . '/tpls/';
-    
-    //    public string $tplDir = __DIR__ . '/tpls/';
+    const TPL_PATH = __DIR__ . '/phtml/';
+    const TPL_PATH_EXT = __DIR__ . '/phtml/';
             
     const RESERVED_VARS = [
         'vars',

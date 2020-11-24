@@ -4,14 +4,14 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Tester
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library;
+namespace Madsoft\Library\Tester;
 
 use Exception;
 use Mockery;
@@ -23,7 +23,7 @@ use RuntimeException;
  * Test
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Tester
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -128,7 +128,7 @@ abstract class Test
     protected function getContents(): string
     {
         ob_start();
-        include __DIR__ . '/../index.php';
+        include __DIR__ . '/../../index.php';
         $contents = ob_get_contents();
         ob_end_clean();
         if (false === $contents) {

@@ -27,5 +27,5 @@ use Madsoft\Library\Template;
  */
 class TalkbotTemplate extends Template
 {
-    const TPL_PATH_EXT = __DIR__ . '/tpls/';
+    const TPL_PATH_EXT = __DIR__ . '/phtml/';
 }

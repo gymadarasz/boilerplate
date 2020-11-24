@@ -4,14 +4,14 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Coverage
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library;
+namespace Madsoft\Library\Coverage;
 
 use Madsoft\Library\Template;
 use RuntimeException;
@@ -20,7 +20,7 @@ use RuntimeException;
  * Coverage
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Coverage
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -224,8 +224,9 @@ class Coverage
     {
         $coverageInfo = $this->getCoverageInfo($coverageData);
         return $this->template->process(
-            'coverage/coverage.phtml',
-            $coverageInfo
+            'coverage.phtml',
+            $coverageInfo,
+            __DIR__ . '/phtml/'
         );
     }
 }

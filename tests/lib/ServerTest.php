@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Server;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * ServerTest

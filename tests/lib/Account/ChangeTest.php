@@ -25,7 +25,7 @@ use Madsoft\Library\Responder\Account\Template\PasswordChangeTemplateResponder;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * ChangeTest

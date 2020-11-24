@@ -21,8 +21,8 @@ use Madsoft\Library\Folders;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Responder\Account\AccountConfig;
 use Madsoft\Library\Session;
-use Madsoft\Library\Test;
 use Madsoft\Library\Test\LibraryTestCleaner;
+use Madsoft\Library\Tester\Test;
 use RuntimeException;
 use SplFileInfo;
 
@@ -208,7 +208,7 @@ class AccountTest extends Test
      */
     protected function canSeePublicIndex(): void
     {
-        $contents = $this->get('q=index');
+        $contents = $this->get('q=example');
         $this->assertStringContains('Public Index Page', $contents);
     }
     
@@ -219,7 +219,7 @@ class AccountTest extends Test
      */
     protected function canSeeProtectedIndex(): void
     {
-        $contents = $this->get('q=index');
+        $contents = $this->get('q=example');
         $this->assertStringContains('Restricted Index Page', $contents);
     }
         

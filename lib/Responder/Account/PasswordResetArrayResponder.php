@@ -35,6 +35,8 @@ use Madsoft\Library\Token;
  */
 class PasswordResetArrayResponder extends ArrayResponder
 {
+    const EMAIL_TPL_PATH = __DIR__ . '/Template/phtml/';
+    
     protected Template $template;
     protected Token $token;
     protected Crud $crud;
@@ -154,7 +156,8 @@ class PasswordResetArrayResponder extends ArrayResponder
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,
-            ]
+            ],
+            $this::EMAIL_TPL_PATH
         );
         return $this->mailer->send(
             $email,

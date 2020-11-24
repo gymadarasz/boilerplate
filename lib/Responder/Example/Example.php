@@ -4,48 +4,62 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Responder\Example
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library;
+namespace Madsoft\Library\Responder\Example;
 
 /**
- * Index
+ * Example
  *
  * @category  PHP
- * @package   Madsoft\Library
+ * @package   Madsoft\Library\Responder\Example
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
+ *
+ * @suppress PhanUnreferencedPublicClassConstant
  */
-class Index
+class Example
 {
-    
+    const ROUTES = [
+        'public' => [
+            'GET' => [
+                'example' => [Example::class, 'getPublic'],
+            ],
+        ],
+        'protected' => [
+            'GET' => [
+                '' => [Example::class, 'getProtected'],
+                'example' => [Example::class, 'getProtected'],
+            ],
+        ],
+    ];
     /**
-     * Method index
+     * Method getPublic
      *
      * @return string
      *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function index(): string
+    public function getPublic(): string
     {
         return 'Public Index Page';
     }
     
     /**
-     * Method restricted
+     * Method getProtected
      *
      * @return string
      *
      * @suppress PhanUnreferencedPublicMethod
      */
-    public function restricted(): string
+    public function getProtected(): string
     {
         return 'Restricted Index Page';
     }

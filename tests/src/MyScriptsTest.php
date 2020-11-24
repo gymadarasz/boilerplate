@@ -14,7 +14,7 @@
 namespace Madsoft\Talkbot\Test;
 
 use Madsoft\Library\Session;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * MyScriptsTest

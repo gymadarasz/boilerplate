@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library\Test;
 
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * TesterTest

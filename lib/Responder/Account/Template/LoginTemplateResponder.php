@@ -62,7 +62,7 @@ class LoginTemplateResponder extends TemplateResponder
             return $this->setTplfile('login.phtml')->getResponse($arrayResponse);
         }
         return $this
-            ->setTplfile('../../../../tpls/index.phtml')
+            ->setTplfile('../../../Example/phtml/example.phtml')
             ->getResponse($arrayResponse);
     }
 }

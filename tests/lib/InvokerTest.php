@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Invoker;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use Madsoft\Library\Test\Injectable;
 use Madsoft\Library\Test\NotInjectable;
 use RuntimeException;

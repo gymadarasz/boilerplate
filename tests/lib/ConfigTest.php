@@ -15,7 +15,7 @@ namespace Madsoft\Library\Test;
 
 use Madsoft\Library\Merger;
 use Madsoft\Library\Template;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use RuntimeException;
 
 /**

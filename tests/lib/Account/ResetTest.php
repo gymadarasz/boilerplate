@@ -26,7 +26,7 @@ use Madsoft\Library\Responder\Account\PasswordResetArrayResponder;
 use Madsoft\Library\Responder\Account\Template\PasswordResetTemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Template;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 use Madsoft\Library\Token;
 
 /**

@@ -37,6 +37,8 @@ use Madsoft\Library\Token;
  */
 class RegistryArrayResponder extends ArrayResponder
 {
+    const EMAIL_TPL_PATH = __DIR__ . '/Template/phtml/';
+    
     protected Template $template;
     protected Token $token;
     protected Encrypter $encrypter;
@@ -177,7 +179,8 @@ class RegistryArrayResponder extends ArrayResponder
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,
-            ]
+            ],
+            $this::EMAIL_TPL_PATH
         );
         return $this->mailer->send(
             $email,

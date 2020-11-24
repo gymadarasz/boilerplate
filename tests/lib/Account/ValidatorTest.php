@@ -15,7 +15,7 @@ namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Params;
-use Madsoft\Library\Test;
+use Madsoft\Library\Tester\Test;
 
 /**
  * ValidatorTest

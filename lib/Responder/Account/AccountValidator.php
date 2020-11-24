@@ -35,6 +35,8 @@ use Madsoft\Library\Validator\Validator;
  */
 class AccountValidator extends Validator
 {
+    const LOGIN_DELAY = 0; // TODO: set to 3;
+    
     const PASSWORD_VALIDATION = [
         'minLength' => ['min' => 8,],
         'checkMinLength' => true,
@@ -57,7 +59,7 @@ class AccountValidator extends Validator
             [
                 'delay' =>
                 [
-                    'value' => AccountConfig::LOGIN_DELAY,
+                    'value' => $this::LOGIN_DELAY,
                     'rules' =>
                     [
                         //Mandatory::class => null, // TODO add it on live

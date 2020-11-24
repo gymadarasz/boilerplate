@@ -4,7 +4,7 @@ namespace Madsoft\Test;
 
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Test\LibraryTestCleaner;
-use Madsoft\Library\Tester;
+use Madsoft\Library\Tester\Tester;
 use Madsoft\Talkbot\Test\TalkbotTestCleaner;
 use RuntimeException;
 
@@ -23,9 +23,9 @@ $tester->cleanUp();
 
 $tester->getCoverage()->start([
     __DIR__ . "/vendor/",
-    __DIR__ . "/lib/Coverage.php",
-    __DIR__ . "/lib/Test.php",
-    __DIR__ . "/lib/Tester.php",
+    __DIR__ . "/lib/Coverage/Coverage.php",
+    __DIR__ . "/lib/Tester/Test.php",
+    __DIR__ . "/lib/Tester/Tester.php",
     __DIR__ . "/tests/",
 ]);
 
