@@ -30,14 +30,15 @@ class AccountActivateTemplateResponder extends TemplateResponder
     /**
      * Method getActivateResponse
      *
-     * @param AccountActivator $activator activator
+     * @param AccountActivateArrayResponder $arrayResponder activator
      *
      * @return string
      */
-    public function getActivateResponse(AccountActivator $activator): string
-    {
+    public function getActivateResponse(
+        AccountActivateArrayResponder $arrayResponder
+    ): string {
         return $this->setTplfile('activated.phtml')->getResponse(
-            $activator->activate()
+            $arrayResponder->getActivateResponse()
         );
     }
 }

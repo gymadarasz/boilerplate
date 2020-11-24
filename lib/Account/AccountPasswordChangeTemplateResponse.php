@@ -30,15 +30,15 @@ class AccountPasswordChangeTemplateResponse extends TemplateResponder
     /**
      * Method getChangePasswordResponse
      *
-     * @param AccountPasswordChanger $passwordChanger passwordChanger
+     * @param AccountPasswordChangeArrayResponder $arrayResponder passwordChanger
      *
      * @return string
      */
     public function getChangePasswordResponse(
-        AccountPasswordChanger $passwordChanger
+        AccountPasswordChangeArrayResponder $arrayResponder
     ): string {
-        $responseArray = $passwordChanger->changePassword();
-        if ($passwordChanger->hasResponseMessageType($responseArray, 'error')) {
+        $responseArray = $arrayResponder->getChangePasswordResponse();
+        if ($arrayResponder->hasResponseMessageType($responseArray, 'error')) {
             return $this->setTplfile('change.phtml')->getResponse($responseArray);
         }
         return $this->setTplfile('login.phtml')->getResponse($responseArray);

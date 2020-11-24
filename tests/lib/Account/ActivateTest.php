@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Account\AccountActivateTemplateResponder;
-use Madsoft\Library\Account\AccountActivator;
+use Madsoft\Library\Account\AccountActivateArrayResponder;
 use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
@@ -94,7 +94,7 @@ class ActivateTest extends Test
         
         $messages = new Messages();
         
-        $activator = new AccountActivator(
+        $arrayResponder = new AccountActivateArrayResponder(
             $messages,
             $merger,
             $session,
@@ -109,7 +109,7 @@ class ActivateTest extends Test
             $merger,
             $template
         );
-        $result = $activate->getActivateResponse($activator);
+        $result = $activate->getActivateResponse($arrayResponder);
         $this->assertStringContains('User activation failed', $result);
     }
 }

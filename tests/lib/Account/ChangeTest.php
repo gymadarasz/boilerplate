@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\AccountPasswordChanger;
+use Madsoft\Library\Account\AccountPasswordChangeArrayResponder;
 use Madsoft\Library\Account\AccountPasswordChangeTemplateResponse;
 use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
@@ -84,7 +84,7 @@ class ChangeTest extends Test
             $template
         );
         $encrypter = new Encrypter();
-        $changer = new AccountPasswordChanger(
+        $arrayResponder = new AccountPasswordChangeArrayResponder(
             $messages,
             $merger,
             $crud, // @phpstan-ignore-line
@@ -92,7 +92,7 @@ class ChangeTest extends Test
             $validator, // @phpstan-ignore-line
             $encrypter
         );
-        $result = $change->getChangePasswordResponse($changer);
+        $result = $change->getChangePasswordResponse($arrayResponder);
         $this->assertStringContains('Password is not saved', $result);
     }
 }

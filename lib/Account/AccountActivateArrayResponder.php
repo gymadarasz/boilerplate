@@ -14,14 +14,14 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
-use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
 use Madsoft\Library\Responder\ArrayResponder;
+use Madsoft\Library\Session;
 
 /**
- * AccountPasswordChanger
+ * AccountActivateArrayResponder
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -30,78 +30,85 @@ use Madsoft\Library\Responder\ArrayResponder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class AccountPasswordChanger extends ArrayResponder
+class AccountActivateArrayResponder extends ArrayResponder
 {
+    protected Session $session;
     protected Crud $crud;
     protected Params $params;
     protected AccountValidator $validator;
-    protected Encrypter $encrypter;
     
     /**
      * Method __construct
      *
      * @param Messages         $messages  messages
      * @param Merger           $merger    merger
+     * @param Session          $session   session
      * @param Crud             $crud      crud
      * @param Params           $params    params
      * @param AccountValidator $validator validator
-     * @param Encrypter        $encrypter encrypter
      */
     public function __construct(
         Messages $messages,
         Merger $merger,
+        Session $session,
         Crud $crud,
         Params $params,
-        AccountValidator $validator,
-        Encrypter $encrypter
+        AccountValidator $validator
     ) {
         parent::__construct($messages, $merger);
+        $this->session = $session;
         $this->crud = $crud;
         $this->params = $params;
         $this->validator = $validator;
-        $this->encrypter = $encrypter;
     }
     
     /**
-     * Method changePassword
+     * Method getActivateResponse
      *
      * @return mixed[]
      */
-    public function changePassword(): array
+    public function getActivateResponse(): array
     {
-        $errors = $this->validator->validateChangePassword($this->params);
+        $errors = $this->validator->validateActivate($this->params);
         if ($errors) {
             return $this->getErrorResponse(
-                'Password change failed',
-                $errors,
-                [
-                    'token' => $this->params->get('token')
-                ]
+                'Account activation failed',
+                $errors
             );
         }
         
-        if (!$this->crud->set(
+        $token = $this->params->get('token');
+        
+        $user = $this->crud->get(
             'user',
-            [
-                'hash' => $this->encrypter->encrypt($this->params->get('password')),
-                'token' => '',
-            ],
-            [
-                'token' => $this->params->get('token'),
-            ]
-        )
-        ) {
+            ['id', 'active'],
+            ['token' => $token],
+            1,
+            0,
+            -1
+        );
+        if (!$user->get('id')) {
             return $this->getErrorResponse(
-                'Password is not saved',
-                [],
-                [
-                    'token' => $this->params->get('token')
-                ]
+                'Invalid token'
             );
         }
+        
+        if ($user->get('active')) {
+            return $this->getErrorResponse(
+                'User is active already'
+            );
+        }
+        
+        if (!$this->crud->set('user', ['active' => '1'], ['token' => $token])) {
+            return $this->getErrorResponse(
+                'User activation failed'
+            );
+        }
+        
+        $this->session->unset('resend');
         
         return $this->getSuccessResponse(
-            'Password is changed'
+            'Account is now activated'
         );
     }
 }
