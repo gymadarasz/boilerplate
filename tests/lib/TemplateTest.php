@@ -75,7 +75,8 @@ class TemplateTest extends Test
         
         $results = $template->process(
             __DIR__ . '/test.phtml',
-            ['data1' => 'foo']
+            ['data1' => 'foo'],
+            ''
         );
         $this->assertEquals('Hello Template foo!', $results);
         $csrf = $template->getVars()['csrf'];
@@ -87,7 +88,8 @@ class TemplateTest extends Test
         );
         $results = $template->process(
             __DIR__ . '/test.phtml',
-            ['data1' => 'bazz']
+            ['data1' => 'bazz'],
+            ''
         );
         $this->assertEquals('Hello Template bazz!', $results);
         $this->assertNotEquals($csrf, $template->getVars()['csrf']);

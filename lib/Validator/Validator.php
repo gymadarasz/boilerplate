@@ -17,7 +17,7 @@ use Madsoft\Library\Invoker;
 use RuntimeException;
 
 /**
- * Checker
+ * Validator
  *
  * @category  PHP
  * @package   Madsoft\Library\Validator
@@ -26,7 +26,7 @@ use RuntimeException;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Checker
+class Validator
 {
     protected Invoker $invoker;
     

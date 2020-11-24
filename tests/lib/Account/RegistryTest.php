@@ -14,15 +14,16 @@
 namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Account\Registry;
-use Madsoft\Library\Account\Validator;
+use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Encrypter;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
@@ -89,14 +90,16 @@ class RegistryTest extends Test
         $crud->shouldReceive('get')->andReturn($user);
         $crud->shouldReceive('add')->andReturnFalse();
         
-        $validator = $this->getMock(Validator::class);
+        $validator = $this->getMock(AccountValidator::class);
         $validator->shouldReceive('validateRegistry')->andReturn([]);
         
         $mailer = $this->getMock(Mailer::class);
         
-        $config = new Config($template);
+        $config = new Config($template, $merger);
         
-        $responder = new Responder($template, $merger);
+        $messages = new Messages();
+        
+        $responder = new TemplateResponder($messages, $merger, $template);
         
         $registy = new Registry(
             $responder,
@@ -155,15 +158,17 @@ class RegistryTest extends Test
         $crud->shouldReceive('get')->andReturn($user);
         $crud->shouldReceive('add')->andReturnTrue();
         
-        $validator = $this->getMock(Validator::class);
+        $validator = $this->getMock(AccountValidator::class);
         $validator->shouldReceive('validateRegistry')->andReturn([]);
         
         $mailer = $this->getMock(Mailer::class);
         $mailer->shouldReceive('send')->andReturnFalse();
         
-        $config = new Config($template);
+        $config = new Config($template, $merger);
         
-        $responder = new Responder($template, $merger);
+        $messages = new Messages();
+        
+        $responder = new TemplateResponder($messages, $merger, $template);
         
         $registy = new Registry(
             $responder,

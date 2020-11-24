@@ -15,7 +15,7 @@ namespace Madsoft\Library\Test\Account;
 
 use DiDom\Document;
 use DOMElement;
-use Madsoft\Library\Account\Account;
+use Madsoft\Library\Account\AccountConfig;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Folders;
@@ -83,16 +83,46 @@ class AccountTest extends Test
      */
     public function testRoutes(): void
     {
-        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['login']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['registry']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['resend']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['activate']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['GET']['reset']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['login']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['registry']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['reset']);
-        $this->assertNotEquals(null, Account::ROUTES['public']['POST']['change']);
-        $this->assertNotEquals(null, Account::ROUTES['protected']['GET']['logout']);
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['GET']['login']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['GET']['registry']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['GET']['resend']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['GET']['activate']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['GET']['reset']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['POST']['login']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['POST']['registry']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['POST']['reset']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['public']['POST']['change']
+        );
+        $this->assertNotEquals(
+            null,
+            AccountConfig::ROUTES['protected']['GET']['logout']
+        );
     }
 
     /**

@@ -16,7 +16,7 @@ namespace Madsoft\Library\Account;
 use Madsoft\Library\Index;
 
 /**
- * Account
+ * AccountConfig
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -25,7 +25,7 @@ use Madsoft\Library\Index;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-abstract class Account
+abstract class AccountConfig
 {
     const LOGIN_DELAY = 0; // TODO: set to 3;
     const ROUTES = [
@@ -36,7 +36,9 @@ abstract class Account
                 'login' => [Login::class, 'login'],
                 'registry' => [Registry::class, 'registry'],
                 'resend' => [Registry::class, 'doResend'],
-                'activate' => [Activate::class, 'doActivate'],
+                'activate' =>
+                [
+                    AccountActivateTemplateResponder::class, 'getActivateResponse'],
                 'reset' => [Reset::class, 'reset'],
             ],
             'POST' => [

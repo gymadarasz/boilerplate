@@ -4,40 +4,42 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Talkbot
+ * @package   Madsoft\Library\Responder
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Talkbot;
+namespace Madsoft\Library\Responder;
 
 use Madsoft\Library\Merger;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Messages;
 
 /**
- * TalkbotResponder
+ * AbstractResponder
  *
  * @category  PHP
- * @package   Madsoft\Talkbot
+ * @package   Madsoft\Library\Responder
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class TalkbotResponder extends Responder
+abstract class AbstractResponder
 {
+    protected Messages $messages;
+    protected Merger $merger;
+
     /**
      * Method __construct
      *
-     * @param TalkbotTemplate $template template
-     * @param Merger          $merger   merger
+     * @param Messages $messages messages
+     * @param Merger   $merger   merger
      */
-    public function __construct(
-        TalkbotTemplate $template,
-        Merger $merger
-    ) {
-        parent::__construct($template, $merger);
+    public function __construct(Messages $messages, Merger $merger)
+    {
+        $this->messages = $messages;
+        $this->merger = $merger;
     }
 }

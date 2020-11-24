@@ -14,11 +14,14 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
+use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\ArrayResponder;
+use Madsoft\Library\Session;
 
 /**
- * Activate
+ * AccountActivator
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -27,28 +30,33 @@ use Madsoft\Library\Responder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Activate extends Account
+class AccountActivator extends ArrayResponder
 {
-    protected Responder $responder;
+    protected Session $session;
     protected Crud $crud;
     protected Params $params;
-    protected Validator $validator;
+    protected AccountValidator $validator;
     
     /**
      * Method __construct
      *
-     * @param Responder $responder responder
-     * @param Crud      $crud      crud
-     * @param Params    $params    params
-     * @param Validator $validator validator
+     * @param Messages         $messages  messages
+     * @param Merger           $merger    merger
+     * @param Session          $session   session
+     * @param Crud             $crud      crud
+     * @param Params           $params    params
+     * @param AccountValidator $validator validator
      */
     public function __construct(
-        Responder $responder,
+        Messages $messages,
+        Merger $merger,
+        Session $session,
         Crud $crud,
         Params $params,
-        Validator $validator
+        AccountValidator $validator
     ) {
-        $this->responder = $responder;
+        parent::__construct($messages, $merger);
+        $this->session = $session;
         $this->crud = $crud;
         $this->params = $params;
         $this->validator = $validator;
@@ -57,14 +65,13 @@ class Activate extends Account
     /**
      * Method activate
      *
-     * @return string
+     * @return mixed[]
      */
-    public function doActivate(): string
+    public function activate(): array
     {
         $errors = $this->validator->validateActivate($this->params);
         if ($errors) {
-            return $this->responder->getErrorResponse(
-                'activated.phtml',
+            return $this->getErrorResponse(
                 'Account activation failed',
                 $errors
             );
@@ -81,33 +88,26 @@ class Activate extends Account
             -1
         );
         if (!$user->get('id')) {
-            return $this->responder->getErrorResponse(
-                'activated.phtml',
-                'Invalid token',
-                []
+            return $this->getErrorResponse(
+                'Invalid token'
             );
         }
         
         if ($user->get('active')) {
-            return $this->responder->getErrorResponse(
-                'activated.phtml',
-                'User is active already',
-                []
+            return $this->getErrorResponse(
+                'User is active already'
             );
         }
         
         if (!$this->crud->set('user', ['active' => '1'], ['token' => $token])) {
-            return $this->responder->getErrorResponse(
-                'activated.phtml',
-                'User activation failed',
-                []
+            return $this->getErrorResponse(
+                'User activation failed'
             );
         }
         
         $this->session->unset('resend');
         
-        return $this->responder->getSuccesResponse(
-            'activated.phtml',
+        return $this->getSuccessResponse(
             'Account is now activated'
         );
     }

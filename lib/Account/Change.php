@@ -16,7 +16,7 @@ namespace Madsoft\Library\Account;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Encrypter;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 
 /**
  * Change
@@ -28,26 +28,26 @@ use Madsoft\Library\Responder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Change extends Account
+class Change extends AccountConfig
 {
-    protected Responder $responder;
+    protected TemplateResponder $responder;
     protected Crud $crud;
     protected Params $params;
-    protected Validator $validator;
+    protected AccountValidator $validator;
     
     /**
      * Method __construct
      *
-     * @param Responder $responder responder
-     * @param Crud      $crud      crud
-     * @param Params    $params    params
-     * @param Validator $validator validator
+     * @param TemplateResponder $responder responder
+     * @param Crud              $crud      crud
+     * @param Params            $params    params
+     * @param AccountValidator  $validator validator
      */
     public function __construct(
-        Responder $responder,
+        TemplateResponder $responder,
         Crud $crud,
         Params $params,
-        Validator $validator
+        AccountValidator $validator
     ) {
         $this->responder = $responder;
         $this->crud = $crud;
@@ -66,8 +66,7 @@ class Change extends Account
     {
         $errors = $this->validator->validateChangePassword($this->params);
         if ($errors) {
-            return $this->responder->getErrorResponse(
-                'change.phtml',
+            return $this->responder->setTplfile('change.phtml')->getErrorResponse(
                 'Password change failed',
                 $errors,
                 [
@@ -87,8 +86,7 @@ class Change extends Account
             ]
         )
         ) {
-            return $this->responder->getErrorResponse(
-                'change.phtml',
+            return $this->responder->setTplfile('change.phtml')->getErrorResponse(
                 'Password is not saved',
                 [],
                 [
@@ -97,8 +95,7 @@ class Change extends Account
             );
         }
         
-        return $this->responder->getSuccesResponse(
-            'login.phtml',
+        return $this->responder->setTplfile('login.phtml')->getSuccessResponse(
             'Password is changed'
         );
     }

@@ -17,7 +17,7 @@ use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Token;
 
 /**
@@ -30,30 +30,30 @@ use Madsoft\Library\Token;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Reset extends Account
+class Reset extends AccountConfig
 {
-    protected Responder $responder;
+    protected TemplateResponder $responder;
     protected Crud $crud;
     protected Params $params;
-    protected Validator $validator;
+    protected AccountValidator $validator;
     protected Mailer $mailer;
     protected Config $config;
 
     /**
      * Method __construct
      *
-     * @param Responder $responder responder
-     * @param Crud      $crud      crud
-     * @param Params    $params    params
-     * @param Validator $validator validator
-     * @param Mailer    $mailer    mailer
-     * @param Config    $config    config
+     * @param TemplateResponder $responder responder
+     * @param Crud              $crud      crud
+     * @param Params            $params    params
+     * @param AccountValidator  $validator validator
+     * @param Mailer            $mailer    mailer
+     * @param Config            $config    config
      */
     public function __construct(
-        Responder $responder,
+        TemplateResponder $responder,
         Crud $crud,
         Params $params,
-        Validator $validator,
+        AccountValidator $validator,
         Mailer $mailer,
         Config $config
     ) {
@@ -78,17 +78,15 @@ class Reset extends Account
         if ($token) {
             $user = $this->crud->get('user', ['id'], ['token' => $token], 1, 0, -1);
             if (!$user->get('id')) {
-                return $this->responder->getErrorResponse(
-                    'reset.phtml',
+                return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
                     'Invalid token'
                 );
             }
-            return $this->responder->getResponse(
-                'change.phtml',
+            return $this->responder->setTplfile('change.phtml')->getResponse(
                 ['token' => $token]
             );
         }
-        return $this->responder->getResponse('reset.phtml');
+        return $this->responder->setTplfile('reset.phtml')->getResponse();
     }
     
     /**
@@ -102,8 +100,7 @@ class Reset extends Account
     {
         $errors = $this->validator->validateReset($this->params);
         if ($errors) {
-            return $this->responder->getErrorResponse(
-                'reset.phtml',
+            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
                 'Reset password failed',
                 $errors
             );
@@ -112,29 +109,25 @@ class Reset extends Account
         $email = (string)$this->params->get('email');
         $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
         if ($user->get('email') !== $email) {
-            return $this->responder->getErrorResponse(
-                'reset.phtml',
+            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
                 'Email address not found'
             );
         }
         
         $token = $tokengen->generate();
         if (!$this->crud->set('user', ['token' => $token], ['email' => $email])) {
-            return $this->responder->getErrorResponse(
-                'reset.phtml',
+            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
                 'Token is not updated'
             );
         }
         
         if (!$this->sendResetEmail($email, $token)) {
-            return $this->responder->getErrorResponse(
-                'reset.phtml',
+            return $this->responder->setTplfile('reset.phtml')->getErrorResponse(
                 'Email sending failed'
             );
         }
         
-        return $this->responder->getSuccesResponse(
-            'reset.phtml',
+        return $this->responder->setTplfile('reset.phtml')->getSuccessResponse(
             'Password reset request email sent'
         );
     }
@@ -149,8 +142,7 @@ class Reset extends Account
      */
     protected function sendResetEmail(string $email, string $token): bool
     {
-        $message = $this->responder->getResponse(
-            'emails/reset.phtml',
+        $message = $this->responder->setTplfile('emails/reset.phtml')->getResponse(
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,

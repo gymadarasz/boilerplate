@@ -75,14 +75,18 @@ class Template
     /**
      * Method process
      *
-     * @param string $filename filename
-     * @param mixed  $data     data
+     * @param string      $filename filename
+     * @param mixed[]     $data     data
+     * @param string|null $path     path
      *
      * @return string
      * @throws RuntimeException
      */
-    public function process(string $filename, $data = []): string
-    {
+    public function process(
+        string $filename,
+        array $data = [],
+        ?string $path = null
+    ): string {
         $this->vars = [];
         foreach ($this->safer->freez('htmlentities', $data) as $key => $value) {
             if (is_numeric($key)) {
@@ -99,7 +103,7 @@ class Template
         }
         $this->vars['csrf'] = $this->csrfgen->get();
         ob_start();
-        $this->include($filename);
+        $this->include($filename, $path);
         $contents = (string)ob_get_contents();
         ob_end_clean();
         return $contents;
@@ -108,19 +112,21 @@ class Template
     /**
      * Method include
      *
-     * @param string $filename filename
+     * @param string      $filename filename
+     * @param string|null $path     path
      *
      * @return void
      *
      * @suppress PhanUnusedVariable
      * @suppress PhanPluginDollarDollar
      */
-    protected function include(string $filename): void
+    protected function include(string $filename, ?string $path = null): void
     {
         foreach ($this->vars as $key => $value) {
             $$key = $value;
         }
-        include $filename;
+        include null === $path ?
+            $this->getTemplateFile($filename) : ($path . $filename);
     }
     
     /**

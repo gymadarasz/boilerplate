@@ -224,7 +224,7 @@ class Coverage
     {
         $coverageInfo = $this->getCoverageInfo($coverageData);
         return $this->template->process(
-            __DIR__ . '/tpls/coverage/coverage.phtml',
+            'coverage/coverage.phtml',
             $coverageInfo
         );
     }

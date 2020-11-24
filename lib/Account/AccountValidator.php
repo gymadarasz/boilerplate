@@ -14,7 +14,7 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Assoc;
-use Madsoft\Library\Validator\Checker;
+use Madsoft\Library\Validator\Validator;
 use Madsoft\Library\Validator\Rule\Email;
 use Madsoft\Library\Validator\Rule\Mandatory;
 use Madsoft\Library\Validator\Rule\Match;
@@ -24,7 +24,7 @@ use Madsoft\Library\Validator\Rule\PasswordVerify;
 use Madsoft\Library\Validator\Rule\Sleep;
 
 /**
- * Validator
+ * AccountValidator
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -33,7 +33,7 @@ use Madsoft\Library\Validator\Rule\Sleep;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Validator extends Checker
+class AccountValidator extends Validator
 {
     const PASSWORD_VALIDATION = [
         'minLength' => ['min' => 8,],

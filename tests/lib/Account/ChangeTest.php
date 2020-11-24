@@ -14,13 +14,14 @@
 namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Account\Change;
-use Madsoft\Library\Account\Validator;
+use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
@@ -72,10 +73,12 @@ class ChangeTest extends Test
         $crud = $this->getMock(Crud::class);
         $crud->shouldReceive('set')->andReturnFalse();
         
-        $validator = $this->getMock(Validator::class);
+        $validator = $this->getMock(AccountValidator::class);
         $validator->shouldReceive('validateChangePassword')->andReturn([]);
         
-        $responder = new Responder($template, $merger);
+        $messages = new Messages();
+        
+        $responder = new TemplateResponder($messages, $merger, $template);
         
         // @phpstan-ignore-next-line
         $change = new Change($responder, $crud, $params, $validator);

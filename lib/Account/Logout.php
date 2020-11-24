@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library\Account;
 
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\User;
 
 /**
@@ -26,19 +26,19 @@ use Madsoft\Library\User;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Logout extends Account
+class Logout extends AccountConfig
 {
-    protected Responder $responder;
+    protected TemplateResponder $responder;
     protected User $user;
     
     /**
      * Method __construct
      *
-     * @param Responder $responder responder
-     * @param User      $user      user
+     * @param TemplateResponder $responder responder
+     * @param User              $user      user
      */
     public function __construct(
-        Responder $responder,
+        TemplateResponder $responder,
         User $user
     ) {
         $this->responder = $responder;
@@ -56,6 +56,8 @@ class Logout extends Account
     {
         $this->user->logout();
         
-        return $this->responder->getSuccesResponse('login.phtml', 'Logout success');
+        return $this->responder->setTplfile('login.phtml')->getSuccessResponse(
+            'Logout success'
+        );
     }
 }

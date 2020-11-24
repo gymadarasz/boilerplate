@@ -16,7 +16,7 @@ namespace Madsoft\Library\Account;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Logger;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\User;
 
 /**
@@ -29,32 +29,32 @@ use Madsoft\Library\User;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Login extends Account
+class Login extends AccountConfig
 {
-    protected Responder $responder;
+    protected TemplateResponder $responder;
     protected Crud $crud;
     protected Logger $logger;
     protected User $user;
     protected Params $params;
-    protected Validator $validator;
+    protected AccountValidator $validator;
     
     /**
      * Method __construct
      *
-     * @param Responder $responder responder
-     * @param Crud      $crud      crud
-     * @param Logger    $logger    logger
-     * @param User      $user      user
-     * @param Params    $params    params
-     * @param Validator $validator validator
+     * @param TemplateResponder $responder responder
+     * @param Crud              $crud      crud
+     * @param Logger            $logger    logger
+     * @param User              $user      user
+     * @param Params            $params    params
+     * @param AccountValidator  $validator validator
      */
     public function __construct(
-        Responder $responder,
+        TemplateResponder $responder,
         Crud $crud,
         Logger $logger,
         User $user,
         Params $params,
-        Validator $validator
+        AccountValidator $validator
     ) {
         $this->responder = $responder;
         $this->crud = $crud;
@@ -73,7 +73,7 @@ class Login extends Account
      */
     public function login(): string
     {
-        return $this->responder->getResponse('login.phtml');
+        return $this->responder->setTplfile('login.phtml')->getResponse();
     }
     
     /**
@@ -114,7 +114,9 @@ class Login extends Account
         
         $this->user->login((int)$user->get('id'));
         
-        return $this->responder->getSuccesResponse('index.phtml', 'Login success');
+        return $this->responder->setTplfile('index.phtml')->getSuccessResponse(
+            'Login success'
+        );
     }
     
     /**
@@ -135,6 +137,8 @@ class Login extends Account
         $this->logger->error(
             "Login error, reason:$reasonstr" . ($email ? ", email: '$email'" : '')
         );
-        return $this->responder->getErrorResponse('login.phtml', 'Login failed');
+        return $this->responder->setTplfile('login.phtml')->getErrorResponse(
+            'Login failed'
+        );
     }
 }

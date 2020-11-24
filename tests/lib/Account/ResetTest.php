@@ -14,15 +14,16 @@
 namespace Madsoft\Library\Test\Account;
 
 use Madsoft\Library\Account\Reset;
-use Madsoft\Library\Account\Validator;
+use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Encrypter;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
+use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;
@@ -68,11 +69,12 @@ class ResetTest extends Test
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['email'] = 'emailaddr1';
         $params = $invoker->getInstance(Params::class);
-        $validator = $this->getMock(Validator::class);
+        $validator = $this->getMock(AccountValidator::class);
         $validator->shouldReceive('validateReset')->andReturn([]);
         $mailer = $invoker->getInstance(Mailer::class);
         $config = $invoker->getInstance(Config::class);
-        $responder = new Responder($template, $merger);
+        $messages = new Messages();
+        $responder = new TemplateResponder($messages, $merger, $template);
         $reset = new Reset(
             $responder,
             $crud, // @phpstan-ignore-line
@@ -110,12 +112,13 @@ class ResetTest extends Test
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['email'] = 'emailaddr1';
         $params = $invoker->getInstance(Params::class);
-        $validator = $this->getMock(Validator::class);
+        $validator = $this->getMock(AccountValidator::class);
         $validator->shouldReceive('validateReset')->andReturn([]);
         $mailer = $this->getMock(Mailer::class);
         $mailer->shouldReceive('send')->andReturnFalse();
         $config = $invoker->getInstance(Config::class);
-        $responder = new Responder($template, $merger);
+        $messages = new Messages();
+        $responder = new TemplateResponder($messages, $merger, $template);
         $reset = new Reset(
             $responder,
             $crud, // @phpstan-ignore-line

@@ -13,13 +13,14 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\Activate;
-use Madsoft\Library\Account\Validator;
+use Madsoft\Library\Account\AccountActivateTemplateResponder;
+use Madsoft\Library\Account\AccountActivator;
+use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
@@ -38,6 +39,7 @@ use RuntimeException;
  * @link      this
  *
  * @SuppressWarnings(PHPMD.Superglobals)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @suppress PhanUnreferencedClass
  */
@@ -73,7 +75,7 @@ class ActivateTest extends Test
         $crud->shouldReceive('get')->andReturn($user);
         $crud->shouldReceive('set')->andReturnFalse();
         
-        $validator = $this->getMock(Validator::class);
+        $validator = $this->getMock(AccountValidator::class);
         $validator->shouldReceive('validateActivate')->andReturn([]);
         
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -90,11 +92,24 @@ class ActivateTest extends Test
         
         $merger = new Merger();
         
-        $responder = new Responder($template, $merger);
+        $messages = new Messages();
         
-        // @phpstan-ignore-next-line
-        $activate = new Activate($responder, $crud, $params, $validator);
-        $result = $activate->doActivate();
+        $activator = new AccountActivator(
+            $messages,
+            $merger,
+            $session,
+            $crud, // @phpstan-ignore-line
+            $params,
+            // @phpstan-ignore-next-line
+            $validator
+        );
+        
+        $activate = new AccountActivateTemplateResponder(
+            $messages,
+            $merger,
+            $template
+        );
+        $result = $activate->getActivateResponse($activator);
         $this->assertStringContains('User activation failed', $result);
     }
 }

@@ -36,37 +36,17 @@ class Config extends Section
      * Method __construct
      *
      * @param Template $template template
+     * @param Merger   $merger   merger
      */
     public function __construct(
-        Template $template
+        Template $template,
+        Merger $merger
     ) {
         $this->template = $template;
         
         $cfg = $this->readConfig($this::PATH . 'config.ini');
         $ext = $this->readConfig($this::PATH . 'config.' . $this::ENV . '.ini');
-        $this->data = $this->merge($cfg, $ext);
-    }
-    
-    /**
-     * Method merge
-     *
-     * @param mixed[] $array1 array1
-     * @param mixed[] $array2 array2
-     *
-     * @return mixed[]
-     */
-    protected function merge(array $array1, array $array2): array
-    {
-        $merged = $array1;
-
-        foreach ($array2 as $key => & $value) {
-            $merged[$key] = is_array($value)
-                    && isset($merged[$key]) && is_array($merged[$key]) ?
-                    $this->merge($merged[$key], $value) :
-                    $merged[$key] = $value;
-        }
-
-        return $merged;
+        $this->data = $merger->merge($cfg, $ext);
     }
     
     /**
@@ -82,13 +62,8 @@ class Config extends Section
         if (!file_exists($filename)) {
             throw new RuntimeException('Config file not found: ' . $filename);
         }
-        $cfg = parse_ini_string(
-            $this->template->process(
-                $filename,
-                ['dir' => __DIR__]
-            ),
-            true
-        );
+        $inistr = $this->template->process($filename, ['__DIR__' => __DIR__], '');
+        $cfg = parse_ini_string($inistr, true);
         
         if (false === $cfg) {
             throw new RuntimeException('Config error: ' . $filename);

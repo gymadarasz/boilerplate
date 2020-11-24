@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\Validator;
+use Madsoft\Library\Account\AccountValidator;
 
 /**
  * ValidatorMock
@@ -25,7 +25,7 @@ use Madsoft\Library\Account\Validator;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class ValidatorMock extends Validator
+class ValidatorMock extends AccountValidator
 {
     /**
      * Method getErrors

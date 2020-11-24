@@ -16,7 +16,7 @@ namespace Madsoft\Talkbot;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Mysql;
 use Madsoft\Library\Params;
-use Madsoft\Library\Validator\Checker;
+use Madsoft\Library\Validator\Validator;
 use Madsoft\Library\Validator\Rule\Mandatory;
 
 /**
@@ -49,24 +49,24 @@ class MyScripts
     protected Mysql $mysql;
     protected Crud $crud;
     protected Params $params;
-    protected Checker $checker;
-    protected TalkbotResponder $responder;
+    protected Validator $checker;
+    protected TalkbotTemplateResponder $responder;
     
     /**
      * Method __construct
      *
-     * @param Mysql            $mysql     mysql
-     * @param Crud             $crud      crud
-     * @param Params           $params    params
-     * @param Checker          $checker   checker
-     * @param TalkbotResponder $responder responder
+     * @param Mysql                    $mysql     mysql
+     * @param Crud                     $crud      crud
+     * @param Params                   $params    params
+     * @param Validator                $checker   checker
+     * @param TalkbotTemplateResponder $responder responder
      */
     public function __construct(
         Mysql $mysql,
         Crud $crud,
         Params $params,
-        Checker $checker,
-        TalkbotResponder $responder
+        Validator $checker,
+        TalkbotTemplateResponder $responder
     ) {
         $this->mysql = $mysql;
         $this->crud = $crud;
@@ -84,8 +84,7 @@ class MyScripts
      */
     public function viewList(): string
     {
-        return $this->responder->getResponse(
-            'my-scripts/list.phtml',
+        return $this->responder->setTplfile('my-scripts/list.phtml')->getResponse(
             ['my_scripts' => $this->crud->get('script', ['name'], [], 0)]
         );
     }
@@ -99,8 +98,7 @@ class MyScripts
      */
     public function viewCreate(): string
     {
-        return $this->responder->getResponse(
-            'my-scripts/create.phtml',
+        return $this->responder->setTplfile('my-scripts/create.phtml')->getResponse(
             ['name' => '']
         );
     }
@@ -124,8 +122,9 @@ class MyScripts
             ]
         );
         if ($errors) {
-            return $this->responder->getErrorResponse(
-                'my-scripts/create.html',
+            return $this->responder->setTplfile(
+                'my-scripts/create.html'
+            )->getErrorResponse(
                 'Invalid parameters',
                 $errors
             );
@@ -134,12 +133,15 @@ class MyScripts
         $sid = $this->crud->add('script', ['name' => $this->params->get('name')]);
         if (!$sid) {
             $this->mysql->transRollback();
-            return $this->responder->getErrorResponse('my-scripts/create.phtml');
+            return $this->responder->setTplfile(
+                'my-scripts/create.phtml'
+            )->getErrorResponse();
         }
         
         $myScripts = $this->crud->get('script', ['name'], [], 0);
-        return $this->responder->getSuccesResponse(
-            'my-scripts/list.phtml',
+        return $this->responder->setTplfile(
+            'my-scripts/list.phtml'
+        )->getSuccessResponse(
             'Script "' . $name . '" is created',
             ['my_scripts' => $myScripts]
         );
