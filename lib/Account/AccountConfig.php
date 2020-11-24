@@ -38,7 +38,9 @@ abstract class AccountConfig
                 'resend' => [Registry::class, 'doResend'],
                 'activate' =>
                 [
-                    AccountActivateTemplateResponder::class, 'getActivateResponse'],
+                    AccountActivateTemplateResponder::class,
+                    'getActivateResponse'
+                ],
                 'reset' => [Reset::class, 'reset'],
             ],
             'POST' => [
@@ -46,7 +48,11 @@ abstract class AccountConfig
                 'login' => [Login::class, 'doLogin'],
                 'registry' => [Registry::class, 'doRegistry'],
                 'reset' => [Reset::class, 'doReset'],
-                'change' => [Change::class, 'doChangePassword'],
+                'change' =>
+                [
+                    AccountPasswordChangeTemplateResponse::class,
+                    'getChangePasswordResponse'
+                ],
             ],
         ],
         'protected' => [

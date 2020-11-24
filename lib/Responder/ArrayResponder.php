@@ -72,15 +72,14 @@ class ArrayResponder extends AbstractResponder
      */
     public function getResponse(array $data = [], array $errors = []): array
     {
-        return $this->process(
-            $this->merger->merge(
-                [
-                    'messages' => $this->messages->get(),
-                    'errors' => $errors,
-                ],
-                $data
-            )
-        );
+        $messages = $this->messages->get();
+        if ($messages) {
+            $data['messages'] = $messages;
+        }
+        if ($errors) {
+            $data['errors'] = $errors;
+        }
+        return $data;
     }
 
     /**
@@ -93,5 +92,18 @@ class ArrayResponder extends AbstractResponder
     protected function process(array $data): array
     {
         return $data;
+    }
+    
+    /**
+     * Method hasResponseMessageType
+     *
+     * @param mixed[] $response response
+     * @param string  $type     type
+     *
+     * @return bool
+     */
+    public function hasResponseMessageType(array $response, string $type): bool
+    {
+        return isset($response['messages']) && isset($response['messages'][$type]);
     }
 }

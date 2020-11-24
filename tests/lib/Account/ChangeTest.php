@@ -13,7 +13,8 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\Change;
+use Madsoft\Library\Account\AccountPasswordChanger;
+use Madsoft\Library\Account\AccountPasswordChangeTemplateResponse;
 use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
@@ -21,7 +22,6 @@ use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;
@@ -78,12 +78,21 @@ class ChangeTest extends Test
         
         $messages = new Messages();
         
-        $responder = new TemplateResponder($messages, $merger, $template);
-        
-        // @phpstan-ignore-next-line
-        $change = new Change($responder, $crud, $params, $validator);
+        $change = new AccountPasswordChangeTemplateResponse(
+            $messages,
+            $merger,
+            $template
+        );
         $encrypter = new Encrypter();
-        $result = $change->doChangePassword($encrypter);
+        $changer = new AccountPasswordChanger(
+            $messages,
+            $merger,
+            $crud, // @phpstan-ignore-line
+            $params,
+            $validator, // @phpstan-ignore-line
+            $encrypter
+        );
+        $result = $change->getChangePasswordResponse($changer);
         $this->assertStringContains('Password is not saved', $result);
     }
 }

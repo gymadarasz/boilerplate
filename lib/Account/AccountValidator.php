@@ -14,7 +14,6 @@
 namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Assoc;
-use Madsoft\Library\Validator\Validator;
 use Madsoft\Library\Validator\Rule\Email;
 use Madsoft\Library\Validator\Rule\Mandatory;
 use Madsoft\Library\Validator\Rule\Match;
@@ -22,6 +21,7 @@ use Madsoft\Library\Validator\Rule\Number;
 use Madsoft\Library\Validator\Rule\Password;
 use Madsoft\Library\Validator\Rule\PasswordVerify;
 use Madsoft\Library\Validator\Rule\Sleep;
+use Madsoft\Library\Validator\Validator;
 
 /**
  * AccountValidator
@@ -57,7 +57,7 @@ class AccountValidator extends Validator
             [
                 'delay' =>
                 [
-                    'value' => Change::LOGIN_DELAY,
+                    'value' => AccountConfig::LOGIN_DELAY,
                     'rules' =>
                     [
                         //Mandatory::class => null, // TODO add it on live

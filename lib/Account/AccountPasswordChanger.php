@@ -15,11 +15,13 @@ namespace Madsoft\Library\Account;
 
 use Madsoft\Library\Crud;
 use Madsoft\Library\Encrypter;
+use Madsoft\Library\Merger;
+use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
-use Madsoft\Library\Responder\TemplateResponder;
+use Madsoft\Library\Responder\ArrayResponder;
 
 /**
- * Change
+ * AccountPasswordChanger
  *
  * @category  PHP
  * @package   Madsoft\Library\Account
@@ -28,45 +30,48 @@ use Madsoft\Library\Responder\TemplateResponder;
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class Change extends AccountConfig
+class AccountPasswordChanger extends ArrayResponder
 {
-    protected TemplateResponder $responder;
     protected Crud $crud;
     protected Params $params;
     protected AccountValidator $validator;
+    protected Encrypter $encrypter;
     
     /**
      * Method __construct
      *
-     * @param TemplateResponder $responder responder
-     * @param Crud              $crud      crud
-     * @param Params            $params    params
-     * @param AccountValidator  $validator validator
+     * @param Messages         $messages  messages
+     * @param Merger           $merger    merger
+     * @param Crud             $crud      crud
+     * @param Params           $params    params
+     * @param AccountValidator $validator validator
+     * @param Encrypter        $encrypter encrypter
      */
     public function __construct(
-        TemplateResponder $responder,
+        Messages $messages,
+        Merger $merger,
         Crud $crud,
         Params $params,
-        AccountValidator $validator
+        AccountValidator $validator,
+        Encrypter $encrypter
     ) {
-        $this->responder = $responder;
+        parent::__construct($messages, $merger);
         $this->crud = $crud;
         $this->params = $params;
         $this->validator = $validator;
+        $this->encrypter = $encrypter;
     }
     
     /**
-     * Method doChangePassword
+     * Method changePassword
      *
-     * @param Encrypter $encrypter encrypter
-     *
-     * @return string
+     * @return mixed[]
      */
-    public function doChangePassword(Encrypter $encrypter): string
+    public function changePassword(): array
     {
         $errors = $this->validator->validateChangePassword($this->params);
         if ($errors) {
-            return $this->responder->setTplfile('change.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Password change failed',
                 $errors,
                 [
@@ -78,7 +83,7 @@ class Change extends AccountConfig
         if (!$this->crud->set(
             'user',
             [
-                'hash' => $encrypter->encrypt($this->params->get('password')),
+                'hash' => $this->encrypter->encrypt($this->params->get('password')),
                 'token' => '',
             ],
             [
@@ -86,7 +91,7 @@ class Change extends AccountConfig
             ]
         )
         ) {
-            return $this->responder->setTplfile('change.phtml')->getErrorResponse(
+            return $this->getErrorResponse(
                 'Password is not saved',
                 [],
                 [
@@ -95,7 +100,7 @@ class Change extends AccountConfig
             );
         }
         
-        return $this->responder->setTplfile('login.phtml')->getSuccessResponse(
+        return $this->getSuccessResponse(
             'Password is changed'
         );
     }
