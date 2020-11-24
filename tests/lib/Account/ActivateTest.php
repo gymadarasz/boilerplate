@@ -13,14 +13,14 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\ActivateTemplateResponder;
-use Madsoft\Library\Account\ActivateArrayResponder;
-use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder\Account\AccountValidator;
+use Madsoft\Library\Responder\Account\ActivateArrayResponder;
+use Madsoft\Library\Responder\Account\Template\ActivateTemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;

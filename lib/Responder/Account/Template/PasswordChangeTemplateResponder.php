@@ -4,23 +4,24 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account\Template
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Account;
+namespace Madsoft\Library\Responder\Account\Template;
 
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder\Account\PasswordChangeArrayResponder;
 use Madsoft\Library\Responder\TemplateResponder;
 
 /**
  * PasswordChangeTemplateResponder
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account\Template
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -28,6 +29,8 @@ use Madsoft\Library\Responder\TemplateResponder;
  */
 class PasswordChangeTemplateResponder extends TemplateResponder
 {
+    const PATH = __DIR__ . '/phtml/';
+    
     /**
      * Method getPasswordChangeResponse
      *

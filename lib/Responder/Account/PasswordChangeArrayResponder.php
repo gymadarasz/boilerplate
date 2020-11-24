@@ -4,36 +4,37 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Account;
+namespace Madsoft\Library\Responder\Account;
 
 use Madsoft\Library\Assoc;
 use Madsoft\Library\Crud;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Responder\ArrayResponder;
-use Madsoft\Library\Session;
 
 /**
- * ActivateArrayResponder
+ * PasswordChangeArrayResponder
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class ActivateArrayResponder extends ArrayResponder
+class PasswordChangeArrayResponder extends ArrayResponder
 {
     protected Crud $crud;
     protected AccountValidator $validator;
+    protected Encrypter $encrypter;
     
     /**
      * Method __construct
@@ -42,68 +43,63 @@ class ActivateArrayResponder extends ArrayResponder
      * @param Merger           $merger    merger
      * @param Crud             $crud      crud
      * @param AccountValidator $validator validator
+     * @param Encrypter        $encrypter encrypter
      */
     public function __construct(
         Messages $messages,
         Merger $merger,
         Crud $crud,
-        AccountValidator $validator
+        AccountValidator $validator,
+        Encrypter $encrypter
     ) {
         parent::__construct($messages, $merger);
         $this->crud = $crud;
         $this->validator = $validator;
+        $this->encrypter = $encrypter;
     }
     
     /**
-     * Method getActivateResponse
+     * Method getPasswordChangeResponse
      *
-     * @param Assoc   $params  params
-     * @param Session $session session
+     * @param Assoc $params params
      *
      * @return mixed[]
      */
-    public function getActivateResponse(Assoc $params, Session $session): array
+    public function getPasswordChangeResponse(Assoc $params): array
     {
-        $errors = $this->validator->validateActivate($params);
+        $errors = $this->validator->validateChangePassword($params);
         if ($errors) {
             return $this->getErrorResponse(
-                'Account activation failed',
-                $errors
+                'Password change failed',
+                $errors,
+                [
+                    'token' => $params->get('token')
+                ]
             );
         }
         
-        $token = $params->get('token');
-        
-        $user = $this->crud->get(
+        if (!$this->crud->set(
             'user',
-            ['id', 'active'],
-            ['token' => $token],
-            1,
-            0,
-            -1
-        );
-        if (!$user->get('id')) {
+            [
+                'hash' => $this->encrypter->encrypt($params->get('password')),
+                'token' => '',
+            ],
+            [
+                'token' => $params->get('token'),
+            ]
+        )
+        ) {
             return $this->getErrorResponse(
-                'Invalid token'
+                'Password is not saved',
+                [],
+                [
+                    'token' => $params->get('token')
+                ]
             );
         }
-        
-        if ($user->get('active')) {
-            return $this->getErrorResponse(
-                'User is active already'
-            );
-        }
-        
-        if (!$this->crud->set('user', ['active' => '1'], ['token' => $token])) {
-            return $this->getErrorResponse(
-                'User activation failed'
-            );
-        }
-        
-        $session->unset('resend');
         
         return $this->getSuccessResponse(
-            'Account is now activated'
+            'Password is changed'
         );
     }
 }

@@ -13,15 +13,15 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\PasswordChangeArrayResponder;
-use Madsoft\Library\Account\PasswordChangeTemplateResponder;
-use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Csrf;
 use Madsoft\Library\Encrypter;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder\Account\AccountValidator;
+use Madsoft\Library\Responder\Account\PasswordChangeArrayResponder;
+use Madsoft\Library\Responder\Account\Template\PasswordChangeTemplateResponder;
 use Madsoft\Library\Safer;
 use Madsoft\Library\Session;
 use Madsoft\Library\Template;

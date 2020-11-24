@@ -4,14 +4,14 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Account;
+namespace Madsoft\Library\Responder\Account;
 
 use Madsoft\Library\Assoc;
 use Madsoft\Library\Crud;
@@ -25,7 +25,7 @@ use Madsoft\Library\User;
  * LoginArrayResponder
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.

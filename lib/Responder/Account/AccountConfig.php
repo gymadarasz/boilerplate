@@ -4,22 +4,28 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Account;
+namespace Madsoft\Library\Responder\Account;
 
 use Madsoft\Library\Index;
+use Madsoft\Library\Responder\Account\Template\ActivateTemplateResponder;
+use Madsoft\Library\Responder\Account\Template\LoginTemplateResponder;
+use Madsoft\Library\Responder\Account\Template\LogoutTemplateResponder;
+use Madsoft\Library\Responder\Account\Template\PasswordChangeTemplateResponder;
+use Madsoft\Library\Responder\Account\Template\PasswordResetTemplateResponder;
+use Madsoft\Library\Responder\Account\Template\RegistryTemplateResponder;
 
 /**
  * AccountConfig
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.

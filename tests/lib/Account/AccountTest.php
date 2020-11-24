@@ -15,11 +15,11 @@ namespace Madsoft\Library\Test\Account;
 
 use DiDom\Document;
 use DOMElement;
-use Madsoft\Library\Account\AccountConfig;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Folders;
 use Madsoft\Library\Mailer;
+use Madsoft\Library\Responder\Account\AccountConfig;
 use Madsoft\Library\Session;
 use Madsoft\Library\Test;
 use Madsoft\Library\Test\LibraryTestCleaner;

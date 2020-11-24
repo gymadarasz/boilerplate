@@ -30,6 +30,8 @@ use RuntimeException;
  */
 class TemplateResponder extends StringResponder
 {
+    const PATH = null;
+    
     protected string $tplfile = '';
     
     protected Template $template;
@@ -75,6 +77,6 @@ class TemplateResponder extends StringResponder
         if (!$this->tplfile) {
             throw new RuntimeException('Template file is not set.');
         }
-        return $this->template->process($this->tplfile, $data);
+        return $this->template->process($this->tplfile, $data, $this::PATH);
     }
 }

@@ -13,7 +13,7 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\AccountValidator;
+use Madsoft\Library\Responder\Account\AccountValidator;
 
 /**
  * ValidatorMock

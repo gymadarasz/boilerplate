@@ -13,9 +13,6 @@
 
 namespace Madsoft\Library\Test\Account;
 
-use Madsoft\Library\Account\PasswordResetArrayResponder;
-use Madsoft\Library\Account\PasswordResetTemplateResponder;
-use Madsoft\Library\Account\AccountValidator;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
 use Madsoft\Library\Encrypter;
@@ -24,6 +21,9 @@ use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Params;
+use Madsoft\Library\Responder\Account\AccountValidator;
+use Madsoft\Library\Responder\Account\PasswordResetArrayResponder;
+use Madsoft\Library\Responder\Account\Template\PasswordResetTemplateResponder;
 use Madsoft\Library\Row;
 use Madsoft\Library\Template;
 use Madsoft\Library\Test;

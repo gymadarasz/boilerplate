@@ -4,14 +4,14 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account\Template
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Account;
+namespace Madsoft\Library\Responder\Account\Template;
 
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
@@ -23,7 +23,7 @@ use Madsoft\Library\User;
  * LogoutTemplateResponder
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account\Template
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
@@ -31,6 +31,8 @@ use Madsoft\Library\User;
  */
 class LogoutTemplateResponder extends TemplateResponder
 {
+    const PATH = __DIR__ . '/phtml/';
+    
     protected User $user;
     
     /**

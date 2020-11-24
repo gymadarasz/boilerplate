@@ -4,44 +4,47 @@
  * PHP version 7.4
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
 
-namespace Madsoft\Library\Account;
+namespace Madsoft\Library\Responder\Account;
 
 use Madsoft\Library\Assoc;
 use Madsoft\Library\Config;
 use Madsoft\Library\Crud;
+use Madsoft\Library\Encrypter;
 use Madsoft\Library\Mailer;
 use Madsoft\Library\Merger;
 use Madsoft\Library\Messages;
 use Madsoft\Library\Responder\ArrayResponder;
+use Madsoft\Library\Session;
 use Madsoft\Library\Template;
 use Madsoft\Library\Token;
 
 /**
- * PasswordResetArrayResponder
+ * RegistryArrayResponder
  *
  * @category  PHP
- * @package   Madsoft\Library\Account
+ * @package   Madsoft\Library\Responder\Account
  * @author    Gyula Madarasz <gyula.madarasz@gmail.com>
  * @copyright 2020 Gyula Madarasz
  * @license   Copyright (c) All rights reserved.
  * @link      this
  */
-class PasswordResetArrayResponder extends ArrayResponder
+class RegistryArrayResponder extends ArrayResponder
 {
     protected Template $template;
     protected Token $token;
+    protected Encrypter $encrypter;
     protected Crud $crud;
     protected AccountValidator $validator;
     protected Mailer $mailer;
     protected Config $config;
-
+    
     /**
      * Method __construct
      *
@@ -49,6 +52,7 @@ class PasswordResetArrayResponder extends ArrayResponder
      * @param Merger           $merger    merger
      * @param Template         $template  template
      * @param Token            $token     token
+     * @param Encrypter        $encrypter encrypter
      * @param Crud             $crud      crud
      * @param AccountValidator $validator validator
      * @param Mailer           $mailer    mailer
@@ -59,6 +63,7 @@ class PasswordResetArrayResponder extends ArrayResponder
         Merger $merger,
         Template $template,
         Token $token,
+        Encrypter $encrypter,
         Crud $crud,
         AccountValidator $validator,
         Mailer $mailer,
@@ -67,90 +72,108 @@ class PasswordResetArrayResponder extends ArrayResponder
         parent::__construct($messages, $merger);
         $this->template = $template;
         $this->token = $token;
+        $this->encrypter = $encrypter;
         $this->crud = $crud;
         $this->validator = $validator;
         $this->mailer = $mailer;
         $this->config = $config;
     }
-    /**
-     * Method getPasswordResetFormResponse
-     *
-     * @param Assoc $params params
-     *
-     * @return mixed[]
-     */
-    public function getPasswordResetFormResponse(Assoc $params): array
-    {
-        $token = $params->get('token', '');
-        if ($token) {
-            $user = $this->crud->get('user', ['id'], ['token' => $token], 1, 0, -1);
-            if (!$user->get('id')) {
-                return $this->getErrorResponse(
-                    'Invalid token'
-                );
-            }
-            return $this->getResponse(
-                ['token' => $token]
-            );
-        }
-        return $this->getResponse();
-    }
 
     /**
-     * Method getPasswordResetRequestResponse
+     * Method getRegistryResponse
      *
-     * @param Assoc $params params
+     * @param Assoc   $params  params
+     * @param Session $session session
      *
      * @return mixed[]
      */
-    public function getPasswordResetRequestResponse(Assoc $params): array
+    public function getRegistryResponse(Assoc $params, Session $session): array
     {
-        $errors = $this->validator->validateReset($params);
+        $errors = $this->validator->validateRegistry($params);
         if ($errors) {
             return $this->getErrorResponse(
-                'Reset password request failed',
+                'Invalid registration data',
                 $errors
             );
         }
         
-        $email = (string)$params->get('email');
-        $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
-        if ($user->get('email') !== $email) {
-            return $this->getErrorResponse(
-                'Email address not found'
-            );
-        }
-        
+        $email = $params->get('email');
         $token = $this->token->generate();
-        if (!$this->crud->set('user', ['token' => $token], ['email' => $email])) {
+        
+        $user = $this->crud->get('user', ['email'], ['email' => $email], 1, 0, -1);
+        if ($user->get('email') === $email) {
             return $this->getErrorResponse(
-                'Token is not updated'
+                'Email address already registered',
+                $errors
             );
         }
         
-        if (!$this->sendResetEmail($email, $token)) {
+        if (!$this->crud->add(
+            'user',
+            [
+                'email' => $email,
+                'hash' => $this->encrypter->encrypt($params->get('password')),
+                'token' => $token,
+                'active' => '0',
+            ],
+            -1
+        )
+        ) {
             return $this->getErrorResponse(
-                'Email sending failed'
+                'User is not saved'
+            );
+        }
+        $session->set('resend', ['email' => $email, 'token' => $token]);
+        
+        if (!$this->sendActivationEmail($email, $token)) {
+            return $this->getWarningResponse(
+                'Activation email is not sent',
+                $user->getFields()
             );
         }
         
         return $this->getSuccessResponse(
-            'Password reset request email sent'
+            'We sent an activation email to your email account, '
+                . 'please follow the instructions.'
         );
     }
-    
+
     /**
-     * Method sendResetEmail
+     * Method getResendResponse
+     *
+     * @param Session $session session
+     *
+     * @return mixed[]
+     */
+    public function getResendResponse(Session $session): array
+    {
+        $resend = $session->get('resend');
+        $email = $resend['email'];
+        $token = $resend['token'];
+        if (!$this->sendActivationEmail($email, $token)) {
+            return $this->getErrorResponse(
+                'Activation email is not sent'
+            );
+        }
+        
+        return $this->getSuccessResponse(
+            'We re-sent an activation email to your email account, '
+                . 'please follow the instructions.'
+        );
+    }
+
+    /**
+     * Method sendActivationEmail
      *
      * @param string $email email
      * @param string $token token
      *
      * @return bool
      */
-    protected function sendResetEmail(string $email, string $token): bool
+    protected function sendActivationEmail(string $email, string $token): bool
     {
         $message = $this->template->process(
-            'emails/reset.phtml',
+            'emails/activation.phtml',
             [
                 'base' => $this->config->get('Site')->get('base'),
                 'token' => $token,
@@ -158,7 +181,7 @@ class PasswordResetArrayResponder extends ArrayResponder
         );
         return $this->mailer->send(
             $email,
-            'Pasword reset requested',
+            'Activate your account',
             $message
         );
     }
