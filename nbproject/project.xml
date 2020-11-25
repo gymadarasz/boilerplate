@@ -3,15 +3,7 @@
     <type>org.netbeans.modules.php.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/php-project/1">
-            <name>talkbot</name>
+            <name>wapp-saas-boilerplate</name>
         </data>
-        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
-            <word>Ctrlr</word>
-            <word>Madsoft</word>
-            <word>params</word>
-            <word>restprops</word>
-            <word>Talkbot</word>
-            <word>validator</word>
-        </spellchecker-wordlist>
     </configuration>
 </project>

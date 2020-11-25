@@ -1,14 +1,12 @@
 {
-    "name": "gymadarasz/talkbot",
-    "description": "Talkbot",
+    "name": "gymadarasz/wapp-boilerplate",
+    "description": "Web Application Boilerplate",
     "type": "project",
     "license": "Copyright (c) All rights reserved",
     "autoload": {
         "psr-4": {
-            "Madsoft\\Library\\": "lib/",
-            "Madsoft\\Library\\Test\\": "tests/lib/",
-            "Madsoft\\Talkbot\\": "src/",
-            "Madsoft\\Talkbot\\Test\\": "tests/src/"
+            "Madsoft\\": "lib/",
+            "Madsoft\\Library\\Test\\": "lib/tests/"
         }
     },
     "authors": [

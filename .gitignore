@@ -1,8 +1,6 @@
 /vendor/
 /nbproject/private/
-/lib/Tester/coverage/coverage.html
-/lib/mails/
-/lib/config/config.*.ini
+/.phan/
 *.cache
 *.log
 *.cache.php
