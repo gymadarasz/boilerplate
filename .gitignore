@@ -1,6 +1,5 @@
 /vendor/
-/nbproject/private/
-/.phan/
+/nbproject/
 *.cache
 *.log
 *.cache.php
