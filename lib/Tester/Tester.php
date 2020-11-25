@@ -245,7 +245,7 @@ class Tester extends Test
      * @suppress PhanUnreferencedPublicMethod
      */
     public function stat(
-        string $coverageOutput = __DIR__ . '/../../coverage/coverage.html',
+        string $coverageOutput = __DIR__ . '/coverage/coverage.html',
         float $coverageThreshold = 100.0
     ): bool {
         $coverageData = [];

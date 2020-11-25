@@ -1,2 +1,6 @@
 includes:
     - vendor/phpstan/phpstan-mockery/extension.neon
+
+parameters:
+    excludes_analyse:
+        - lib/tools/*

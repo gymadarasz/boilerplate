@@ -179,7 +179,7 @@ class Mailer
             );
         }
         $fname = $this->section->get('save_mail_path') .
-                        '/' . date("Y-m-s H-i-s") . " to $addressTo ($subject).html";
+                        date("Y-m-s H-i-s") . " to $addressTo ($subject).html";
         if (file_put_contents($fname, $body)) {
             $this->logger->info("Email saved to: $fname");
             return true;

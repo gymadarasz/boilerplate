@@ -29,9 +29,9 @@ vendor/bin/php-cs-fixer fix src
 vendor/bin/php-cs-fixer fix tests
 
 show_next "csfix.php"
-php tools/csfix.php lib
-php tools/csfix.php src
-php tools/csfix.php tests
+php lib/tools/csfix.php lib
+php lib/tools/csfix.php src
+php lib/tools/csfix.php tests
 
 show_next "phpcbf"
 vendor/bin/phpcbf lib
@@ -41,7 +41,7 @@ vendor/bin/phpcbf tests
 set -e
 
 show_next "phpcs"
-vendor/bin/phpcs lib
+vendor/bin/phpcs lib --ignore=*/tools/*
 vendor/bin/phpcs src
 vendor/bin/phpcs tests
 
@@ -51,7 +51,7 @@ vendor/bin/phpstan analyse --level 8 src
 vendor/bin/phpstan analyse --level 8 tests
 
 show_next "phpmd"
-vendor/bin/phpmd lib text cleancode,codesize,controversial,design,naming,unusedcode
+vendor/bin/phpmd lib text cleancode,codesize,controversial,design,naming,unusedcode --exclude lib/tools/*
 vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
 vendor/bin/phpmd tests text cleancode,codesize,controversial,design,naming,unusedcode
 
