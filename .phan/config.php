@@ -192,7 +192,7 @@ return [
     //
     // To more aggressively detect dead code,
     // you may want to set `dead_code_detection_prefer_false_negative` to `false`.
-    'dead_code_detection' => false,
+    'dead_code_detection' => true,
 
     // Set to true in order to attempt to detect unused variables.
     // `dead_code_detection` will also enable unused variable detection.
@@ -275,7 +275,9 @@ return [
     //
     // This is useful for excluding hopelessly unanalyzable
     // files that can't be removed for whatever reason.
-    'exclude_file_list' => [],
+    'exclude_file_list' => [
+        'lib/route.cache.php',
+    ],
 
     // A directory list that defines files that will be excluded
     // from static analysis, but whose class and method
@@ -348,6 +350,7 @@ return [
     // your application should be included in this list.
     'directory_list' => [
         'lib',
+        'src',
         'vendor/friendsofphp/php-cs-fixer/src',
         'vendor/imangazaliev/didom/src/DiDom',
         'vendor/mockery/mockery/library',
