@@ -1,9 +1,60 @@
+
+setup:
 ```
 git clone https://github.com/gymadarasz/wapp-boilerplate.git my-project
 cd my-project
 git submodule init
 git submodule update
+git submodule add https://repository-of-my-project.git src
+```
+add it to `composer.json` to load project:
+```
+        "psr-4": {
+            ...
+            ...
+            "MyProject\\": "src/MyProject/",
+            "MyProject\\Test\\": "src/tests/"
+        }
+```
+then
+```
 composer update
-vendor/bin/phan --init --init-level=1
+(echo 'CREATE DATABASE my_project;USE my_project;' && (cat lib/import.sql || cat src/import.sql)) | mysql -u user -ppassword
+```
+
+preferred `config.test.ini` file content:
+```
+[Mailer]
+send_mail = false
+save_mail = true
+```
+
+then finaly attach your project's routes to the application:
+```
+$output = (new App($invoker))->getOutput(
+    [
+        AccountConfig::ROUTES,
+        Example::ROUTES,
+        ...
+        ...
+        MyProject::ROUTES,  // <-- Alwas delete route.cache.php when you have changes in routes
+    ]
+);
+```
+
+testing:
+```
 ./test.sh
+```   
+
+usefull commands: (notes only)
+```
+touch lib/route.cache.php
+touch lib/Library/config/config.test.ini
+mkdir lib/Library/mails
+mkdir lib/Library/log
+touch lib/Library/log/app.log
+
+vendor/bin/phan --init --init-level=1
+tail -f /var/www/sandbox/my-project/lib/Library/log/app.log
 ```
