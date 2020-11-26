@@ -60,9 +60,9 @@ tail -f /var/www/sandbox/my-project/lib/Library/log/app.log
 ```
 
 developement and PRs:
- - Clone this repository then create new branch with proper naming (not main or master!!)
- - PRs should ignor chamges on files:
-        - `.gitmodules` project folder (`src/`)
-        - `composer.json` project path
-        - `index.php` project routes
-        - `src/` project folder
+* Clone this repository then create new branch with proper naming (not main or master!!)
+* PRs should ignor chamges on files:
+  - `.gitmodules` project folder (`src/`)
+  - `composer.json` project path
+  - `index.php` project routes
+  - `src/` project folder
