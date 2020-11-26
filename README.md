@@ -29,7 +29,7 @@ send_mail = false
 save_mail = true
 ```
 
-then finaly attach your project's routes to the application:
+then finaly attach your project's routes to the application: (don't forget to fix uses..)
 ```
 $output = (new App($invoker))->getOutput(
     [
