@@ -68,7 +68,7 @@ tail -f /var/www/sandbox/my-project/lib/Library/log/app.log
 
 developement and PRs:
 * Clone this repository then create new branch with proper naming (not main or master!!)
-* PRs should ignor changes on files:
+* PRs should ignore changes on files to origin (original file contents are in `dist/` folder):
   - `.gitmodules` project folder (`src/`)
   - `composer.json` project path
   - `index.php` project routes
