@@ -6,7 +6,9 @@
     "autoload": {
         "psr-4": {
             "Madsoft\\": "lib/",
-            "Madsoft\\Library\\Test\\": "lib/tests/"
+            "Madsoft\\Library\\Test\\": "lib/tests/",
+            "Madsoft\\Talkbot\\": "src/Talkbot/",
+            "Madsoft\\Talkbot\\Test\\": "src/tests/"
         }
     },
     "authors": [

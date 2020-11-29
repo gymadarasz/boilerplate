@@ -1,3 +1,6 @@
 [submodule "lib"]
 	path = lib
 	url = https://github.com/gymadarasz/wapp-library
+[submodule "src"]
+	path = src
+	url = https://github.com/gymadarasz/wapp-talkbot.git

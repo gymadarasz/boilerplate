@@ -6,6 +6,7 @@ use Madsoft\Library\App;
 use Madsoft\Library\Invoker;
 use Madsoft\Library\Responder\Account\AccountConfig;
 use Madsoft\Library\Responder\Example\Example;
+use Madsoft\Talkbot\MyScripts;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -18,7 +19,7 @@ $output = (new App($invoker))->getOutput(
     [
         AccountConfig::ROUTES,
         Example::ROUTES,
-    //        MyScripts::ROUTES,
+        MyScripts::ROUTES,
     ]
 );
 echo $output;
