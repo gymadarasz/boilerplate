@@ -56,7 +56,7 @@ testing:
 
 usefull commands: (notes only)
 ```
-touch lib/route.cache.php
+echo "" > lib/route.cache.php
 touch lib/Library/config/config.test.ini
 mkdir lib/Library/mails
 mkdir lib/Library/log
