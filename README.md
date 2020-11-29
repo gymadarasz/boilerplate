@@ -42,6 +42,13 @@ $output = (new App($invoker))->getOutput(
 );
 ```
 
+Before testing:
+```
+mkdir lib/Library/mails
+mkdir lib/Library/log
+touch lib/Library/log/app.log
+```
+
 testing:
 ```
 ./test.sh
@@ -61,7 +68,7 @@ tail -f /var/www/sandbox/my-project/lib/Library/log/app.log
 
 developement and PRs:
 * Clone this repository then create new branch with proper naming (not main or master!!)
-* PRs should ignor chamges on files:
+* PRs should ignor changes on files:
   - `.gitmodules` project folder (`src/`)
   - `composer.json` project path
   - `index.php` project routes
