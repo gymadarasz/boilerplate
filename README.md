@@ -19,7 +19,7 @@ add it to `composer.json` to load project:
 then update composer and create database, but change `my_project` database name to your database name:
 ```
 composer update
-(echo 'CREATE DATABASE my_project;USE my_project;' && (cat lib/import.sql || cat src/import.sql)) | mysql -u user -ppassword
+(echo 'CREATE DATABASE my_project;USE my_project;' && (cat lib/import.sql && cat src/import.sql)) | mysql -u user -ppassword
 ```
 
 preferred `config.test.ini` file content:
