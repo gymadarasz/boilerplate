@@ -16,7 +16,7 @@ add it to `composer.json` to load project:
             "MyProject\\Test\\": "src/tests/"
         }
 ```
-then
+then update composer and create database, but change `my_project` database name to your database name:
 ```
 composer update
 (echo 'CREATE DATABASE my_project;USE my_project;' && (cat lib/import.sql || cat src/import.sql)) | mysql -u user -ppassword
@@ -29,7 +29,7 @@ send_mail = false
 save_mail = true
 ```
 
-then finaly attach your project's routes to the application: (don't forget to fix uses..)
+then finaly attach your project's routes to the application in `index.php`: (don't forget to fix uses..)
 ```
 $output = (new App($invoker))->getOutput(
     [
@@ -40,6 +40,13 @@ $output = (new App($invoker))->getOutput(
         MyProject::ROUTES,  // <-- Alwas delete route.cache.php when you have changes in routes
     ]
 );
+```
+
+Before testing:
+```
+mkdir lib/Library/mails
+mkdir lib/Library/log
+touch lib/Library/log/app.log
 ```
 
 testing:
@@ -61,7 +68,7 @@ tail -f /var/www/sandbox/my-project/lib/Library/log/app.log
 
 developement and PRs:
 * Clone this repository then create new branch with proper naming (not main or master!!)
-* PRs should ignor chamges on files:
+* PRs should ignor changes on files:
   - `.gitmodules` project folder (`src/`)
   - `composer.json` project path
   - `index.php` project routes
