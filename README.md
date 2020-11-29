@@ -10,8 +10,8 @@ git submodule add https://repository-of-my-project.git src
 add it to `composer.json` to load project:
 ```
         "psr-4": {
-            ...
-            ...
+            ...,
+            ...,
             "MyProject\\": "src/MyProject/",
             "MyProject\\Test\\": "src/tests/"
         }
